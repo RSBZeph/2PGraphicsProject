@@ -1,5 +1,5 @@
 ﻿using OpenTK;
-using OpenTK.Graphics.ES10;
+using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +17,11 @@ class Camera
 
     void CameraPlacement()
     {
-
+        var M = Matrix4.CreatePerspectiveFieldOfView(1.6f, 1.3f, .1f, 1000);
+        GL.LoadMatrix(ref M);
+        GL.Translate(CameraPosition.X, CameraPosition.Y, CameraPosition.Z);
+        GL.Rotate(360, CameraDirection.X, 0, 0);
+        GL.Rotate(360, 0, CameraDirection.Y, 0);
+        GL.Rotate(360, 0, 0, CameraDirection.Y);
     }
 }
