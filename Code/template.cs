@@ -15,6 +15,7 @@ namespace Template
 		static bool terminated = false;
 		protected override void OnLoad( EventArgs e )
 		{
+            //This is my Branch now;
 			// called upon app init
 			GL.ClearColor( Color.Black );
 			GL.Enable( EnableCap.Texture2D );
