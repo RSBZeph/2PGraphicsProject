@@ -11,6 +11,7 @@ class Game
 	public void Init()
 	{
             //test
+            //j;ladsj;adgs
 	}
 	// tick: renders one frame
 	public void Tick()
