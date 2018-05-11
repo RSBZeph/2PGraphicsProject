@@ -66,8 +66,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Code\Application.cs" />
     <Compile Include="Code\Camera.cs" />
     <Compile Include="Code\game.cs" />
+    <Compile Include="Code\Intersection.cs" />
+    <Compile Include="Code\Light.cs" />
+    <Compile Include="Code\Plane.cs" />
+    <Compile Include="Code\Primitive.cs" />
+    <Compile Include="Code\Raytracer.cs" />
+    <Compile Include="Code\Scene.cs" />
+    <Compile Include="Code\Sphere.cs" />
     <Compile Include="Code\surface.cs" />
     <Compile Include="Code\template.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
