@@ -10,8 +10,6 @@ class Game
 	// initialize
 	public void Init()
 	{
-            //test
-            //normaal doen robert
 	}
 	// tick: renders one frame
 	public void Tick()
