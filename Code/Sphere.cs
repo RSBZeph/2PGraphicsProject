@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace template.Code
 {
-    class Sphere
+    class Sphere : Primitive
     {
     }
 }
