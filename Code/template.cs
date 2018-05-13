@@ -16,9 +16,6 @@ namespace Template
 		protected override void OnLoad( EventArgs e )
 		{
 			// called upon app init
-			GL.ClearColor( Color.Black );
-			GL.Enable( EnableCap.Texture2D );
-			GL.Disable( EnableCap.DepthTest );
 			GL.Hint( HintTarget.PerspectiveCorrectionHint, HintMode.Nicest );
 			ClientSize = new Size( 640, 400 );
 			game = new Game();
@@ -49,8 +46,12 @@ namespace Template
 		}
 		protected override void OnRenderFrame( FrameEventArgs e )
 		{
-			// called once per frame; render
-			game.Tick();
+            GL.ClearColor(Color.Black);
+            GL.Enable(EnableCap.Texture2D);
+            GL.Disable(EnableCap.DepthTest);
+            GL.Color3(1.0f, 1.0f, 1.0f);
+            // called once per frame; render
+            game.Tick();
 			if (terminated) 
 			{
 				Exit();
@@ -77,8 +78,13 @@ namespace Template
 			GL.TexCoord2( 1.0f, 0.0f ); GL.Vertex2(  1.0f,  1.0f );
 			GL.TexCoord2( 0.0f, 0.0f ); GL.Vertex2( -1.0f,  1.0f );
 			GL.End();
-			// tell OpenTK we're done rendering
-			SwapBuffers();
+            // prepare for generic OpenGL rendering
+            GL.Enable(EnableCap.DepthTest);
+            GL.Disable(EnableCap.Texture2D);
+            GL.Clear(ClearBufferMask.DepthBufferBit);
+            game.RenderGL();
+            // tell OpenTK we're done rendering
+            SwapBuffers();
 		}
 		public static void Main( string[] args ) 
 		{ 
