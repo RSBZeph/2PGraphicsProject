@@ -13,12 +13,15 @@ namespace Template
 		static int screenID;
 		static Game game;
 		static bool terminated = false;
-
 		protected override void OnLoad( EventArgs e )
 		{
+            //This is my Branch now;
 			// called upon app init
-			GL.Hint(HintTarget.PerspectiveCorrectionHint, HintMode.Nicest);
-			ClientSize = new Size( 1600, 900 );
+			GL.ClearColor( Color.Black );
+			GL.Enable( EnableCap.Texture2D );
+			GL.Disable( EnableCap.DepthTest );
+			GL.Hint( HintTarget.PerspectiveCorrectionHint, HintMode.Nicest );
+			ClientSize = new Size( 1366, 720 );
 			game = new Game();
 			game.screen = new Surface( Width, Height );
 			Sprite.target = game.screen;
@@ -47,12 +50,8 @@ namespace Template
 		}
 		protected override void OnRenderFrame( FrameEventArgs e )
 		{
-            GL.ClearColor(Color.Black);
-            GL.Enable(EnableCap.Texture2D);
-            GL.Disable(EnableCap.DepthTest);
-            GL.Color3(1.0f, 1.0f, 1.0f);
-            // called once per frame; render
-            game.Tick();
+			// called once per frame; render
+			game.Tick();
 			if (terminated) 
 			{
 				Exit();
@@ -79,12 +78,8 @@ namespace Template
 			GL.TexCoord2( 1.0f, 0.0f ); GL.Vertex2(  1.0f,  1.0f );
 			GL.TexCoord2( 0.0f, 0.0f ); GL.Vertex2( -1.0f,  1.0f );
 			GL.End();
-            // prepare for generic OpenGL rendering
-            GL.Enable(EnableCap.DepthTest);
-            GL.Disable(EnableCap.Texture2D);
-            GL.Clear(ClearBufferMask.DepthBufferBit);
-            // tell OpenTK we're done rendering
-            SwapBuffers();
+			// tell OpenTK we're done rendering
+			SwapBuffers();
 		}
 		public static void Main( string[] args ) 
 		{ 
