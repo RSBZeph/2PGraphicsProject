@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OpenTK;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,5 +8,6 @@ using template.Code;
 
 class Sphere : Primitive
 {
-
+    Vector3 Position;
+    float Radius;
 }
