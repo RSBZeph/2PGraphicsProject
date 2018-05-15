@@ -10,4 +10,9 @@ class Sphere : Primitive
 {
     Vector3 Position;
     float Radius;
+
+    public Sphere()
+    {
+
+    }
 }
