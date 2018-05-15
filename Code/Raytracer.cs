@@ -21,10 +21,5 @@ class Raytracer
 
     }
 
-struct Ray
-{
-    float3 O; // ray origin
-    float3 D; // ray direction
-    float t; // distance
-};
+
 }
