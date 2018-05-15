@@ -7,7 +7,6 @@ using Template;
 class Game
 {
     public Surface screen;
-    int width, height;
     Application A;
 
     public void Init()

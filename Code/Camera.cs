@@ -1,6 +1,7 @@
 ﻿using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
+
 class Camera
 {
     public Vector3 Position = new Vector3(0, 0, 0), Direction = new Vector3(0, 0, 0), ScreenCentre;
@@ -10,7 +11,7 @@ class Camera
     public Camera()
     {
         LeftScreen = new Plane();
-        LeftScreen.DistanceToOrigin = 20;
+        LeftScreen.DistanceToOrigin = 1;
         ScreenCentre = Position + Direction * LeftScreen.DistanceToOrigin;
         LeftScreen.P0 = ScreenCentre + new Vector3(-1, -1, 0);
         LeftScreen.P1 = ScreenCentre + new Vector3(1, -1, 0);
