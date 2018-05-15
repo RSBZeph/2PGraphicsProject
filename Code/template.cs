@@ -12,6 +12,7 @@ namespace Template
 	{
 		static int screenID;
 		static Game game;
+        static Sphere sphere;
 		static bool terminated = false;
 		protected override void OnLoad( EventArgs e )
 		{
@@ -23,6 +24,7 @@ namespace Template
 			GL.Hint( HintTarget.PerspectiveCorrectionHint, HintMode.Nicest );
 			ClientSize = new Size( 1366, 720 );
 			game = new Game();
+            sphere = new Sphere();
 			game.screen = new Surface( Width, Height );
 			Sprite.target = game.screen;
 			screenID = game.screen.GenTexture();
@@ -52,6 +54,7 @@ namespace Template
 		{
 			// called once per frame; render
 			game.Tick();
+            sphere.Draw();
 			if (terminated) 
 			{
 				Exit();
