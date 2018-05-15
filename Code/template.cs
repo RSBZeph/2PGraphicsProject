@@ -13,11 +13,12 @@ namespace Template
 		static int screenID;
 		static Game game;
 		static bool terminated = false;
+
 		protected override void OnLoad( EventArgs e )
 		{
 			// called upon app init
-			GL.Hint( HintTarget.PerspectiveCorrectionHint, HintMode.Nicest );
-			ClientSize = new Size( 640, 400 );
+			GL.Hint(HintTarget.PerspectiveCorrectionHint, HintMode.Nicest);
+			ClientSize = new Size( 1600, 900 );
 			game = new Game();
 			game.screen = new Surface( Width, Height );
 			Sprite.target = game.screen;
@@ -82,7 +83,6 @@ namespace Template
             GL.Enable(EnableCap.DepthTest);
             GL.Disable(EnableCap.Texture2D);
             GL.Clear(ClearBufferMask.DepthBufferBit);
-            game.RenderGL();
             // tell OpenTK we're done rendering
             SwapBuffers();
 		}
