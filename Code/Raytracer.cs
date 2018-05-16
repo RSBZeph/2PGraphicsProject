@@ -13,12 +13,14 @@ class Raytracer
 {
     Camera C;
     public Surface Screen;
+    Scene S;
     Vector3 DebugOrigin;
     int scale = 50;
 
     public Raytracer()
     {
         C = new Camera();
+        S = new Scene();
     }
 
     public void Render()
@@ -32,7 +34,7 @@ class Raytracer
             for (int y = 0; y < Screen.height / 2; y++)
                 for (int t = 0; t < 10; t++)
                 {
-                   //CheckIntersect(C.Position + t * CreateRayDirection(x, y));
+                   S.CheckIntersect(new Ray(C.Position, CreateRayDirection(x, y)));
                 }
     }
 
@@ -52,12 +54,6 @@ class Raytracer
         Screen.Line((int)((DebugOrigin.X * 512 * 3) + C.LeftScreen.P0.X * scale), (int)((DebugOrigin.Y * -256 + 256) - C.LeftScreen.DistanceToOrigin * scale), (int)((DebugOrigin.X * 512 * 3) + C.LeftScreen.P1.X * scale), (int)((DebugOrigin.Y * -256 + 256) - C.LeftScreen.DistanceToOrigin * scale), 0xff0000);
     }
 
-    float Distance(Vector3 first, Vector3 second)
-    {
-        Vector3 Difference = second - first;
-        return (float)Math.Sqrt(Math.Pow(Difference.X, 2) + Math.Pow(Difference.Y, 2) + Math.Pow(Difference.Z, 2));
-    }
-
     Vector3 CreateRayDirection(float x, float y)
     {
         Vector3 Direction, NDirection;
@@ -65,5 +61,16 @@ class Raytracer
         Direction = ScreenPoint - C.Position;
         NDirection = Vector3.Divide(Direction, (float)Math.Sqrt(Math.Pow(Direction.X, 2) + Math.Pow(Direction.Y, 2) + Math.Pow(Direction.Z, 2)));
         return Vector3.Divide(Direction, NDirection);
+    }
+
+    public struct Ray
+    {
+        public Vector3 Start, Direction;
+
+        public Ray(Vector3 a, Vector3 b)
+        {
+            Start = a;
+            Direction = b;
+        }
     }
 }
