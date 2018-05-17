@@ -27,12 +27,12 @@ class Raytracer
     void Draw3D()
     {
         for (int x = 0; x < Screen.width / 2; x++)        
-            for (int y = 0; y < Screen.height / 2; y++)
+            for (int y = 0; y < Screen.height; y++)
                 S.CheckIntersect(new Ray(C.Position, CreateRayDirection(x, y), x, y));
 
         foreach (Intersection I in S.intersections)
         {
-            Screen.pixels[(int)(I.Ray.x + I.Ray.y * Screen.width)] = CreateColor(100, 255, 0);
+            Screen.pixels[(int)(I.Ray.x + I.Ray.y * Screen.width)] = I.Object.Color;
         }
     }
 
@@ -45,16 +45,12 @@ class Raytracer
     {
         Screen.Line(512, 0, 512, 512, 0xff0000);
 
-        GL.Color3(1f, 0f, 0f);
-        GL.Begin(PrimitiveType.Triangles);
-        GL.Vertex3(((Screen.width / 2) - 10f) / Screen.width, (-(Screen.height / 2) - 10f) / Screen.height, 0);
-        GL.Vertex3(((Screen.width / 2) + 10f) / Screen.width, (-(Screen.height / 2) - 10f) / Screen.height, 0);
-        GL.Vertex3(((Screen.width / 2) - 0f) / Screen.width, (-(Screen.height / 2) + 10f) / Screen.height, 0);
-        GL.End();
+        Screen.Line((int)(Screen.width / 2 + C.Position.X * Screen.width / 20 - 10), (int)(Screen.height - C.Position.Z * Screen.height / 10 + 5), (int)(Screen.width / 2 + C.Position.X * Screen.width / 20), (int)(Screen.height - C.Position.Z * Screen.height / 10 - 20), 0xff0000);
+        Screen.Line((int)(Screen.width / 2 + C.Position.X * Screen.width / 20 + 10), (int)(Screen.height - C.Position.Z * Screen.height / 10 + 5), (int)(Screen.width / 2 + C.Position.X * Screen.width / 20), (int)(Screen.height - C.Position.Z * Screen.height / 10 - 20), 0xff0000);
+        Screen.pixels[(int)(Screen.width / 2 + C.Position.X * Screen.width / 20 + Screen.height - C.Position.Z * Screen.height / 10 * Screen.width)] = 0xff0000;
+        Vector3 Origin = new Vector3(Screen.width / 4 * 3, Screen.height / 10 * 9, 0);
 
-        DebugOrigin = new Vector3(0.5f, -0.5f, 0f);
-
-        Screen.Line((int)((DebugOrigin.X * 512 * 3) + C.LeftScreen.P0.X * scale), (int)((DebugOrigin.Y * -256 + 256) - C.LeftScreen.DistanceToOrigin * scale), (int)((DebugOrigin.X * 512 * 3) + C.LeftScreen.P1.X * scale), (int)((DebugOrigin.Y * -256 + 256) - C.LeftScreen.DistanceToOrigin * scale), 0xff0000);
+        Screen.Line((int)(Origin.X - C.ScreenWidth / 2 * Screen.width / 20), (int)(Origin.Y - C.LeftScreen.DistanceToOrigin * Screen.height / 10), (int)(Origin.X + C.ScreenWidth / 2 * Screen.width / 20), (int)(Origin.Y - C.LeftScreen.DistanceToOrigin * Screen.height / 10), 0xff0000);
 
         S.DrawPrimitivesDebug();
     }
