@@ -13,6 +13,10 @@ class Sphere : Primitive
     public Vector3 Position;
     public float Radius;
 
+    public Sphere()
+    {
+
+    }
     //public Surface screen;
     //int w, h;
     public Sphere()
