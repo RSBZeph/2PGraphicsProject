@@ -45,11 +45,9 @@ class Raytracer
     public void DrawDebug()
     {
         Screen.Line(512, 0, 512, 512, 0xff0000);
-
-        Screen.Line((int)(Screen.width / 2 + C.Position.X * Screen.width / 20 - 10), (int)(Screen.height - C.Position.Z * Screen.height / 10 + 5), (int)(Screen.width / 2 + C.Position.X * Screen.width / 20), (int)(Screen.height - C.Position.Z * Screen.height / 10 - 20), 0xff0000);
-        Screen.Line((int)(Screen.width / 2 + C.Position.X * Screen.width / 20 + 10), (int)(Screen.height - C.Position.Z * Screen.height / 10 + 5), (int)(Screen.width / 2 + C.Position.X * Screen.width / 20), (int)(Screen.height - C.Position.Z * Screen.height / 10 - 20), 0xff0000);
-        Screen.pixels[(int)(Screen.width / 2 + C.Position.X * Screen.width / 20 + Screen.height - C.Position.Z * Screen.height / 10 * Screen.width)] = 0xff0000;
-        Vector3 Origin = new Vector3(Screen.width / 4 * 3, Screen.height / 10 * 9, 0);
+        Vector3 Origin = new Vector3(Screen.width / 2 + C.Position.X * Screen.width / 20, Screen.height - C.Position.Z * Screen.height / 10, 0);
+        Screen.Line((int)(Origin.X - 5), (int)(Origin.Y + 5), (int)(Origin.X), (int)(Origin.Y - 10), 0xff0000);
+        Screen.Line((int)(Origin.X + 5), (int)(Origin.Y + 5), (int)(Origin.X), (int)(Origin.Y - 10), 0xff0000);
 
         Screen.Line((int)(Origin.X - C.ScreenWidth / 2 * Screen.width / 20), (int)(Origin.Y - C.LeftScreen.DistanceToOrigin * Screen.height / 10), (int)(Origin.X + C.ScreenWidth / 2 * Screen.width / 20), (int)(Origin.Y - C.LeftScreen.DistanceToOrigin * Screen.height / 10), 0xff0000);
 

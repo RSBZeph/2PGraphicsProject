@@ -28,7 +28,7 @@ class Scene
         Sphere s1 = new Sphere(new Vector3(3, 4, 7), 1f, 100, 70, 0);
         spheres.Add(s1);
 
-        Sphere s2 = new Sphere(new Vector3(6, 6, 5), 2f, 0, 150, 200);
+        Sphere s2 = new Sphere(new Vector3(7, 6, 7), 2f, 0, 150, 200);
         spheres.Add(s2);
     }
 
