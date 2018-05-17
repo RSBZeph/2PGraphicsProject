@@ -27,21 +27,27 @@ class Scene
     {
         Sphere s = new Sphere();
         s.Position = new Vector3(3, 4, 7);
-        s.Radius = 3f;
+        s.Radius = 1f;
         spheres.Add(s);
     }
 
     public void DrawPrimitivesDebug()
     {
-        for (double i = 0.0; i < 360; i++)
+        int width = Screen.width / 2, height = Screen.height;
+        int width1 = width / 10, height1 = height / 10;
+        foreach (Sphere sphere in spheres)
         {
-            double angle = i * Math.PI / 180;
-            int x = (int)(750 + 50 * Math.Cos(angle));
-            int y = (int)(300 + 50 * Math.Sin(angle));
-            int Location = x + y * Screen.width;
-            Screen.pixels[Location] = CreateColor(0, 100, 100);
+            for (double i = 0.0; i < 360; i++)
+            {
+                double angle = i * Math.PI / 180;
+                int x = (int)(width + width1 * sphere.Position.X + width1 * sphere.Radius * Math.Cos(angle));
+                int y = (int)(height - height1 * sphere.Position.Z + height1 * sphere.Radius * Math.Sin(angle));
+                int Location = x + y * Screen.width;
+                Screen.pixels[Location] = CreateColor(0, 100, 100);
+            }
         }
     }
+        
 
     int CreateColor(int red, int green, int blue)
     {
