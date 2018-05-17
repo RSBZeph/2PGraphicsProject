@@ -10,9 +10,10 @@ class Sphere : Primitive
 {
     public Vector3 Position;
     public float Radius;
+    public int Color;
 
-    public Sphere()
+    public Sphere(int red = 255, int green = 255, int blue = 255)
     {
-
+        Color = (red << 16) + (green << 8) + blue;
     }
 }

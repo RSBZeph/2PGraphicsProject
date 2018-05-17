@@ -25,10 +25,15 @@ class Scene
 
     void FillLists()
     {
-        Sphere s = new Sphere();
-        s.Position = new Vector3(3, 4, 7);
-        s.Radius = 1f;
-        spheres.Add(s);
+        Sphere s1 = new Sphere();
+        s1.Position = new Vector3(3, 4, 7);
+        s1.Radius = 1f;
+        spheres.Add(s1);
+
+        Sphere s2 = new Sphere(0, 150, 200);
+        s2.Position = new Vector3(6, 6, 5);
+        s2.Radius = 2f;
+        spheres.Add(s2);
     }
 
     public void DrawPrimitivesDebug()
@@ -43,15 +48,9 @@ class Scene
                 int x = (int)(width + width1 * sphere.Position.X + width1 * sphere.Radius * Math.Cos(angle));
                 int y = (int)(height - height1 * sphere.Position.Z + height1 * sphere.Radius * Math.Sin(angle));
                 int Location = x + y * Screen.width;
-                Screen.pixels[Location] = CreateColor(0, 100, 100);
+                Screen.pixels[Location] = sphere.Color;
             }
         }
-    }
-        
-
-    int CreateColor(int red, int green, int blue)
-    {
-        return (red << 16) + (green << 8) + blue;
     }
 
     public void CheckIntersect(Ray ray)
