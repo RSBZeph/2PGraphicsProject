@@ -8,8 +8,8 @@ using template.Code;
 
 class Sphere : Primitive
 {
-    Vector3 Position;
-    float Radius;
+    public Vector3 Position;
+    public float Radius;
 
     public Sphere()
     {
