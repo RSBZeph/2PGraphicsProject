@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using template.Code;
+using Template;
 using static Raytracer;
 
 class Scene
@@ -12,19 +13,37 @@ class Scene
     List<Sphere> spheres = new List<Sphere>();
     List<Plane> planes = new List<Plane>();
     List<Light> lights = new List<Light>();
-    List<Intersection> intersections = new List<Intersection>();
-    
-    public Scene()
-    {
+    public List<Intersection> intersections = new List<Intersection>();
+    Intersection i = new Intersection(), j = new Intersection();
+    public Surface Screen;
 
+    public Scene(Surface sur)
+    {
+        Screen = sur;
+        FillLists();
     }
 
     void FillLists()
     {
-        Sphere s = new Sphere();
-        s.Position = new Vector3(3, 4, 7);
-        s.Radius = 3f;
+        Sphere s = new Sphere(new Vector3(3, 4, 7), 3f);
         spheres.Add(s);
+    }
+
+    public void DrawPrimitivesDebug()
+    {
+        for (double i = 0.0; i < 360; i++)
+        {
+            double angle = i * Math.PI / 180;
+            int x = (int)(750 + 50 * Math.Cos(angle));
+            int y = (int)(300 + 50 * Math.Sin(angle));
+            int Location = x + y * Screen.width;
+            Screen.pixels[Location] = CreateColor(0, 100, 100);
+        }
+    }
+
+    int CreateColor(int red, int green, int blue)
+    {
+        return (red << 16) + (green << 8) + blue;
     }
 
     public void CheckIntersect(Ray ray)
@@ -46,10 +65,12 @@ class Scene
             i.Object = sphere;
             i.Distance = t1;
             i.Position = Point1;
+            i.Ray = ray;
             intersections.Add(i);
             j.Object = sphere;
             j.Distance = t2;
-            i.Position = Point2;
+            j.Position = Point2;
+            j.Ray = ray;
             intersections.Add(j);
             break;
         }
