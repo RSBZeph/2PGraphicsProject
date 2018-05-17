@@ -14,8 +14,11 @@ class Intersection
     public float Distance;
     public Ray Ray;
 
-    public Intersection()
+    public Intersection(Vector3 pos, Primitive prim, float dis, Ray r)
     {
-
+        Position = pos;
+        Object = prim;
+        Distance = dis;
+        Ray = r;
     }
 }

@@ -14,7 +14,7 @@ class Scene
     List<Plane> planes = new List<Plane>();
     List<Light> lights = new List<Light>();
     public List<Intersection> intersections = new List<Intersection>();
-    Intersection i = new Intersection(), j = new Intersection();
+    Intersection i, j;
     public Surface Screen;
 
     public Scene(Surface sur)
@@ -25,14 +25,10 @@ class Scene
 
     void FillLists()
     {
-        Sphere s1 = new Sphere();
-        s1.Position = new Vector3(3, 4, 7);
-        s1.Radius = 1f;
+        Sphere s1 = new Sphere(new Vector3(3, 4, 7), 1f, 100, 70, 0);
         spheres.Add(s1);
 
-        Sphere s2 = new Sphere(0, 150, 200);
-        s2.Position = new Vector3(6, 6, 5);
-        s2.Radius = 2f;
+        Sphere s2 = new Sphere(new Vector3(6, 6, 5), 2f, 0, 150, 200);
         spheres.Add(s2);
     }
 
@@ -68,16 +64,8 @@ class Scene
             float t1c = (float)Math.Sqrt(Math.Pow(sphere.Radius, 2) - Math.Pow(CentreToRay, 2)); //afstand snijpunt loodlijn - ray en snijpunt met cirkel (ABC formule)
             float t1 = tc - t1c, t2 = tc + t1c; // lengte van ray.start naar eerste en tweede snijpunt met de sphere
             Vector3 Point1 = ray.Start + ray.Direction * t1, Point2 = ray.Start + ray.Direction * t2; //eerste en tweede intersection point met de sphere            
-            Intersection i = new Intersection(), j = new Intersection();
-            i.Object = sphere;
-            i.Distance = t1;
-            i.Position = Point1;
-            i.Ray = ray;
+            Intersection i = new Intersection(Point1, sphere, t1, ray), j = new Intersection(Point2, sphere, t2, ray);
             intersections.Add(i);
-            j.Object = sphere;
-            j.Distance = t2;
-            j.Position = Point2;
-            j.Ray = ray;
             intersections.Add(j);
             break;
         }
