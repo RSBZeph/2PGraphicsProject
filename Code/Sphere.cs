@@ -17,13 +17,6 @@ class Sphere : Primitive
     {
 
     }
-    //public Surface screen;
-    //int w, h;
-    public Sphere()
-    {
-        
-        //screen = new Surface(1366, 720);
-    }
 
     public void Draw()
     {
