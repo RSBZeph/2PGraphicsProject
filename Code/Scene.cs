@@ -74,7 +74,7 @@ class Scene
             float a = i * i + j * j + k * k;
             float b = 2 * i * (x1 - sphere.Position.X) + 2 * j * (y1 - sphere.Position.Y) + 2 * k * (z1 - sphere.Position.Z);
             float c = (x1 - sphere.Position.X) * (x1 - sphere.Position.X) + (y1 - sphere.Position.Y) * (y1 - sphere.Position.Y) + (z1 - sphere.Position.Z) * (z1 - sphere.Position.Z) - sphere.Radius * sphere.Radius;
-            float discriminant = b * b - 4 * a * c;
+            float discriminant = (b * b) - (4 * a * c);
             if (discriminant > 0)
             {
                 float result1 = (float)((-b + Math.Sqrt(discriminant)) / (2 * a));
