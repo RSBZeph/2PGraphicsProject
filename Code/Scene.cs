@@ -14,7 +14,7 @@ class Scene
     List<Plane> planes = new List<Plane>();
     List<Light> lights = new List<Light>();
     public List<Intersection> intersections = new List<Intersection>();
-    Intersection i = new Intersection(), j = new Intersection();
+    Intersection i, j;
     public Surface Screen;
 
     public Scene(Surface sur)
@@ -25,25 +25,28 @@ class Scene
 
     void FillLists()
     {
-        Sphere s = new Sphere(new Vector3(3, 4, 7), 3f);
-        spheres.Add(s);
+        Sphere s1 = new Sphere(new Vector3(3, 4, 7), 1f, 100, 70, 0);
+        spheres.Add(s1);
+
+        Sphere s2 = new Sphere(new Vector3(6, 6, 5), 2f, 0, 150, 200);
+        spheres.Add(s2);
     }
 
     public void DrawPrimitivesDebug()
     {
-        for (double i = 0.0; i < 360; i++)
+        int width = Screen.width / 2, height = Screen.height;
+        int width1 = width / 10, height1 = height / 10;
+        foreach (Sphere sphere in spheres)
         {
-            double angle = i * Math.PI / 180;
-            int x = (int)(750 + 50 * Math.Cos(angle));
-            int y = (int)(300 + 50 * Math.Sin(angle));
-            int Location = x + y * Screen.width;
-            Screen.pixels[Location] = CreateColor(0, 100, 100);
+            for (double i = 0.0; i < 360; i++)
+            {
+                double angle = i * Math.PI / 180;
+                int x = (int)(width + width1 * sphere.Position.X + width1 * sphere.Radius * Math.Cos(angle));
+                int y = (int)(height - height1 * sphere.Position.Z + height1 * sphere.Radius * Math.Sin(angle));
+                int Location = x + y * Screen.width;
+                Screen.pixels[Location] = sphere.Color;
+            }
         }
-    }
-
-    int CreateColor(int red, int green, int blue)
-    {
-        return (red << 16) + (green << 8) + blue;
     }
 
     public void CheckIntersect(Ray ray)
@@ -61,16 +64,8 @@ class Scene
             float t1c = (float)Math.Sqrt(Math.Pow(sphere.Radius, 2) - Math.Pow(CentreToRay, 2)); //afstand snijpunt loodlijn - ray en snijpunt met cirkel (ABC formule)
             float t1 = tc - t1c, t2 = tc + t1c; // lengte van ray.start naar eerste en tweede snijpunt met de sphere
             Vector3 Point1 = ray.Start + ray.Direction * t1, Point2 = ray.Start + ray.Direction * t2; //eerste en tweede intersection point met de sphere            
-            Intersection i = new Intersection(), j = new Intersection();
-            i.Object = sphere;
-            i.Distance = t1;
-            i.Position = Point1;
-            i.Ray = ray;
+            Intersection i = new Intersection(Point1, sphere, t1, ray), j = new Intersection(Point2, sphere, t2, ray);
             intersections.Add(i);
-            j.Object = sphere;
-            j.Distance = t2;
-            j.Position = Point2;
-            j.Ray = ray;
             intersections.Add(j);
             break;
         }

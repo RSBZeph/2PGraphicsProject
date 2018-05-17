@@ -34,12 +34,12 @@ class Raytracer
     void Draw3D()
     {
         for (int x = 0; x < Screen.width / 2; x++)        
-            for (int y = 0; y < Screen.height / 2; y++)
+            for (int y = 0; y < Screen.height; y++)
                 S.CheckIntersect(new Ray(C.Position, CreateRayDirection(x, y), x, y));
 
         foreach (Intersection I in S.intersections)
         {
-            Screen.pixels[(int)(I.Ray.x + I.Ray.y * Screen.width)] = CreateColor(100, 255, 0);
+            Screen.pixels[(int)(I.Ray.x + I.Ray.y * Screen.width)] = I.Object.Color;
         }
     }
 
@@ -51,17 +51,16 @@ class Raytracer
     public void DrawDebug()
     {
         Screen.Line(512, 0, 512, 512, 0xff0000);
-        Screen.Line((Screen.width / 2) + ((Screen.width / 2) / 2), (int)(Screen.height * 0.9), (Screen.width / 2) + ((Screen.width / 2) / 2) + 1, (int)(Screen.height * 0.9), CreateColor(0, 255, 0));
-       
-        //GL.Color3(1f, 0f, 0f);
-        //GL.Begin(PrimitiveType.Triangles);
-        //GL.Vertex3(((Screen.width / 2) - 10f) / Screen.width, (-(Screen.height / 2) - 10f) / Screen.height, 0);
-        //GL.Vertex3(((Screen.width / 2) + 10f) / Screen.width, (-(Screen.height / 2) - 10f) / Screen.height, 0);
-        //GL.Vertex3(((Screen.width / 2) - 0f) / Screen.width, (-(Screen.height / 2) + 10f) / Screen.height, 0);
-        //GL.End();
+
+        GL.Color3(1f, 0f, 0f);
+        GL.Begin(PrimitiveType.Triangles);
+        GL.Vertex3(((Screen.width / 2) - 10f) / Screen.width, (-(Screen.height / 2) - 10f) / Screen.height, 0);
+        GL.Vertex3(((Screen.width / 2) + 10f) / Screen.width, (-(Screen.height / 2) - 10f) / Screen.height, 0);
+        GL.Vertex3(((Screen.width / 2) - 0f) / Screen.width, (-(Screen.height / 2) + 10f) / Screen.height, 0);
+        GL.End();
 
         DebugOrigin = new Vector3(0.5f, -0.5f, 0f);
-        
+
         Screen.Line((int)((DebugOrigin.X * 512 * 3) + C.LeftScreen.P0.X * scale), (int)((DebugOrigin.Y * -256 + 256) - C.LeftScreen.DistanceToOrigin * scale), (int)((DebugOrigin.X * 512 * 3) + C.LeftScreen.P1.X * scale), (int)((DebugOrigin.Y * -256 + 256) - C.LeftScreen.DistanceToOrigin * scale), 0xff0000);
 
         foreach (Intersection I in S.intersections)
