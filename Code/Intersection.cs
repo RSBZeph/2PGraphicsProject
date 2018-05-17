@@ -14,11 +14,11 @@ class Intersection
     public float Distance;
     public Ray Ray;
 
-    public Intersection(Vector3 pos, Primitive prim, float dis, Ray r)
+    public Intersection(Primitive prim, float dis, Ray r)
     {
-        Position = pos;
         Object = prim;
         Distance = dis;
         Ray = r;
+        Position = Ray.Start + Ray.Direction * dis;
     }
 }

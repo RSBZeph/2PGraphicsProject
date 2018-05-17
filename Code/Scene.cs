@@ -53,21 +53,37 @@ class Scene
     {
         foreach (Sphere sphere in spheres)
         {
-            Vector3 L = sphere.Position - ray.Start;
-            float Lfloat = (float)Math.Sqrt(Math.Pow(L.X, 2) + Math.Pow(L.Y, 2) + Math.Pow(L.Z, 2)); //lengte van LenthToCentre (ABC formule)
-            float tc = Vector3.Dot(L, ray.Direction); //ray vanuit sphere.position evenwijdig aan ray en stopt bij ray.start
-            if (tc < 0)
-                continue;
-            float CentreToRay = (float)Math.Sqrt(Math.Pow(Lfloat, 2) + Math.Pow(tc, 2)); //loodlijn tussen ray en sphere.position (ABC formule)
-            if (CentreToRay > sphere.Radius)
-                continue;
-            float t1c = (float)Math.Sqrt(Math.Pow(sphere.Radius, 2) - Math.Pow(CentreToRay, 2)); //afstand snijpunt loodlijn - ray en snijpunt met cirkel (ABC formule)
-            float t1 = tc - t1c, t2 = tc + t1c; // lengte van ray.start naar eerste en tweede snijpunt met de sphere
-            Vector3 Point1 = ray.Start + ray.Direction * t1, Point2 = ray.Start + ray.Direction * t2; //eerste en tweede intersection point met de sphere            
-            Intersection i = new Intersection(Point1, sphere, t1, ray), j = new Intersection(Point2, sphere, t2, ray);
-            intersections.Add(i);
-            intersections.Add(j);
-            break;
+            //Vector3 L = sphere.Position - ray.Start;
+            //float Lfloat = (float)Math.Sqrt(Math.Pow(L.X, 2) + Math.Pow(L.Y, 2) + Math.Pow(L.Z, 2)); //lengte van LenthToCentre (Pytagoras)
+            //float tc = Vector3.Dot(L, ray.Direction); //ray vanuit sphere.position evenwijdig aan ray en stopt bij ray.start
+            //if (tc < 0)
+            //    continue;
+            //float CentreToRay = (float)Math.Sqrt(Math.Pow(Lfloat, 2) + Math.Pow(tc, 2)); //loodlijn tussen ray en sphere.position (Pytagoras)
+            //if (CentreToRay > sphere.Radius)
+            //    continue;
+            //float t1c = (float)Math.Sqrt(Math.Pow(sphere.Radius, 2) - Math.Pow(CentreToRay, 2)); //afstand snijpunt loodlijn - ray en snijpunt met cirkel (Pytagoras)
+            //float t1 = tc - t1c, t2 = tc + t1c; // lengte van ray.start naar eerste en tweede snijpunt met de sphere
+            //Vector3 Point1 = ray.Start + ray.Direction * t1, Point2 = ray.Start + ray.Direction * t2; //eerste en tweede intersection point met de sphere            
+            //Intersection i = new Intersection(Point1, sphere, t1, ray), j = new Intersection(Point2, sphere, t2, ray);
+            //intersections.Add(i);
+            //intersections.Add(j);
+            //break;
+
+            float x1 = ray.Start.X, y1 = ray.Start.Y, z1 = ray.Start.Z;
+            float i = ray.Direction.X, j = ray.Direction.Y, k = ray.Direction.Z;
+            float a = i * i + j * j + k * k;
+            float b = 2 * i * (x1 - sphere.Position.X) + 2 * j * (y1 - sphere.Position.Y) + 2 * k * (z1 - sphere.Position.Z);
+            float c = (x1 - sphere.Position.X) * (x1 - sphere.Position.X) + (y1 - sphere.Position.Y) * (y1 - sphere.Position.Y) + (z1 - sphere.Position.Z) * (z1 - sphere.Position.Z) - sphere.Radius * sphere.Radius;
+            float discriminant = b * b - 4 * a * c;
+            if (discriminant > 0)
+            {
+                float result1 = (float)((-b + Math.Sqrt(discriminant)) / (2 * a));
+                float result2 = (float)((-b - Math.Sqrt(discriminant)) / (2 * a));
+                Intersection intersec1 = new Intersection(sphere, result1, ray), intersec2 = new Intersection(sphere, result2, ray);
+                intersections.Add(intersec1);
+                intersections.Add(intersec2);
+                break;
+            }
         }
 
         foreach(Plane plane in planes)
