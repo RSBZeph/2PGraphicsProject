@@ -98,9 +98,13 @@ class Scene
         }
     }
 
-    float Distance(Vector3 first, Vector3 second)
+    public float Distance(Vector3 first, Vector3 second)
     {
         Vector3 Difference = second - first;
         return (float)Math.Sqrt(Math.Pow(Difference.X, 2) + Math.Pow(Difference.Y, 2) + Math.Pow(Difference.Z, 2));
+    }
+    public float Length(Vector3 L)
+    {
+        return (float)Math.Sqrt(L.X * L.X + L.Y * L.Y + L.Z * L.Z);
     }
 }

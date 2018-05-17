@@ -14,6 +14,7 @@ class Raytracer
         C = new Camera();
         Screen = sur;
         S = new Scene(Screen);
+        
     }
 
     public void Render()
