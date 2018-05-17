@@ -11,8 +11,9 @@ class Sphere : Primitive
     public Vector3 Position;
     public float Radius;
 
-    public Sphere()
+    public Sphere(Vector3 pos, float rad)
     {
-
+        Position = pos;
+        Radius = rad;
     }
 }

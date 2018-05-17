@@ -21,9 +21,7 @@ class Scene
 
     void FillLists()
     {
-        Sphere s = new Sphere();
-        s.Position = new Vector3(3, 4, 7);
-        s.Radius = 3f;
+        Sphere s = new Sphere(new Vector3(3, 4, 7), 3f);
         spheres.Add(s);
     }
 
