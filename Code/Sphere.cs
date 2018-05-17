@@ -1,29 +1,19 @@
 ﻿using OpenTK;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using template.Code;
-using Template;
 
 class Sphere : Primitive
 {
     public Vector3 Position;
     public float Radius;
+    public int Color;
 
-    public Sphere(Vector3 pos, float rad)
+    public Sphere(int red = 255, int green = 255, int blue = 255)
     {
-        Position = pos;
-        Radius = rad;
-    }
-
-    public void Draw()
-    {
-
-
-
-
+        Color = (red << 16) + (green << 8) + blue;
     }
 }
