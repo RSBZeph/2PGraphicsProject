@@ -46,9 +46,9 @@ class Raytracer
 
         GL.Color3(1f, 0f, 0f);
         GL.Begin(PrimitiveType.Triangles);
-        GL.Vertex3(((Screen.width / 2) - 10f) / Screen.width, (-(Screen.height / 2) - 10f) / Screen.height, 0);
-        GL.Vertex3(((Screen.width / 2) + 10f) / Screen.width, (-(Screen.height / 2) - 10f) / Screen.height, 0);
-        GL.Vertex3(((Screen.width / 2) - 0f) / Screen.width, (-(Screen.height / 2) + 10f) / Screen.height, 0);
+        GL.Vertex3(((-10f) / Screen.width) + DebugOrigin.X, (- 10f / Screen.height) + DebugOrigin.Y, 0);
+        GL.Vertex3(((10f / Screen.width)) + DebugOrigin.X, (- 10f / Screen.height) + DebugOrigin.Y, 0);
+        GL.Vertex3(DebugOrigin.X, (10f / Screen.height) + DebugOrigin.Y, 0);
         GL.End();
 
         Screen.Line((int)((DebugOrigin.X * 512 * 3) + C.LeftScreen.P0.X * scale), (int)((DebugOrigin.Y * -256 + 256) - C.LeftScreen.DistanceToOrigin * scale), (int)((DebugOrigin.X * 512 * 3) + C.LeftScreen.P1.X * scale), (int)((DebugOrigin.Y * -256 + 256) - C.LeftScreen.DistanceToOrigin * scale), 0xff0000);
