@@ -12,11 +12,12 @@ class Scene
     List<Sphere> spheres = new List<Sphere>();
     List<Plane> planes = new List<Plane>();
     List<Light> lights = new List<Light>();
-    List<Intersection> intersections = new List<Intersection>();
-    
+    public List<Intersection> intersections = new List<Intersection>();
+    Intersection i = new Intersection(), j = new Intersection();
+
     public Scene()
     {
-
+        FillLists();
     }
 
     void FillLists()
@@ -46,10 +47,12 @@ class Scene
             i.Object = sphere;
             i.Distance = t1;
             i.Position = Point1;
+            i.Ray = ray;
             intersections.Add(i);
             j.Object = sphere;
             j.Distance = t2;
-            i.Position = Point2;
+            j.Position = Point2;
+            j.Ray = ray;
             intersections.Add(j);
             break;
         }

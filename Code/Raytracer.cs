@@ -26,16 +26,24 @@ class Raytracer
     public void Render()
     {
         DrawDebug();
+        Draw3D();
     }
 
     void Draw3D()
     {
-        for (int x = 0; x < Screen.width / 2; x++)
+        for (int x = 0; x < Screen.width / 2; x++)        
             for (int y = 0; y < Screen.height / 2; y++)
-                for (int t = 0; t < 10; t++)
-                {
-                   S.CheckIntersect(new Ray(C.Position, CreateRayDirection(x, y)));
-                }
+                S.CheckIntersect(new Ray(C.Position, CreateRayDirection(x, y), x, y));
+
+        foreach (Intersection I in S.intersections)
+        {
+            Screen.pixels[(int)(I.Ray.x + I.Ray.y * Screen.width)] = CreateColor(100, 255, 0);
+        }
+    }
+
+    int CreateColor(int red, int green, int blue)
+    {
+        return (red << 16) + (green << 8) + blue;
     }
 
     public void DrawDebug()
@@ -67,11 +75,14 @@ class Raytracer
     public struct Ray
     {
         public Vector3 Start, Direction;
+        public float x, y;
 
-        public Ray(Vector3 a, Vector3 b)
+        public Ray(Vector3 a, Vector3 b, float c, float d)
         {
             Start = a;
             Direction = b;
+            x = c;
+            y = d;
         }
     }
 }
