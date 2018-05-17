@@ -61,6 +61,7 @@ class Raytracer
 
         foreach (Intersection I in S.intersections)
         {
+            Console.WriteLine(I.Position.X + " " + I.Position.Y);
             Screen.Line((int)(Screen.width * 0.75), (int)(Screen.height * 0.9), (int)I.Position.X, (int)I.Position.Y, CreateColor(0, 0, 255));
             //Console.WriteLine("aaaffaafaffadadffa");
         }
