@@ -25,10 +25,10 @@ class Scene
 
     void FillLists()
     {
-        Sphere s1 = new Sphere(new Vector3(3, 4, 7), 1f, 100, 70, 0);
+        Sphere s1 = new Sphere(new Vector3(3, 0, 7), 1f, 100, 70, 0);
         spheres.Add(s1);
 
-        Sphere s2 = new Sphere(new Vector3(7, 6, 7), 2f, 0, 150, 200);
+        Sphere s2 = new Sphere(new Vector3(7, 0, 7), 2f, 0, 150, 200);
         spheres.Add(s2);
     }
 
@@ -100,8 +100,7 @@ class Scene
 
     public float Distance(Vector3 first, Vector3 second)
     {
-        Vector3 Difference = second - first;
-        return (float)Math.Sqrt(Math.Pow(Difference.X, 2) + Math.Pow(Difference.Y, 2) + Math.Pow(Difference.Z, 2));
+        return Length(second - first);
     }
     public float Length(Vector3 L)
     {

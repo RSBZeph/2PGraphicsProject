@@ -1,6 +1,4 @@
 ﻿using OpenTK;
-using OpenTK.Graphics.OpenGL;
-using OpenTK.Input;
 using System;
 
 class Camera
@@ -12,14 +10,14 @@ class Camera
 
     public Camera()
     {
-        NormDirection = Vector3.Divide(Direction, (float)Math.Sqrt(Math.Pow(Direction.X, 2) + Math.Pow(Direction.Y, 2) + Math.Pow(Direction.Z, 2)));
+        NormDirection = Vector3.Normalize(Direction);
         LeftScreen = new Plane();
-        LeftScreen.DistanceToOrigin = 1;
+        LeftScreen.DistanceToOrigin = 1.5f;
         ScreenCentre = Position + Direction * LeftScreen.DistanceToOrigin;
         LeftScreen.P0 = ScreenCentre + new Vector3(-1, -1, 0);
         LeftScreen.P1 = ScreenCentre + new Vector3(1, -1, 0);
         LeftScreen.P2 = ScreenCentre + new Vector3(-1, 1, 0);
         sw = LeftScreen.P1 - LeftScreen.P0;
-        ScreenWidth = (float)Math.Sqrt(Math.Pow(sw.X, 2) + Math.Pow(sw.Y, 2) + Math.Pow(sw.Z, 2));
+        ScreenWidth = (float)Math.Sqrt(sw.X * sw.X + sw.Y * sw.Y + sw.Z * sw.Z);
     }
 }
