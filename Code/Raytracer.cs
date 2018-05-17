@@ -1,10 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using template.Code;
-using OpenTK.Graphics;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using Template;
@@ -17,16 +11,17 @@ class Raytracer
     Vector3 DebugOrigin;
     int scale = 50;
 
-    public Raytracer()
+    public Raytracer(Surface sur)
     {
         C = new Camera();
-        S = new Scene();
+        Screen = sur;
+        S = new Scene(Screen);
     }
 
     public void Render()
     {
-        DrawDebug();
         Draw3D();
+        DrawDebug();
     }
 
     void Draw3D()
@@ -52,7 +47,7 @@ class Raytracer
 
         GL.Color3(1f, 0f, 0f);
         GL.Begin(PrimitiveType.Triangles);
-        GL.Vertex3(((Screen.width / 2) - 10f ) / Screen.width, (-(Screen.height / 2) - 10f) / Screen.height, 0);
+        GL.Vertex3(((Screen.width / 2) - 10f) / Screen.width, (-(Screen.height / 2) - 10f) / Screen.height, 0);
         GL.Vertex3(((Screen.width / 2) + 10f) / Screen.width, (-(Screen.height / 2) - 10f) / Screen.height, 0);
         GL.Vertex3(((Screen.width / 2) - 0f) / Screen.width, (-(Screen.height / 2) + 10f) / Screen.height, 0);
         GL.End();
@@ -60,6 +55,8 @@ class Raytracer
         DebugOrigin = new Vector3(0.5f, -0.5f, 0f);
 
         Screen.Line((int)((DebugOrigin.X * 512 * 3) + C.LeftScreen.P0.X * scale), (int)((DebugOrigin.Y * -256 + 256) - C.LeftScreen.DistanceToOrigin * scale), (int)((DebugOrigin.X * 512 * 3) + C.LeftScreen.P1.X * scale), (int)((DebugOrigin.Y * -256 + 256) - C.LeftScreen.DistanceToOrigin * scale), 0xff0000);
+
+        S.DrawPrimitivesDebug();
     }
 
     Vector3 CreateRayDirection(float x, float y)
