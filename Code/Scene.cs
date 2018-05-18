@@ -24,10 +24,10 @@ class Scene
 
     void FillLists()
     {
-        Sphere s1 = new Sphere(new Vector3(3, 5, 7), 1f, 100, 70, 0);
+        Sphere s1 = new Sphere(new Vector3(3, 5, 7), 1f, new Vector3(100, 70, 0));
         spheres.Add(s1);
 
-        Sphere s2 = new Sphere(new Vector3(7, 5, 7), 2f, 0, 150, 200);
+        Sphere s2 = new Sphere(new Vector3(7, 5, 7), 2f, new Vector3(0, 150, 200));
         spheres.Add(s2);
 
         Light l1 = new Light(new Vector3(0, 10, 0), 1f);
@@ -46,7 +46,7 @@ class Scene
                 int x = (int)(width + width1 * sphere.Position.X + width1 * sphere.Radius * Math.Cos(angle));
                 int y = (int)(height - height1 * sphere.Position.Z + height1 * sphere.Radius * Math.Sin(angle));
                 int Location = x + y * Screen.width;
-                Screen.pixels[Location] = sphere.Color;
+                Screen.pixels[Location] = Colour(sphere.Color);
             }
         }
     }
@@ -96,8 +96,10 @@ class Scene
         {
             shadowray = light.Position - intersection.Position;
             shadowlength = Length(shadowray);
-            lightscale = light.Intensity / shadowlength;
-            return (int)(lightscale * intersection.Object.Color);            
+            lightscale = light.Intensity / (shadowlength / 3);
+            int colllolol = Colour(lightscale * intersection.Object.Color);
+            colllolol = Colour(lightscale* intersection.Object.Color);
+            return Colour(lightscale * intersection.Object.Color);
         }
         return 0;
     }

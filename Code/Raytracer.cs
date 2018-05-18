@@ -8,13 +8,16 @@ class Raytracer
     Camera C;
     public Surface Screen;
     Scene S;
+    Ray r;
+    Ray[] arRay;
+    int CheckRayY = 0;
 
     public Raytracer(Surface sur)
     {
         C = Camera.Instance();
         Screen = sur;
         S = new Scene(Screen);
-
+        arRay = new Ray[Screen.width / 2];
     }
 
     public void Render()
@@ -25,19 +28,19 @@ class Raytracer
 
     void Draw3D()
     {
-        for (int x = 0; x < Screen.width / 2; x++)        
+        for (int x = 0; x < Screen.width / 2; x++)
             for (int y = 0; y < Screen.height; y++)
-                S.CheckIntersect(new Ray(C.Position, CreateRayDirection(x, y), x, y));
+            {
+                r = new Ray(C.Position, CreateRayDirection(x, y), x, y);
+                if (y == CheckRayY)
+                    arRay[x] = r;
+                S.CheckIntersect(r);
+            }
 
         foreach (Intersection I in S.intersections)
         {
             Screen.pixels[(int)(I.Ray.x + I.Ray.y * Screen.width)] = S.ShadowRay(I);
         }
-    }
-
-    int CreateColor(int red, int green, int blue)
-    {
-        return (red << 16) + (green << 8) + blue;
     }
 
     public void DrawDebug()
