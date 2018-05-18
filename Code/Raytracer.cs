@@ -55,7 +55,7 @@ class Raytracer
     Vector3 CreateRayDirection(float x, float y)
     {
         Vector3 Direction;
-        Vector3 ScreenPoint = C.LeftScreen.P0 + x * (C.LeftScreen.P1 - C.LeftScreen.P0) + y * (C.LeftScreen.P2 - C.LeftScreen.P0);
+        Vector3 ScreenPoint = C.LeftScreen.P0 + x * (C.LeftScreen.P1 - C.LeftScreen.P0) / (Screen.width / 2) + y * (C.LeftScreen.P2 - C.LeftScreen.P0) / Screen.height;
         Direction = ScreenPoint - C.Position;
         return Vector3.Normalize(Direction);
     }
