@@ -3,17 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using template.Code;
 using OpenTK;
 
-namespace template.Code
+class Light
 {
-    class Light
-    {
-        Vector3 Postion;
-        public Light(Vector3 pos)
-        {
+    public Vector3 Position;
+    public float Intensity;
 
-        }
+    public Light(Vector3 pos, float intensity)
+    {
+        Position = pos;
+        Intensity = intensity;
     }
 }

@@ -11,10 +11,10 @@ class Raytracer
 
     public Raytracer(Surface sur)
     {
-        C = new Camera();
+        C = Camera.Instance();
         Screen = sur;
         S = new Scene(Screen);
-        
+
     }
 
     public void Render()
@@ -31,7 +31,7 @@ class Raytracer
 
         foreach (Intersection I in S.intersections)
         {
-            Screen.pixels[(int)(I.Ray.x + I.Ray.y * Screen.width)] = I.Object.Color;
+            Screen.pixels[(int)(I.Ray.x + I.Ray.y * Screen.width)] = S.ShadowRay(I);
         }
     }
 
@@ -54,7 +54,6 @@ class Raytracer
 
     Vector3 CreateRayDirection(float x, float y)
     {
-        //= unit vector
         Vector3 Direction;
         Vector3 ScreenPoint = C.LeftScreen.P0 + x * (C.LeftScreen.P1 - C.LeftScreen.P0) / (Screen.width / 2) + y * (C.LeftScreen.P2 - C.LeftScreen.P0) / Screen.height;
         Direction = ScreenPoint - C.Position;

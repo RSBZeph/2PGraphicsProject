@@ -1,5 +1,4 @@
 ﻿using OpenTK;
-using template.Code;
 
 class Sphere : Primitive
 {
