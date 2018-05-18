@@ -11,10 +11,10 @@ class Raytracer
 
     public Raytracer(Surface sur)
     {
-        C = new Camera();
+        C = Camera.Instance();
         Screen = sur;
         S = new Scene(Screen);
-        
+
     }
 
     public void Render()
@@ -31,7 +31,7 @@ class Raytracer
 
         foreach (Intersection I in S.intersections)
         {
-            Screen.pixels[(int)(I.Ray.x + I.Ray.y * Screen.width)] = I.Object.Color;
+            Screen.pixels[(int)(I.Ray.x + I.Ray.y * Screen.width)] = S.ShadowRay(I);
         }
     }
 

@@ -7,6 +7,7 @@ class Camera
     Vector3 sw;
     public float FOV, ScreenWidth;
     public Plane LeftScreen;
+    static Camera C = new Camera();
 
     public Camera()
     {
@@ -19,5 +20,10 @@ class Camera
         LeftScreen.P2 = ScreenCentre + new Vector3(-1, 1, 0);
         sw = LeftScreen.P1 - LeftScreen.P0;
         ScreenWidth = (float)Math.Sqrt(sw.X * sw.X + sw.Y * sw.Y + sw.Z * sw.Z);
+    }
+
+    public static Camera Instance()
+    {
+        return C;
     }
 }

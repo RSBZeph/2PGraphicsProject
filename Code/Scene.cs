@@ -1,10 +1,7 @@
 ﻿using OpenTK;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using template.Code;
+using System.Drawing;
 using Template;
 using static Raytracer;
 
@@ -14,8 +11,10 @@ class Scene
     List<Plane> planes = new List<Plane>();
     List<Light> lights = new List<Light>();
     public List<Intersection> intersections = new List<Intersection>();
-    Intersection i, j;
+    Intersection i1, i2;
     public Surface Screen;
+    float x1, y1, z1, i, j, k, a, b, c, discriminant, result1, result2, shadowlength, lightscale;
+    Vector3 difference, shadowray;
 
     public Scene(Surface sur)
     {
@@ -30,6 +29,9 @@ class Scene
 
         Sphere s2 = new Sphere(new Vector3(7, 5, 7), 2f, 0, 150, 200);
         spheres.Add(s2);
+
+        Light l1 = new Light(new Vector3(0, 10, 0), 1f);
+        lights.Add(l1);
     }
 
     public void DrawPrimitivesDebug()
@@ -38,9 +40,9 @@ class Scene
         int width1 = width / 10, height1 = height / 10;
         foreach (Sphere sphere in spheres)
         {
-            for (double i = 0.0; i < 360; i++)
+            for (double rad = 0.0; rad < 360; rad++)
             {
-                double angle = i * Math.PI / 180;
+                double angle = rad * Math.PI / 180;
                 int x = (int)(width + width1 * sphere.Position.X + width1 * sphere.Radius * Math.Cos(angle));
                 int y = (int)(height - height1 * sphere.Position.Z + height1 * sphere.Radius * Math.Sin(angle));
                 int Location = x + y * Screen.width;
@@ -53,36 +55,25 @@ class Scene
     {
         foreach (Sphere sphere in spheres)
         {
-            //Vector3 L = sphere.Position - ray.Start;
-            //float Lfloat = (float)Math.Sqrt(Math.Pow(L.X, 2) + Math.Pow(L.Y, 2) + Math.Pow(L.Z, 2)); //lengte van LenthToCentre (Pytagoras)
-            //float tc = Vector3.Dot(L, ray.Direction); //ray vanuit sphere.position evenwijdig aan ray en stopt bij ray.start
-            //if (tc < 0)
-            //    continue;
-            //float CentreToRay = (float)Math.Sqrt(Math.Pow(Lfloat, 2) + Math.Pow(tc, 2)); //loodlijn tussen ray en sphere.position (Pytagoras)
-            //if (CentreToRay > sphere.Radius)
-            //    continue;
-            //float t1c = (float)Math.Sqrt(Math.Pow(sphere.Radius, 2) - Math.Pow(CentreToRay, 2)); //afstand snijpunt loodlijn - ray en snijpunt met cirkel (Pytagoras)
-            //float t1 = tc - t1c, t2 = tc + t1c; // lengte van ray.start naar eerste en tweede snijpunt met de sphere
-            //Vector3 Point1 = ray.Start + ray.Direction * t1, Point2 = ray.Start + ray.Direction * t2; //eerste en tweede intersection point met de sphere            
-            //Intersection i = new Intersection(Point1, sphere, t1, ray), j = new Intersection(Point2, sphere, t2, ray);
-            //intersections.Add(i);
-            //intersections.Add(j);
-            //break;
-
-            float x1 = ray.Start.X, y1 = ray.Start.Y, z1 = ray.Start.Z;
-            float i = ray.Direction.X, j = ray.Direction.Y, k = ray.Direction.Z;
-            Vector3 difference = ray.Start - sphere.Position;            
-            float a = Vector3.Dot(ray.Direction, ray.Direction);
-            float b = 2 * Vector3.Dot(difference, ray.Direction);
-            float c = Vector3.Dot(difference, difference) - (sphere.Radius * sphere.Radius);
-            float discriminant = (b * b) - (4 * a * c);
+            x1 = ray.Start.X;
+            y1 = ray.Start.Y;
+            z1 = ray.Start.Z;
+            i = ray.Direction.X;
+            j = ray.Direction.Y;
+            k = ray.Direction.Z;
+            difference = ray.Start - sphere.Position;            
+             a = Vector3.Dot(ray.Direction, ray.Direction);
+             b = 2 * Vector3.Dot(difference, ray.Direction);
+             c = Vector3.Dot(difference, difference) - (sphere.Radius * sphere.Radius);
+             discriminant = (b * b) - (4 * a * c);
             if (discriminant > 0)
             {
-                float result1 = (float)((-b + Math.Sqrt(discriminant)) / (2 * a));
-                float result2 = (float)((-b - Math.Sqrt(discriminant)) / (2 * a));
-                Intersection intersec1 = new Intersection(sphere, result1, ray), intersec2 = new Intersection(sphere, result2, ray);
-                intersections.Add(intersec1);
-                intersections.Add(intersec2);
+                 result1 = (float)((-b + Math.Sqrt(discriminant)) / (2 * a));
+                 result2 = (float)((-b - Math.Sqrt(discriminant)) / (2 * a));
+                i1 = new Intersection(sphere, result1, ray);
+                i2 = new Intersection(sphere, result2, ray);
+                intersections.Add(i1);
+                intersections.Add(i2);
                 break;
             }
         }
@@ -97,6 +88,18 @@ class Scene
              //}
             }
         }
+    }
+
+    public int ShadowRay(Intersection intersection)
+    {
+        foreach (Light light in lights)
+        {
+            shadowray = light.Position - intersection.Position;
+            shadowlength = Length(shadowray);
+            lightscale = light.Intensity / shadowlength;
+            return (int)(lightscale * intersection.Object.Color);            
+        }
+        return 0;
     }
 
     public float Distance(Vector3 first, Vector3 second)
