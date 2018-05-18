@@ -49,9 +49,18 @@ class Raytracer
         Vector3 Origin = new Vector3(Screen.width / 2 + C.Position.X * Screen.width / 20, Screen.height - C.Position.Z * Screen.height / 10, 0);
         Screen.Line((int)(Origin.X - 5), (int)(Origin.Y + 5), (int)(Origin.X), (int)(Origin.Y - 10), 0xff0000);
         Screen.Line((int)(Origin.X + 5), (int)(Origin.Y + 5), (int)(Origin.X), (int)(Origin.Y - 10), 0xff0000);
-
         Screen.Line((int)(Origin.X - C.ScreenWidth / 2 * Screen.width / 20), (int)(Origin.Y - C.LeftScreen.DistanceToOrigin * Screen.height / 10), (int)(Origin.X + C.ScreenWidth / 2 * Screen.width / 20), (int)(Origin.Y - C.LeftScreen.DistanceToOrigin * Screen.height / 10), 0xff0000);
-
+        int tijd = 32;
+        foreach (Ray r in arRay)
+        {
+            float t = 1000;
+            if(tijd == 32)
+            {
+                Screen.Line((int)(Origin.X), (int)(Origin.Y), (int)(Origin.X + t * r.Direction.X), (int)(Origin.Y + t * r.Direction.Y), 0xff0000);
+                tijd = 0;
+            }
+            tijd++;
+        }
         S.DrawPrimitivesDebug();
     }
 
@@ -73,9 +82,9 @@ class Raytracer
     public struct Ray
     {
         public Vector3 Start, Direction;
-        public float x, y;
+        public int x, y;
 
-        public Ray(Vector3 a, Vector3 b, float c, float d)
+        public Ray(Vector3 a, Vector3 b, int c, int d)
         {
             Start = a;
             Direction = b;
