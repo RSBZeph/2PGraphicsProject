@@ -4,7 +4,7 @@ using static Raytracer;
 
 class Intersection
 {
-    public Vector3 Position = new Vector3();
+    public Vector3 Position = new Vector3(), Color;
     public Primitive Object = new Primitive();
     public float Distance;
     public Ray Ray;
@@ -15,5 +15,6 @@ class Intersection
         Distance = dis;
         Ray = r;
         Position = Ray.Start + Ray.Direction * dis;
+        Color = prim.Color;
     }
 }

@@ -62,6 +62,7 @@ class Raytracer
         Direction = ScreenPoint - C.Position;
         return Vector3.Normalize(Direction);
     }
+
     public static int Colour(Vector3 colorVec)
     {
         float colorx = MathHelper.Clamp(colorVec.X, 0, 1);

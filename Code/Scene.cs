@@ -24,10 +24,10 @@ class Scene
 
     void FillLists()
     {
-        Sphere s1 = new Sphere(new Vector3(3, 5, 7), 1f, new Vector3(100, 70, 0));
+        Sphere s1 = new Sphere(new Vector3(4, 5, 4), 1f, new Vector3(0.5f, 0.3f, 0));
         spheres.Add(s1);
 
-        Sphere s2 = new Sphere(new Vector3(7, 5, 7), 2f, new Vector3(0, 150, 200));
+        Sphere s2 = new Sphere(new Vector3(7, 5, 7), 2f, new Vector3(0, 0.6f, 0.5f));
         spheres.Add(s2);
 
         Light l1 = new Light(new Vector3(0, 10, 0), 1f);
@@ -96,12 +96,9 @@ class Scene
         {
             shadowray = light.Position - intersection.Position;
             shadowlength = Length(shadowray);
-            lightscale = light.Intensity / (shadowlength / 3);
-            int colllolol = Colour(lightscale * intersection.Object.Color);
-            colllolol = Colour(lightscale* intersection.Object.Color);
-            return Colour(lightscale * intersection.Object.Color);
+            intersection.Color = intersection.Color * (light.Intensity / shadowlength);
         }
-        return 0;
+        return Colour(intersection.Color);
     }
 
     public float Distance(Vector3 first, Vector3 second)
