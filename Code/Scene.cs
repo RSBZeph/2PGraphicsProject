@@ -25,10 +25,10 @@ class Scene
 
     void FillLists()
     {
-        Sphere s1 = new Sphere(new Vector3(3, 4, 7), 1f, 100, 70, 0);
+        Sphere s1 = new Sphere(new Vector3(3, 5, 7), 1f, 100, 70, 0);
         spheres.Add(s1);
 
-        Sphere s2 = new Sphere(new Vector3(7, 6, 7), 2f, 0, 150, 200);
+        Sphere s2 = new Sphere(new Vector3(7, 5, 7), 2f, 0, 150, 200);
         spheres.Add(s2);
     }
 
@@ -71,9 +71,10 @@ class Scene
 
             float x1 = ray.Start.X, y1 = ray.Start.Y, z1 = ray.Start.Z;
             float i = ray.Direction.X, j = ray.Direction.Y, k = ray.Direction.Z;
-            float a = i * i + j * j + k * k;
-            float b = 2 * i * (x1 - sphere.Position.X) + 2 * j * (y1 - sphere.Position.Y) + 2 * k * (z1 - sphere.Position.Z);
-            float c = (x1 - sphere.Position.X) * (x1 - sphere.Position.X) + (y1 - sphere.Position.Y) * (y1 - sphere.Position.Y) + (z1 - sphere.Position.Z) * (z1 - sphere.Position.Z) - sphere.Radius * sphere.Radius;
+            Vector3 difference = ray.Start - sphere.Position;            
+            float a = Vector3.Dot(ray.Direction, ray.Direction);
+            float b = 2 * Vector3.Dot(difference, ray.Direction);
+            float c = Vector3.Dot(difference, difference) - (sphere.Radius * sphere.Radius);
             float discriminant = (b * b) - (4 * a * c);
             if (discriminant > 0)
             {

@@ -5,7 +5,7 @@ using System;
 
 class Camera
 {
-    public Vector3 Position = new Vector3(5, 0, 1), Direction = new Vector3(0, 0, 1), ScreenCentre, NormDirection;
+    public Vector3 Position = new Vector3(5, 5, 1), Direction = new Vector3(0, 0, 1), ScreenCentre, NormDirection;
     Vector3 sw;
     public float FOV, ScreenWidth;
     public Plane LeftScreen;
