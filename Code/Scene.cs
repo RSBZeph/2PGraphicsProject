@@ -24,13 +24,13 @@ class Scene
 
     void FillLists()
     {
-        Sphere s1 = new Sphere(new Vector3(2, 5, 9), 1f, new Vector3(0.5f, 0.3f, 0));
+        Sphere s1 = new Sphere(new Vector3(1, 5, 7), 1f, new Vector3(0.5f, 0.3f, 0));
         spheres.Add(s1);
 
-        Sphere s2 = new Sphere(new Vector3(7, 5, 7), 2f, new Vector3(0, 0.6f, 0.5f));
+        Sphere s2 = new Sphere(new Vector3(5, 5, 7), 2f, new Vector3(0, 0.6f, 0.5f));
         spheres.Add(s2);
 
-        Light l1 = new Light(new Vector3(0, 7, 5), 1f);
+        Light l1 = new Light(new Vector3(0, 5, 7), 1f);
         lights.Add(l1);
     }
 
@@ -51,7 +51,7 @@ class Scene
         }
     }
 
-    public void CheckIntersect(Ray ray, bool shadowray = false)
+    public void CheckIntersect(Ray ray)
     {
         foreach (Sphere sphere in spheres)
         {
@@ -70,19 +70,12 @@ class Scene
             {
                 result1 = (float)((-b + Math.Sqrt(discriminant)) / (2 * a));
                 result2 = (float)((-b - Math.Sqrt(discriminant)) / (2 * a));
-                if (!shadowray)
-                {
-                    if (result1 > 0)
-                        i1 = new Intersection(sphere, result1, ray);
-                    if (result2 > 0)
-                        i2 = new Intersection(sphere, result2, ray);
-                    intersections.Add(i1);
-                    intersections.Add(i2);
-                }
-                else
-                {
-                    ray.Occluded = true;
-                }
+                if (result1 > 0)
+                    i1 = new Intersection(sphere, result1, ray);
+                if (result2 > 0)
+                    i2 = new Intersection(sphere, result2, ray);
+                intersections.Add(i1);
+                intersections.Add(i2);
                 break;
             }
         }
@@ -103,16 +96,11 @@ class Scene
     {
         foreach (Light light in lights)
         {
-            shadowray = light.Position - inter.Position;
-            shadowlength = Length(shadowray);
-            shadowray = Vector3.Normalize(shadowray);
-            inter.Color = inter.Color * (light.Intensity / (shadowlength / 4));
-            Ray SR = new Ray(inter.Position + float.Epsilon * shadowray, shadowray);
-            CheckIntersect(SR, true);
-            inter.ShadowRay.Add(SR);
+            difference = inter.Position - light.Position;
+            shadowray = Vector3.Normalize(difference);
+            shadowlength = Length(difference);
+            inter.Color = inter.Color * (1- (light.Intensity - shadowlength / 8));
         }
-        if (inter.ShadowRay[0].Occluded)
-            return Colour(new Vector3(0, 255, 100));
         return Colour(inter.Color);
     }
 
