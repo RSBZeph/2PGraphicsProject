@@ -40,9 +40,8 @@ class Raytracer
             }
 
         foreach (Intersection I in S.intersections)
-        {
-            int colorvalue = S.ShadowRay(I);
-            Screen.pixels[(int)(I.Ray.x + I.Ray.y * Screen.width)] = colorvalue;
+        {           
+            Screen.pixels[(I.Ray.x + I.Ray.y * Screen.width)] = S.ShadowRay(I);
         }
     }
 

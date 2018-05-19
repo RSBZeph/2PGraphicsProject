@@ -7,7 +7,7 @@ class Sphere : Primitive
 
     public Sphere(Vector3 pos, float radius, Vector3 Col)
     {
-        Position = pos;
+        Position = new Vector3(pos.X, 10 - pos.Y, pos.Z);
         Radius = radius;
         Color = Col;
     }

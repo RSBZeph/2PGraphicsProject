@@ -24,14 +24,17 @@ class Scene
 
     void FillLists()
     {
-        Sphere s1 = new Sphere(new Vector3(1, 5, 7), 1f, new Vector3(0.5f, 0.3f, 0));
+        Sphere s1 = new Sphere(new Vector3(2, 7, 7), 1f, new Vector3(0.5f, 0.3f, 0));
         spheres.Add(s1);
 
-        Sphere s2 = new Sphere(new Vector3(5, 5, 7), 2f, new Vector3(0, 0.6f, 0.5f));
+        Sphere s2 = new Sphere(new Vector3(5, 4, 7), 2f, new Vector3(0, 0.6f, 0.5f));
         spheres.Add(s2);
 
         Light l1 = new Light(new Vector3(0, 5, 7), 1f);
         lights.Add(l1);
+
+        Light l2 = new Light(new Vector3(10, 5, 7), 1f);
+        lights.Add(l2);
     }
 
     public void DrawPrimitivesDebug()
@@ -47,6 +50,19 @@ class Scene
                 int y = (int)(height - height1 * sphere.Position.Z + height1 * sphere.Radius * Math.Sin(angle));
                 int Location = x + y * Screen.width;
                 Screen.pixels[Location] = Colour(sphere.Color);
+            }
+        }
+
+        foreach (Light light in lights)
+        {
+            for (double rad = 0.0; rad < 360; rad++)
+            {
+                double angle = rad * Math.PI / 180;
+                int x = (int)(width + width1 * light.Position.X + width1 * 0.25f * Math.Cos(angle));
+                int y = (int)(height - height1 * light.Position.Z + height1 * 0.25f * Math.Sin(angle));
+                int Location = x + y * Screen.width;
+                if (x > Screen.width / 2 && x < Screen.width)
+                    Screen.pixels[Location] = Colour(new Vector3 (200, 200, 200));
             }
         }
     }
@@ -94,14 +110,46 @@ class Scene
 
     public int ShadowRay(Intersection inter)
     {
+        int index = 0;
         foreach (Light light in lights)
         {
-            difference = inter.Position - light.Position;
+            difference = light.Position - inter.Position;
             shadowray = Vector3.Normalize(difference);
             shadowlength = Length(difference);
-            inter.Color = inter.Color * (1- (light.Intensity - shadowlength / 8));
+            //Ray SR = new Ray(inter.Position + float.Epsilon * shadowray, shadowray);
+            ////SR = CheckShadowRayIntersect(SR);
+            //inter.ShadowRay.Add(SR);
+            //if (!inter.ShadowRay[index].Occluded)
+            inter.Color *= (light.Intensity - shadowlength / 6);
+            index++;
         }
         return Colour(inter.Color);
+    }
+
+    Ray CheckShadowRayIntersect(Ray ray)
+    {
+        foreach (Sphere sphere in spheres)
+        {
+            x1 = ray.Start.X;
+            y1 = ray.Start.Y;
+            z1 = ray.Start.Z;
+            i = ray.Direction.X;
+            j = ray.Direction.Y;
+            k = ray.Direction.Z;
+            difference = ray.Start - sphere.Position;
+            a = Vector3.Dot(ray.Direction, ray.Direction);
+            b = 2 * Vector3.Dot(difference, ray.Direction);
+            c = Vector3.Dot(difference, difference) - (sphere.Radius * sphere.Radius);
+            discriminant = (b * b) - (4 * a * c);
+            if (discriminant > 0)
+            {
+                result1 = (float)((-b + Math.Sqrt(discriminant)) / (2 * a));
+                result2 = (float)((-b - Math.Sqrt(discriminant)) / (2 * a));
+                ray.Occluded = true;
+                return ray;
+            }
+        }
+        return ray;
     }
 
     public float Distance(Vector3 first, Vector3 second)
