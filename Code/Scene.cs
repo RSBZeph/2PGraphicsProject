@@ -13,7 +13,7 @@ class Scene
     public List<Intersection> intersections = new List<Intersection>();
     Intersection i1, i2;
     public Surface Screen;
-    float x1, y1, z1, i, j, k, a, b, c, discriminant, result1, result2, shadowlength, lightscale;
+    float x1, y1, z1, i, j, k, a, b, c, discriminant, result1, result2, shadowlength;
     Vector3 difference, shadowray;
 
     public Scene(Surface sur)
@@ -24,13 +24,13 @@ class Scene
 
     void FillLists()
     {
-        Sphere s1 = new Sphere(new Vector3(4, 5, 4), 1f, new Vector3(0.5f, 0.3f, 0));
+        Sphere s1 = new Sphere(new Vector3(2, 5, 9), 1f, new Vector3(0.5f, 0.3f, 0));
         spheres.Add(s1);
 
         Sphere s2 = new Sphere(new Vector3(7, 5, 7), 2f, new Vector3(0, 0.6f, 0.5f));
         spheres.Add(s2);
 
-        Light l1 = new Light(new Vector3(0, 10, 0), 1f);
+        Light l1 = new Light(new Vector3(0, 7, 5), 1f);
         lights.Add(l1);
     }
 
@@ -51,7 +51,7 @@ class Scene
         }
     }
 
-    public void CheckIntersect(Ray ray)
+    public void CheckIntersect(Ray ray, bool shadowray = false)
     {
         foreach (Sphere sphere in spheres)
         {
@@ -68,12 +68,21 @@ class Scene
              discriminant = (b * b) - (4 * a * c);
             if (discriminant > 0)
             {
-                 result1 = (float)((-b + Math.Sqrt(discriminant)) / (2 * a));
-                 result2 = (float)((-b - Math.Sqrt(discriminant)) / (2 * a));
-                i1 = new Intersection(sphere, result1, ray);
-                i2 = new Intersection(sphere, result2, ray);
-                intersections.Add(i1);
-                intersections.Add(i2);
+                result1 = (float)((-b + Math.Sqrt(discriminant)) / (2 * a));
+                result2 = (float)((-b - Math.Sqrt(discriminant)) / (2 * a));
+                if (!shadowray)
+                {
+                    if (result1 > 0)
+                        i1 = new Intersection(sphere, result1, ray);
+                    if (result2 > 0)
+                        i2 = new Intersection(sphere, result2, ray);
+                    intersections.Add(i1);
+                    intersections.Add(i2);
+                }
+                else
+                {
+                    ray.Occluded = true;
+                }
                 break;
             }
         }
@@ -90,15 +99,21 @@ class Scene
         }
     }
 
-    public int ShadowRay(Intersection intersection)
+    public int ShadowRay(Intersection inter)
     {
         foreach (Light light in lights)
         {
-            shadowray = light.Position - intersection.Position;
+            shadowray = light.Position - inter.Position;
             shadowlength = Length(shadowray);
-            intersection.Color = intersection.Color * (light.Intensity / shadowlength);
+            shadowray = Vector3.Normalize(shadowray);
+            inter.Color = inter.Color * (light.Intensity / (shadowlength / 4));
+            Ray SR = new Ray(inter.Position + float.Epsilon * shadowray, shadowray);
+            CheckIntersect(SR, true);
+            inter.ShadowRay.Add(SR);
         }
-        return Colour(intersection.Color);
+        if (inter.ShadowRay[0].Occluded)
+            return Colour(new Vector3(0, 255, 100));
+        return Colour(inter.Color);
     }
 
     public float Distance(Vector3 first, Vector3 second)

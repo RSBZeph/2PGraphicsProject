@@ -31,7 +31,9 @@ class Raytracer
         for (int x = 0; x < Screen.width / 2; x++)
             for (int y = 0; y < Screen.height; y++)
             {
-                r = new Ray(C.Position, CreateRayDirection(x, y), x, y);
+                r = new Ray(C.Position, CreateRayDirection(x, y));
+                r.x = x;
+                r.y = y;
                 if (y == CheckRayY)
                     arRay[x] = r;
                 S.CheckIntersect(r);
@@ -39,7 +41,8 @@ class Raytracer
 
         foreach (Intersection I in S.intersections)
         {
-            Screen.pixels[(int)(I.Ray.x + I.Ray.y * Screen.width)] = S.ShadowRay(I);
+            int colorvalue = S.ShadowRay(I);
+            Screen.pixels[(int)(I.Ray.x + I.Ray.y * Screen.width)] = colorvalue;
         }
     }
 
@@ -84,13 +87,15 @@ class Raytracer
     {
         public Vector3 Start, Direction;
         public int x, y;
+        public bool Occluded;
 
-        public Ray(Vector3 a, Vector3 b, int c, int d)
+        public Ray(Vector3 a, Vector3 b)
         {
             Start = a;
             Direction = b;
-            x = c;
-            y = d;
+            x = -1;
+            y = -1;
+            Occluded = false;
         }
     }
 }

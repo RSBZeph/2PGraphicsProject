@@ -1,13 +1,15 @@
 ﻿using OpenTK;
 using System;
+using System.Collections.Generic;
 using static Raytracer;
 
 class Intersection
 {
     public Vector3 Position = new Vector3(), Color;
     public Primitive Object = new Primitive();
-    public float Distance;
+    public float Distance, ColorFactor = 1;
     public Ray Ray;
+    public List<Ray> ShadowRay = new List<Ray>();
 
     public Intersection(Primitive prim, float dis, Ray r)
     {
