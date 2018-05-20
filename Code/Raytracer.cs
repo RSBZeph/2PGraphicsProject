@@ -11,6 +11,7 @@ class Raytracer
     Ray r;
     Ray[] arRay;
     int CheckRayY;
+    Vector3 RayColor;
 
     public Raytracer(Surface sur)
     {
@@ -49,22 +50,23 @@ class Raytracer
 
     public void DrawDebug()
     {
+        RayColor = new Vector3(0.3f, 0.8f, 0.5f);
         Screen.Line(512, 0, 512, 512, 0xff0000);
         Vector2 Origin = VectorToScreenPos(C.Position);
         Screen.Line((int)(Origin.X - 5), (int)(Origin.Y + 5), (int)(Origin.X), (int)(Origin.Y - 10), 0xff0000);
         Screen.Line((int)(Origin.X + 5), (int)(Origin.Y + 5), (int)(Origin.X), (int)(Origin.Y - 10), 0xff0000);
         Screen.Line((int)(Origin.X - C.ScreenWidth / 2 * Screen.width / 20), (int)(Origin.Y - C.LeftScreen.DistanceToOrigin * Screen.height / 10), (int)(Origin.X + C.ScreenWidth / 2 * Screen.width / 20), (int)(Origin.Y - C.LeftScreen.DistanceToOrigin * Screen.height / 10), 0xff0000);
-        Screen.Line(0, CheckRayY, Screen.width / 2, CheckRayY, Colour(new Vector3(0.3f, 0.8f, 0.5f)));
+        Screen.Line(0, CheckRayY, Screen.width / 2, CheckRayY, Colour(RayColor));
 
         int counter = 0;
-        int t = 8;
+        int t = 8; //in foreach: zoek door intersects met zelfde x en y: t = intersection.distance
         Vector2 end;
         foreach (Ray r in arRay)
         {
             if (counter == 0)
             {
                 end = VectorToScreenPos(C.Position + t * r.Direction);
-                Screen.Line((int)(Origin.X), (int)(Origin.Y), (int)(end.X), (int)(end.Y), Colour(new Vector3(0.3f, 0.8f, 0.5f)));
+                Screen.Line((int)(Origin.X), (int)(Origin.Y), (int)(end.X), (int)(end.Y), Colour(RayColor));
                 counter = 30;
             }
             counter--;
