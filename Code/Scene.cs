@@ -13,7 +13,7 @@ class Scene
     public List<Intersection> intersections = new List<Intersection>();
     Intersection i1, i2;
     public Surface Screen;
-    float x1, y1, z1, i, j, k, a, b, c, discriminant, result1, result2, shadowlength;
+    float x1, y1, z1, i, j, k, a, b, c, discriminant, result1, result2, shadowlength, res1, res2;
     Vector3 difference, shadowray;
 
     public Scene(Surface sur)
@@ -27,14 +27,14 @@ class Scene
         Sphere s1 = new Sphere(new Vector3(2, 7, 7), 1f, new Vector3(0.5f, 0.3f, 0));
         spheres.Add(s1);
 
-        Sphere s2 = new Sphere(new Vector3(5, 4, 7), 2f, new Vector3(0, 0.6f, 0.5f));
+        Sphere s2 = new Sphere(new Vector3(7, 6, 7), 2f, new Vector3(0, 0.6f, 0.5f));
         spheres.Add(s2);
 
-        Light l1 = new Light(new Vector3(0, 5, 7), 1f);
+        Light l1 = new Light(new Vector3(0, 5, 7), 0.6f);
         lights.Add(l1);
 
-        Light l2 = new Light(new Vector3(10, 5, 7), 1f);
-        lights.Add(l2);
+        //Light l2 = new Light(new Vector3(10, 5, 10), 0.6f);
+        //lights.Add(l2);
     }
 
     public void DrawPrimitivesDebug()
@@ -61,7 +61,7 @@ class Scene
                 int x = (int)(width + width1 * light.Position.X + width1 * 0.25f * Math.Cos(angle));
                 int y = (int)(height - height1 * light.Position.Z + height1 * 0.25f * Math.Sin(angle));
                 int Location = x + y * Screen.width;
-                if (x > Screen.width / 2 && x < Screen.width)
+                if (x > Screen.width / 2 && x < Screen.width && y > -1)
                     Screen.pixels[Location] = Colour(new Vector3 (200, 200, 200));
             }
         }
@@ -84,11 +84,15 @@ class Scene
              discriminant = (b * b) - (4 * a * c);
             if (discriminant > 0)
             {
-                result1 = (float)((-b + Math.Sqrt(discriminant)) / (2 * a));
-                result2 = (float)((-b - Math.Sqrt(discriminant)) / (2 * a));
+                res1 = (float)((-b + Math.Sqrt(discriminant)) / (2 * a));
+                res2 = (float)((-b - Math.Sqrt(discriminant)) / (2 * a));
+                if (res1 < result1 || result1 == 0)
+                    result1 = res1;
+                if (res2 < result2 || result2 == 0)
+                    result2 = res2;
                 if (result1 > 0)
                     i1 = new Intersection(sphere, result1, ray);
-                if (result2 > 0)
+                if (result2 > 0 && result2 != result1)
                     i2 = new Intersection(sphere, result2, ray);
                 intersections.Add(i1);
                 intersections.Add(i2);
@@ -110,23 +114,28 @@ class Scene
 
     public int ShadowRay(Intersection inter)
     {
-        int index = 0;
+        float attenuation = 0;
+        //int index = 0;
         foreach (Light light in lights)
         {
             difference = light.Position - inter.Position;
             shadowray = Vector3.Normalize(difference);
             shadowlength = Length(difference);
-            //Ray SR = new Ray(inter.Position + float.Epsilon * shadowray, shadowray);
-            ////SR = CheckShadowRayIntersect(SR);
-            //inter.ShadowRay.Add(SR);
-            //if (!inter.ShadowRay[index].Occluded)
-            inter.Color *= (light.Intensity - shadowlength / 6);
-            index++;
+            Ray SR = new Ray(inter.Position, shadowray);
+            if(!CheckShadowRayIntersect(SR))
+            {
+                attenuation = 1;
+                //float angle = Vector3.CalculateAngle(shadowray, Vector3.Normalize(inter.Object.Position - inter.Position));
+                //attenuation += 1.0f * light.Intensity / (1.0f + 0.1f * shadowlength + 0.1f * shadowlength * shadowlength);//(light.Intensity - shadowlength / 6);// * (float)Math.Max(0, Math.Cos(angle));
+                //if (factor > 1)
+                //    factor = 1;
+                //index++;
+            }
         }
-        return Colour(inter.Color);
+        return Colour(inter.Color * attenuation);
     }
 
-    Ray CheckShadowRayIntersect(Ray ray)
+    bool CheckShadowRayIntersect(Ray ray)
     {
         foreach (Sphere sphere in spheres)
         {
@@ -142,14 +151,9 @@ class Scene
             c = Vector3.Dot(difference, difference) - (sphere.Radius * sphere.Radius);
             discriminant = (b * b) - (4 * a * c);
             if (discriminant > 0)
-            {
-                result1 = (float)((-b + Math.Sqrt(discriminant)) / (2 * a));
-                result2 = (float)((-b - Math.Sqrt(discriminant)) / (2 * a));
-                ray.Occluded = true;
-                return ray;
-            }
+                return true;            
         }
-        return ray;
+        return false;
     }
 
     public float Distance(Vector3 first, Vector3 second)

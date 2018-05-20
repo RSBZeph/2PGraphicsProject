@@ -9,7 +9,6 @@ class Intersection
     public Primitive Object = new Primitive();
     public float Distance, ColorFactor = 1;
     public Ray Ray;
-    public List<Ray> ShadowRay = new List<Ray>();
 
     public Intersection(Primitive prim, float dis, Ray r)
     {
