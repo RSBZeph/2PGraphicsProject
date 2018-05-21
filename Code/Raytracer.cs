@@ -59,7 +59,7 @@ class Raytracer
 
         int counter = 0;
         float t; //in foreach: zoek door intersects met zelfde x en y: t = intersection.distance
-        Vector2 end;
+        Vector2 end, srstart, srend;
         foreach (Ray r in arRay)
         {
             if (counter == 0)
@@ -76,6 +76,18 @@ class Raytracer
                 end = VectorToScreenPos(C.Position + t * r.Direction);
                 Screen.Line((int)(Origin.X), (int)(Origin.Y), (int)(end.X), (int)(end.Y), Colour(RayColor));
                 counter = 30;
+
+                foreach (Ray sr in S.shadowrays)
+                {
+                    if (r.y == sr.y)
+                        if (r.x == sr.x)
+                        {
+                            srstart = VectorToScreenPos(sr.Start);
+                            srend = VectorToScreenPos(sr.Start + sr.Direction * sr.Distance);
+                            Screen.Line((int)(srstart.X), (int)(srstart.Y), (int)(srend.X), (int)(srend.Y), Colour(new Vector3(200,200,200)));
+                            break;
+                        }
+                }
             }
             counter--;
         }
@@ -108,6 +120,7 @@ class Raytracer
         public Vector3 Start, Direction;
         public int x, y;
         public float Distance;
+        public bool Occluded;
 
         public Ray(Vector3 a, Vector3 b)
         {
@@ -116,6 +129,7 @@ class Raytracer
             x = -1;
             y = -1;
             Distance = 10;
+            Occluded = false;
         }
     }
 }

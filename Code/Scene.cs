@@ -11,9 +11,10 @@ class Scene
     List<Plane> planes = new List<Plane>();
     List<Light> lights = new List<Light>();
     public List<Intersection> intersections = new List<Intersection>();
-    Intersection i1, i2;
+    public List<Ray> shadowrays = new List<Ray>();
+    Intersection i1;
     public Surface Screen;
-    float x1, y1, z1, i, j, k, a, b, c, discriminant, result1, result2, shadowlength;
+    float x1, y1, z1, i, j, k, a, b, c, discriminant, result1, result2, finalresult, shadowlength;
     Vector3 difference, shadowray;
 
     public Scene(Surface sur)
@@ -88,7 +89,7 @@ class Scene
             {
                 result1 = (float)((-b + Math.Sqrt(discriminant)) / (2 * a));
                 result2 = (float)((-b - Math.Sqrt(discriminant)) / (2 * a));
-                float finalresult = Math.Min(result1, result2);
+                finalresult = Math.Min(result1, result2);
                 i1 = new Intersection(sphere, finalresult, ray);
                 i1.X = ray.x;
                 i1.Y = ray.y;
@@ -120,8 +121,10 @@ class Scene
             difference = light.Position - inter.Position;
             shadowray = Vector3.Normalize(difference);
             shadowlength = Length(difference);
-            Ray SR = new Ray(light.Position, -shadowray);
-            if(!ShadowRayIntersect(SR, shadowlength))
+            Ray SR = new Ray(inter.Position, shadowray);
+            SR.x = inter.X;
+            SR.y = inter.Y;
+            if(!ShadowRayIntersect(SR))
             {
                 attenuation = 1;
                 //float angle = Vector3.CalculateAngle(shadowray, Vector3.Normalize(inter.Object.Position - inter.Position));
@@ -134,8 +137,10 @@ class Scene
         return Colour(inter.Color * attenuation);
     }
 
-    bool ShadowRayIntersect(Ray ray, float distance)
+    bool ShadowRayIntersect(Ray ray)
     {
+        result1 = 0;
+        result2 = 0;
         foreach (Sphere sphere in spheres)
         {
             ray.Start *= float.Epsilon;
@@ -154,8 +159,15 @@ class Scene
             {
                 result1 = (float)((-b + Math.Sqrt(discriminant)) / (2 * a));
                 result2 = (float)((-b - Math.Sqrt(discriminant)) / (2 * a));
-                if ((result1 > 0 || result2 > 0) && (result1 < distance || result2 < distance))
-                return true;
+                if (result1 > 0 && result2 > 0)
+                    finalresult = Math.Min(result1, result2);
+                else
+                    finalresult = Math.Max(result1, result2);
+                ray.Distance = finalresult;
+                ray.Occluded = true;
+                shadowrays.Add(ray);
+                if (finalresult > 0)
+                    return true;
             }           
         }
         return false;
