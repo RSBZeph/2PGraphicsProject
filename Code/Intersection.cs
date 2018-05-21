@@ -5,10 +5,9 @@ using static Raytracer;
 
 class Intersection
 {
-    public Vector3 Position = new Vector3(), Color;
-    public Primitive Object = new Primitive();
+    public Vector3 Position, Color;
+    public Primitive Object;
     public float Distance, ColorFactor = 1;
-    public int X = -1, Y = -1;
     public Ray Ray;
 
     public Intersection(Primitive prim, float dis, Ray r)

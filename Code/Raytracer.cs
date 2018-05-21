@@ -43,8 +43,9 @@ class Raytracer
 
         foreach (Intersection I in S.intersections)
         {           
-            Screen.pixels[(I.Ray.x + I.Ray.y * Screen.width)] = S.ShadowRay(I);
+            Screen.pixels[I.Ray.x + I.Ray.y * Screen.width] = S.ShadowRay(I);
         }
+        S.intersections.Clear();        
     }
 
     public void DrawDebug()
@@ -58,7 +59,7 @@ class Raytracer
         Screen.Line(0, CheckRayY, Screen.width / 2, CheckRayY, Colour(RayColor));
 
         int counter = 0;
-        float t; //in foreach: zoek door intersects met zelfde x en y: t = intersection.distance
+        float t;
         Vector2 end, srstart, srend;
         foreach (Ray r in arRay)
         {
@@ -92,6 +93,7 @@ class Raytracer
             counter--;
         }
         S.DrawPrimitivesDebug();
+        S.shadowrays.Clear();
     }
 
     Vector2 VectorToScreenPos(Vector3 v)
@@ -112,7 +114,7 @@ class Raytracer
         float colorx = MathHelper.Clamp(colorVec.X, 0, 1);
         float colory = MathHelper.Clamp(colorVec.Y, 0, 1);
         float colorz = MathHelper.Clamp(colorVec.Z, 0, 1);
-        return ((int)(colorx * 255f) << 16) + ((int)(colory * 255f) << 8) + (int)(colorz * 255);
+        return ((int)(colorx * 255f) << 16) + ((int)(colory * 255f) << 8) + (int)(colorz * 255f);
     }
 
     public struct Ray
