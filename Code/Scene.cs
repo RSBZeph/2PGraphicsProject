@@ -25,17 +25,17 @@ class Scene
 
     void FillLists()
     {
-        Sphere s1 = new Sphere(new Vector3(3, 5, 5), 1f, new Vector3(0.5f, 0.3f, 0));
+        Sphere s1 = new Sphere(new Vector3(3, 5, 7), 1f, new Vector3(0.5f, 0.3f, 0));
         spheres.Add(s1);
 
         Sphere s2 = new Sphere(new Vector3(7, 5, 7), 2f, new Vector3(0, 0.6f, 0.5f));
         spheres.Add(s2);
 
-        Light l1 = new Light(new Vector3(0, 5, 3.5f), 0.6f);
+        Light l1 = new Light(new Vector3(0, 5, 7), 0.6f);
         lights.Add(l1);
 
-        //Light l2 = new Light(new Vector3(10, 6, 9), 0.6f);
-        //lights.Add(l2);
+        Light l2 = new Light(new Vector3(10, 6, 7), 0.6f);
+        lights.Add(l2);
     }
 
     public void DrawPrimitivesDebug()
@@ -115,7 +115,6 @@ class Scene
     public int ShadowRay(Intersection inter)
     {
         float attenuation = 0;
-        //int index = 0;
         foreach (Light light in lights)
         {
             difference = light.Position - inter.Position;
@@ -126,12 +125,10 @@ class Scene
             SR.y = inter.Y;
             if(!ShadowRayIntersect(SR))
             {
-                attenuation = 1;
-                //float angle = Vector3.CalculateAngle(shadowray, Vector3.Normalize(inter.Object.Position - inter.Position));
-                //attenuation += 1.0f * light.Intensity / (1.0f + 0.1f * shadowlength + 0.1f * shadowlength * shadowlength);//(light.Intensity - shadowlength / 6);// * (float)Math.Max(0, Math.Cos(angle));
-                //if (factor > 1)
-                //    factor = 1;
-                //index++;
+                float angle = Vector3.CalculateAngle(shadowray, Vector3.Normalize(inter.Object.Position - inter.Position));
+                attenuation += 1.0f * (light.Intensity / (shadowlength / 4));// * (float)Math.Max(0, Math.Cos(angle)); //light.Intensity / (1.0f + 0.1f * shadowlength + 0.1f * shadowlength * shadowlength);
+                if (attenuation > 1)
+                    attenuation = 1;
             }
         }
         return Colour(inter.Color * attenuation);
