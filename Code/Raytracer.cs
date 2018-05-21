@@ -36,14 +36,13 @@ class Raytracer
                 r = new Ray(C.Position, CreateRayDirection(x, y));
                 r.x = x;
                 r.y = Screen.height - y;
+                r.Distance = S.CheckIntersect(r);
                 if (y == CheckRayY)
                     arRay[x] = r;
-                S.CheckIntersect(r);
             }
 
         foreach (Intersection I in S.intersections)
         {           
-            //if (I.Ray.y == C)
             Screen.pixels[(I.Ray.x + I.Ray.y * Screen.width)] = S.ShadowRay(I);
         }
     }
@@ -59,12 +58,21 @@ class Raytracer
         Screen.Line(0, CheckRayY, Screen.width / 2, CheckRayY, Colour(RayColor));
 
         int counter = 0;
-        int t = 8; //in foreach: zoek door intersects met zelfde x en y: t = intersection.distance
+        float t; //in foreach: zoek door intersects met zelfde x en y: t = intersection.distance
         Vector2 end;
         foreach (Ray r in arRay)
         {
             if (counter == 0)
             {
+                t = 8;
+                for (int o = 0; o < arRay.Length; o ++)
+                {
+                    if (arRay[o].x == r.x)
+                    {
+                        t = arRay[o].Distance;
+                        break;
+                    }
+                }
                 end = VectorToScreenPos(C.Position + t * r.Direction);
                 Screen.Line((int)(Origin.X), (int)(Origin.Y), (int)(end.X), (int)(end.Y), Colour(RayColor));
                 counter = 30;
@@ -99,6 +107,7 @@ class Raytracer
     {
         public Vector3 Start, Direction;
         public int x, y;
+        public float Distance;
 
         public Ray(Vector3 a, Vector3 b)
         {
@@ -106,6 +115,7 @@ class Raytracer
             Direction = b;
             x = -1;
             y = -1;
+            Distance = 10;
         }
     }
 }
