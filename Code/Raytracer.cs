@@ -51,16 +51,17 @@ class Raytracer
     public void DrawDebug()
     {
         RayColor = new Vector3(0.3f, 0.8f, 0.5f);
-        Screen.Line(512, 0, 512, 512, 0xff0000);
+        Screen.Line(512, 0, 512, 512, Colour(new Vector3(1, 1, 1)));
         Vector2 Origin = VectorToScreenPos(C.Position);
-        Screen.Line((int)(Origin.X - 5), (int)(Origin.Y + 5), (int)(Origin.X), (int)(Origin.Y - 10), 0xff0000);
-        Screen.Line((int)(Origin.X + 5), (int)(Origin.Y + 5), (int)(Origin.X), (int)(Origin.Y - 10), 0xff0000);
-        Screen.Line((int)(Origin.X - C.ScreenWidth / 2 * Screen.width / 20), (int)(Origin.Y - C.LeftScreen.DistanceToOrigin * Screen.height / 10), (int)(Origin.X + C.ScreenWidth / 2 * Screen.width / 20), (int)(Origin.Y - C.LeftScreen.DistanceToOrigin * Screen.height / 10), 0xff0000);
+        Screen.Line((int)(Origin.X - 5), (int)(Origin.Y + 5), (int)(Origin.X), (int)(Origin.Y - 10), Colour(new Vector3(1, 1, 1)));
+        Screen.Line((int)(Origin.X + 5), (int)(Origin.Y + 5), (int)(Origin.X), (int)(Origin.Y - 10), Colour(new Vector3(1, 1, 1)));
+        Screen.Line((int)(Origin.X - C.ScreenWidth / 2 * Screen.width / 20), (int)(Origin.Y - C.LeftScreen.DistanceToOrigin * Screen.height / 10), (int)(Origin.X + C.ScreenWidth / 2 * Screen.width / 20), (int)(Origin.Y - C.LeftScreen.DistanceToOrigin * Screen.height / 10), Colour(new Vector3(1, 1, 1)));
         Screen.Line(0, CheckRayY, Screen.width / 2, CheckRayY, Colour(RayColor));
 
         int counter = 0;
         float t;
         Vector2 end, srstart, srend;
+        Vector3 shadowcolor = new Vector3(1, 1, 1);
         foreach (Ray r in arRay)
         {
             if (counter == 0)
@@ -86,13 +87,14 @@ class Raytracer
                             srstart = VectorToScreenPos(sr.Start);
                             if (sr.Occluded)
                             {
-                                srend = VectorToScreenPos(sr.Start + sr.Direction * sr.Distance);                                
+                                srend = VectorToScreenPos(sr.Start + sr.Direction * sr.Distance);
+                                shadowcolor = new Vector3(0.7f, 0.1f, 0);
                             }
                             else
                             {
                                 srend = VectorToScreenPos(sr.Target.Position);
                             }
-                            Screen.Line((int)(srstart.X), (int)(srstart.Y), (int)(srend.X), (int)(srend.Y), Colour(new Vector3(200, 200, 200)));
+                            Screen.Line((int)(srstart.X), (int)(srstart.Y), (int)(srend.X), (int)(srend.Y), Colour(shadowcolor));
                             break;
                         }
                 }

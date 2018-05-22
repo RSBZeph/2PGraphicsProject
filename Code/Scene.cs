@@ -14,7 +14,7 @@ class Scene
     public List<Ray> shadowrays = new List<Ray>();
     Intersection i1;
     public Surface Screen;
-    float a, b, c, discriminant, result1, result2, finalresult, shadowlength, precalc1, precalc2;
+    float a, b, c, discriminant, result1, result2, finalresult, shadowlength, precalc1;
     Vector3 difference, shadowray;
     Ray SR;
 
@@ -26,16 +26,16 @@ class Scene
 
     void FillLists()
     {
-        Sphere s1 = new Sphere(new Vector3(3, 5, 5), 0.3f, new Vector3(0.5f, 0.3f, 0));
+        Sphere s1 = new Sphere(new Vector3(3, 5, 8), 1f, new Vector3(0.5f, 0.3f, 0));
         spheres.Add(s1);
 
-        Sphere s2 = new Sphere(new Vector3(7, 5, 7), 2f, new Vector3(0, 0.6f, 0.5f));
+        Sphere s2 = new Sphere(new Vector3(7, 5, 8), 1f, new Vector3(0, 0.6f, 0.5f));
         spheres.Add(s2);
 
-        Light l1 = new Light(new Vector3(0, 5, 3), 0.6f);
+        Light l1 = new Light(new Vector3(0, 5, 5), 3f);
         lights.Add(l1);
 
-        Light l2 = new Light(new Vector3(10, 6, 7), 0.6f);
+        Light l2 = new Light(new Vector3(10, 5, 5), 1.5f);
         lights.Add(l2);
     }
 
@@ -110,11 +110,10 @@ class Scene
                 SR.Distance = shadowlength;
                 SR.Target = light;
                 shadowrays.Add(SR);
-                attenuation = 1;
-                //float angle = Vector3.CalculateAngle(shadowray, Vector3.Normalize(inter.Object.Position - inter.Position));
-                //attenuation += 1.0f * (light.Intensity / (shadowlength / 4));// * (float)Math.Max(0, Math.Cos(angle)); //light.Intensity / (1.0f + 0.1f * shadowlength + 0.1f * shadowlength * shadowlength);
-                //if (attenuation > 1)
-                //    attenuation = 1;
+                float angle = Vector3.CalculateAngle(shadowray, Vector3.Normalize(inter.Object.Position - inter.Position));
+                attenuation += Vector3.Dot(inter.Normal, difference) / (shadowlength * shadowlength) * light.Intensity;
+                if (attenuation > 1)
+                    attenuation = 1;
             }
         }
         return Colour(inter.Color * attenuation);
@@ -138,9 +137,9 @@ class Scene
                 if (result1 < maxdis && result2 < maxdis)
                 {
                     if (result1 > 0 && result2 > 0)
-                        finalresult = Math.Min(result1, result2);
+                        finalresult = Math.Min(result1, result2) - 2 * float.Epsilon;
                     else
-                        finalresult = Math.Max(result1, result2);
+                        finalresult = Math.Max(result1, result2) - 2 * float.Epsilon;
                     SR.Distance = finalresult;
                     SR.Occluded = true;
                     shadowrays.Add(SR);
