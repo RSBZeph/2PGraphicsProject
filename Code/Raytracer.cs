@@ -84,8 +84,15 @@ class Raytracer
                         if (r.x == sr.x)
                         {
                             srstart = VectorToScreenPos(sr.Start);
-                            srend = VectorToScreenPos(sr.Start + sr.Direction * sr.Distance);
-                            Screen.Line((int)(srstart.X), (int)(srstart.Y), (int)(srend.X), (int)(srend.Y), Colour(new Vector3(200,200,200)));
+                            if (sr.Occluded)
+                            {
+                                srend = VectorToScreenPos(sr.Start + sr.Direction * sr.Distance);                                
+                            }
+                            else
+                            {
+                                srend = VectorToScreenPos(sr.Target.Position);
+                            }
+                            Screen.Line((int)(srstart.X), (int)(srstart.Y), (int)(srend.X), (int)(srend.Y), Colour(new Vector3(200, 200, 200)));
                             break;
                         }
                 }
@@ -123,6 +130,7 @@ class Raytracer
         public int x, y;
         public float Distance;
         public bool Occluded;
+        public Light Target;
 
         public Ray(Vector3 a, Vector3 b)
         {
@@ -132,6 +140,7 @@ class Raytracer
             y = -1;
             Distance = 10;
             Occluded = false;
+            Target = null;
         }
     }
 }

@@ -14,7 +14,7 @@ class Scene
     public List<Ray> shadowrays = new List<Ray>();
     Intersection i1;
     public Surface Screen;
-    float a, b, c, discriminant, result1, result2, finalresult, shadowlength;
+    float a, b, c, discriminant, result1, result2, finalresult, shadowlength, precalc1, precalc2;
     Vector3 difference, shadowray;
     Ray SR;
 
@@ -96,17 +96,19 @@ class Scene
         float attenuation = 0;
         foreach (Light light in lights)
         {
+            difference = light.Position - inter.Position;
+            shadowray = Vector3.Normalize(difference);
+            shadowlength = Math.Abs(Length(difference));
             SR = new Ray(inter.Position, shadowray)
             {
                 x = inter.Ray.x,
-                y = inter.Ray.x,
+                y = inter.Ray.y,
             };
-            difference = light.Position - inter.Position;
-            shadowray = Vector3.Normalize(difference);
-            shadowlength = Length(difference);
+
             if(!ShadowRayIntersect(inter, shadowlength - float.Epsilon))
             {
                 SR.Distance = shadowlength;
+                SR.Target = light;
                 shadowrays.Add(SR);
                 attenuation = 1;
                 //float angle = Vector3.CalculateAngle(shadowray, Vector3.Normalize(inter.Object.Position - inter.Position));
@@ -120,7 +122,7 @@ class Scene
 
     bool ShadowRayIntersect(Intersection inter, float maxdis)
     {
-        SR.Start += SR.Direction * 0.1f; //float.Epsilon;
+        SR.Start += SR.Direction * float.Epsilon;
         foreach (Sphere sphere in spheres)
         {
             difference = SR.Start - sphere.Position;
@@ -130,8 +132,9 @@ class Scene
             discriminant = (b * b) - (4 * a * c);
             if (discriminant > 0)
             {
-                result1 = (float)((-b + Math.Sqrt(discriminant)) / (2 * a));
-                result2 = (float)((-b - Math.Sqrt(discriminant)) / (2 * a));
+                precalc1 = (float)(Math.Sqrt(discriminant));
+                result1 = ((-b + precalc1) / (2 * a));
+                result2 = ((-b - precalc1) / (2 * a));
                 if (result1 < maxdis && result2 < maxdis)
                 {
                     if (result1 > 0 && result2 > 0)
