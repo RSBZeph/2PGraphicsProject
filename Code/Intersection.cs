@@ -17,6 +17,6 @@ class Intersection
         Ray = r;
         Position = Ray.Start + Ray.Direction * dis;
         Color = prim.Color;
-        Normal = Position - Object.Position;
+        Normal = Vector3.Normalize(Position - Object.Position);
     }
 }

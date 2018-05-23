@@ -28,17 +28,17 @@ class Raytracer
     {
         KBS = Keyboard.GetState();
         if (KBS.IsKeyDown(Key.A))
-            C.Position.X-= 0.25f;
+            C.Position.X -= 0.25f;
         else if (KBS.IsKeyDown(Key.D))
-            C.Position.X+= 0.25f;
+            C.Position.X += 0.25f;
         if (KBS.IsKeyDown(Key.S))
-            C.Position.Z-= 0.25f;
+            C.Position.Z -= 0.25f;
         else if (KBS.IsKeyDown(Key.W))
-            C.Position.Z+= 0.25f;
+            C.Position.Z += 0.25f;
         if (KBS.IsKeyDown(Key.Q))
-            C.Position.Y-= 0.25f;
+            C.Position.Y -= 0.25f;
         else if (KBS.IsKeyDown(Key.E))
-            C.Position.Y+= 0.25f;
+            C.Position.Y += 0.25f;
 
         Draw3D();
         DrawDebug();
@@ -59,10 +59,10 @@ class Raytracer
             }
 
         foreach (Intersection I in S.intersections)
-        {           
+        {
             Screen.pixels[I.Ray.x + I.Ray.y * Screen.width] = S.ShadowRay(I);
         }
-        S.intersections.Clear();        
+        S.intersections.Clear();
     }
 
     public void DrawDebug()
@@ -85,12 +85,13 @@ class Raytracer
         float t;
         Vector2 end, srstart, srend;
         Vector3 shadowcolor = new Vector3(1, 1, 1);
+
         foreach (Ray r in arRay)
         {
             if (counter == 0)
             {
                 t = 8;
-                for (int o = 0; o < arRay.Length; o ++)
+                for (int o = 0; o < arRay.Length; o++)
                 {
                     if (arRay[o].x == r.x)
                     {
@@ -115,7 +116,8 @@ class Raytracer
                             }
                             else
                             {
-                                srend = VectorToScreenPos(sr.Target.Position);
+                                srend = VectorToScreenPos(sr.Start + sr.Direction * sr.MaxDistance);
+                                shadowcolor = new Vector3(1, 1, 1);
                             }
                             Screen.Line((int)(srstart.X), (int)(srstart.Y), (int)(srend.X), (int)(srend.Y), Colour(shadowcolor));
                             break;
@@ -153,9 +155,8 @@ class Raytracer
     {
         public Vector3 Start, Direction;
         public int x, y;
-        public float Distance;
+        public float Distance, MaxDistance;
         public bool Occluded;
-        public Light Target;
 
         public Ray(Vector3 a, Vector3 b)
         {
@@ -164,8 +165,8 @@ class Raytracer
             x = -1;
             y = -1;
             Distance = 10;
+            MaxDistance = 1;
             Occluded = false;
-            Target = null;
         }
     }
 }

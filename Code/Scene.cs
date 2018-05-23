@@ -26,17 +26,17 @@ class Scene
 
     void FillLists()
     {
-        Sphere s1 = new Sphere(new Vector3(3, 5, 8), 1f, new Vector3(0.5f, 0.3f, 0));
+        Sphere s1 = new Sphere(new Vector3(5, 5, 7), 3f, new Vector3(0.5f, 0.3f, 0));
         spheres.Add(s1);
 
-        Sphere s2 = new Sphere(new Vector3(7, 5, 8), 1f, new Vector3(0, 0.6f, 0.5f));
-        spheres.Add(s2);
+        //Sphere s2 = new Sphere(new Vector3(7, 5, 6), 1f, new Vector3(0, 0.6f, 0.5f));
+        //spheres.Add(s2);
 
-        Light l1 = new Light(new Vector3(0, 5, 5), 3f);
+        Light l1 = new Light(new Vector3(0, 5, 2), 2f);
         lights.Add(l1);
 
-        Light l2 = new Light(new Vector3(10, 5, 5), 1.5f);
-        lights.Add(l2);
+        //Light l2 = new Light(new Vector3(10, 5, 5), 3f);
+        //lights.Add(l2);
     }
 
     public void DrawPrimitivesDebug()
@@ -103,23 +103,26 @@ class Scene
             {
                 x = inter.Ray.x,
                 y = inter.Ray.y,
+                MaxDistance = shadowlength,
             };
-
-            if(!ShadowRayIntersect(inter, shadowlength - float.Epsilon))
+            ShadowRayIntersect(inter, shadowlength - float.Epsilon);
+            if (!SR.Occluded)
             {
-                SR.Distance = shadowlength;
-                SR.Target = light;
-                shadowrays.Add(SR);
-                float angle = Vector3.CalculateAngle(shadowray, Vector3.Normalize(inter.Object.Position - inter.Position));
-                attenuation += Vector3.Dot(inter.Normal, difference) / (shadowlength * shadowlength) * light.Intensity;
-                if (attenuation > 1)
-                    attenuation = 1;
+                //attenuation += Vector3.Dot(inter.Normal, difference) / (shadowlength * shadowlength) * light.Intensity;
+                //if (attenuation > 1)
+                //    attenuation = 1;
+                attenuation = 1;
+            }
+            shadowrays.Add(SR);
+            if (Vector3.Dot(inter.Normal, difference) < 0)
+            {
+
             }
         }
         return Colour(inter.Color * attenuation);
     }
 
-    bool ShadowRayIntersect(Intersection inter, float maxdis)
+    void ShadowRayIntersect(Intersection inter, float maxdis)
     {
         SR.Start += SR.Direction * float.Epsilon;
         foreach (Sphere sphere in spheres)
@@ -137,18 +140,15 @@ class Scene
                 if (result1 < maxdis && result2 < maxdis)
                 {
                     if (result1 > 0 && result2 > 0)
+                    {
                         finalresult = Math.Min(result1, result2) - 2 * float.Epsilon;
-                    else
-                        finalresult = Math.Max(result1, result2) - 2 * float.Epsilon;
-                    SR.Distance = finalresult;
-                    SR.Occluded = true;
-                    shadowrays.Add(SR);
-                    if (finalresult > 0)
-                        return true;
+                        SR.Distance = finalresult;
+                        SR.Occluded = true;
+                        return;
+                    }
                 }
-            }           
+            }
         }
-        return false;
     }
 
     public float Distance(Vector3 first, Vector3 second)
