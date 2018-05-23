@@ -1,6 +1,7 @@
 ﻿using System;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
+using OpenTK.Input;
 using Template;
 
 class Raytracer
@@ -12,6 +13,7 @@ class Raytracer
     Ray[] arRay;
     int CheckRayY;
     Vector3 RayColor;
+    KeyboardState KBS;
 
     public Raytracer(Surface sur)
     {
@@ -24,6 +26,20 @@ class Raytracer
 
     public void Render()
     {
+        KBS = Keyboard.GetState();
+        if (KBS.IsKeyDown(Key.A))
+            C.Position.X-= 0.25f;
+        else if (KBS.IsKeyDown(Key.D))
+            C.Position.X+= 0.25f;
+        if (KBS.IsKeyDown(Key.S))
+            C.Position.Z-= 0.25f;
+        else if (KBS.IsKeyDown(Key.W))
+            C.Position.Z+= 0.25f;
+        if (KBS.IsKeyDown(Key.Q))
+            C.Position.Y-= 0.25f;
+        else if (KBS.IsKeyDown(Key.E))
+            C.Position.Y+= 0.25f;
+
         Draw3D();
         DrawDebug();
     }
@@ -39,6 +55,7 @@ class Raytracer
                 r.Distance = S.CheckIntersect(r);
                 if (y == CheckRayY)
                     arRay[x] = r;
+                Screen.pixels[x + y * Screen.width] = Colour(new Vector3(0, 0, 0));
             }
 
         foreach (Intersection I in S.intersections)
@@ -50,17 +67,24 @@ class Raytracer
 
     public void DrawDebug()
     {
+        for (int x = 0; x < Screen.width / 2; x++)
+            for (int y = 0; y < Screen.height; y++)
+            {
+                Screen.pixels[x + Screen.width / 2 + y * Screen.width] = Colour(new Vector3(0, 0, 0));
+            }
+
         RayColor = new Vector3(0.3f, 0.8f, 0.5f);
-        Screen.Line(512, 0, 512, 512, 0xff0000);
+        Screen.Line(512, 0, 512, 512, Colour(new Vector3(1, 1, 1)));
         Vector2 Origin = VectorToScreenPos(C.Position);
-        Screen.Line((int)(Origin.X - 5), (int)(Origin.Y + 5), (int)(Origin.X), (int)(Origin.Y - 10), 0xff0000);
-        Screen.Line((int)(Origin.X + 5), (int)(Origin.Y + 5), (int)(Origin.X), (int)(Origin.Y - 10), 0xff0000);
-        Screen.Line((int)(Origin.X - C.ScreenWidth / 2 * Screen.width / 20), (int)(Origin.Y - C.LeftScreen.DistanceToOrigin * Screen.height / 10), (int)(Origin.X + C.ScreenWidth / 2 * Screen.width / 20), (int)(Origin.Y - C.LeftScreen.DistanceToOrigin * Screen.height / 10), 0xff0000);
+        Screen.Line((int)(Origin.X - 5), (int)(Origin.Y + 5), (int)(Origin.X), (int)(Origin.Y - 10), Colour(new Vector3(1, 1, 1)));
+        Screen.Line((int)(Origin.X + 5), (int)(Origin.Y + 5), (int)(Origin.X), (int)(Origin.Y - 10), Colour(new Vector3(1, 1, 1)));
+        Screen.Line((int)(Origin.X - C.ScreenWidth / 2 * Screen.width / 20), (int)(Origin.Y - C.LeftScreen.DistanceToOrigin * Screen.height / 10), (int)(Origin.X + C.ScreenWidth / 2 * Screen.width / 20), (int)(Origin.Y - C.LeftScreen.DistanceToOrigin * Screen.height / 10), Colour(new Vector3(1, 1, 1)));
         Screen.Line(0, CheckRayY, Screen.width / 2, CheckRayY, Colour(RayColor));
 
         int counter = 0;
         float t;
         Vector2 end, srstart, srend;
+        Vector3 shadowcolor = new Vector3(1, 1, 1);
         foreach (Ray r in arRay)
         {
             if (counter == 0)
@@ -86,13 +110,14 @@ class Raytracer
                             srstart = VectorToScreenPos(sr.Start);
                             if (sr.Occluded)
                             {
-                                srend = VectorToScreenPos(sr.Start + sr.Direction * sr.Distance);                                
+                                srend = VectorToScreenPos(sr.Start + sr.Direction * sr.Distance);
+                                shadowcolor = new Vector3(0.7f, 0.1f, 0);
                             }
                             else
                             {
                                 srend = VectorToScreenPos(sr.Target.Position);
                             }
-                            Screen.Line((int)(srstart.X), (int)(srstart.Y), (int)(srend.X), (int)(srend.Y), Colour(new Vector3(200, 200, 200)));
+                            Screen.Line((int)(srstart.X), (int)(srstart.Y), (int)(srend.X), (int)(srend.Y), Colour(shadowcolor));
                             break;
                         }
                 }
