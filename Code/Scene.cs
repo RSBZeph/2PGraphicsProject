@@ -98,31 +98,31 @@ class Scene
         {
             difference = light.Position - inter.Position;
             shadowray = Vector3.Normalize(difference);
-            shadowlength = Math.Abs(Length(difference));
+            shadowlength = Math.Abs(Length(difference)) - 2 * float.Epsilon;
             SR = new Ray(inter.Position, shadowray)
             {
                 x = inter.Ray.x,
-                y = inter.Ray.y,
+                y = inter.Ray.y,                
             };
+            SR.Start += SR.Direction * 0.1f;
+            SR.Distance = shadowlength;
 
-            if(!ShadowRayIntersect(inter, shadowlength - float.Epsilon))
+            if (!ShadowRayIntersect(shadowlength))
             {
-                SR.Distance = shadowlength;
                 SR.Target = light;
                 shadowrays.Add(SR);
                 attenuation = 1;
-                //float angle = Vector3.CalculateAngle(shadowray, Vector3.Normalize(inter.Object.Position - inter.Position));
-                //attenuation += 1.0f * (light.Intensity / (shadowlength / 4));// * (float)Math.Max(0, Math.Cos(angle)); //light.Intensity / (1.0f + 0.1f * shadowlength + 0.1f * shadowlength * shadowlength);
-                //if (attenuation > 1)
-                //    attenuation = 1;
+                float angle = Vector3.CalculateAngle(shadowray, Vector3.Normalize(inter.Object.Position - inter.Position));
+                attenuation += 1.0f * (light.Intensity / (shadowlength / 4));// * (float)Math.Max(0, Math.Cos(angle)); //light.Intensity / (1.0f + 0.1f * shadowlength + 0.1f * shadowlength * shadowlength);
+                if (attenuation > 1)
+                    attenuation = 1;
             }
         }
         return Colour(inter.Color * attenuation);
     }
 
-    bool ShadowRayIntersect(Intersection inter, float maxdis)
+    bool ShadowRayIntersect(float maxdis)
     {
-        SR.Start += SR.Direction * float.Epsilon;
         foreach (Sphere sphere in spheres)
         {
             difference = SR.Start - sphere.Position;
