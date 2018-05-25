@@ -1,25 +1,28 @@
 ﻿using OpenTK;
-using OpenTK.Graphics.OpenGL;
-using OpenTK.Input;
 using System;
 
 class Camera
 {
-    public Vector3 Position = new Vector3(5, 0, 0), Direction = new Vector3(0, 0, 0), ScreenCentre, NormDirection;
-    Vector3 sw;
-    public float FOV, ScreenWidth;
+    public Vector3 Position = new Vector3(5, 5, 0.5f), Direction = new Vector3(0, 0, 1), ScreenCentre, NormDirection;
+    public float FOV = 90, ScreenWidth;
     public Plane LeftScreen;
+    static Camera C = new Camera();
 
     public Camera()
     {
-        NormDirection = Vector3.Divide(Direction, (float)Math.Sqrt(Math.Pow(Direction.X, 2) + Math.Pow(Direction.Y, 2) + Math.Pow(Direction.Z, 2)));
+        double a = Math.Asin((FOV / 180) * Math.PI);
         LeftScreen = new Plane();
-        LeftScreen.DistanceToOrigin = 1;
+        ScreenWidth = 2;
+        LeftScreen.DistanceToOrigin = (float)(1 / Math.Sin(((FOV / 2) / 180) * Math.PI));
+        NormDirection = Vector3.Normalize(Direction);
         ScreenCentre = Position + Direction * LeftScreen.DistanceToOrigin;
         LeftScreen.P0 = ScreenCentre + new Vector3(-1, -1, 0);
         LeftScreen.P1 = ScreenCentre + new Vector3(1, -1, 0);
         LeftScreen.P2 = ScreenCentre + new Vector3(-1, 1, 0);
-        sw = LeftScreen.P1 - LeftScreen.P0;
-        ScreenWidth = (float)Math.Sqrt(Math.Pow(sw.X, 2) + Math.Pow(sw.Y, 2) + Math.Pow(sw.Z, 2));
+    }
+
+    public static Camera Instance()
+    {
+        return C;
     }
 }
