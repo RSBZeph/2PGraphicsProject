@@ -26,17 +26,19 @@ class Scene
 
     void FillLists()
     {
-        Sphere s1 = new Sphere(new Vector3(5, 5, 7), 3f, new Vector3(0.5f, 0.3f, 0));
+        Sphere s1 = new Sphere(new Vector3(3, 5, 7), 3f, new Vector3(0.5f, 0.3f, 0));
         spheres.Add(s1);
 
-        //Sphere s2 = new Sphere(new Vector3(7, 5, 6), 1f, new Vector3(0, 0.6f, 0.5f));
-        //spheres.Add(s2);
+        Sphere s2 = new Sphere(new Vector3(8, 5, 7.5f), 1f, new Vector3(0, 0.6f, 0.5f));
+        spheres.Add(s2);
+
+        Light l2 = new Light(new Vector3(10, 5, 7), 3f);
+        lights.Add(l2);
 
         Light l1 = new Light(new Vector3(0, 5, 2), 2f);
         lights.Add(l1);
 
-        //Light l2 = new Light(new Vector3(10, 5, 5), 3f);
-        //lights.Add(l2);
+
     }
 
     public void DrawPrimitivesDebug()
@@ -99,13 +101,13 @@ class Scene
             difference = light.Position - inter.Position;
             shadowray = Vector3.Normalize(difference);
             shadowlength = Math.Abs(Length(difference));
-            SR = new Ray(inter.Position, shadowray)
+            SR = new Ray(inter.Position - difference * 0.0001f, shadowray)
             {
                 x = inter.Ray.x,
                 y = inter.Ray.y,
                 MaxDistance = shadowlength,
             };
-            ShadowRayIntersect(inter, shadowlength - float.Epsilon);
+            ShadowRayIntersect(inter, shadowlength); // - 2 * 0.0001f);
             if (!SR.Occluded)
             {
                 //attenuation += Vector3.Dot(inter.Normal, difference) / (shadowlength * shadowlength) * light.Intensity;
@@ -118,13 +120,18 @@ class Scene
             {
 
             }
+            //if(SR.Occluded)
+            //{
+            //    attenuation = 0;
+            //}
+            //Console.WriteLine(SR.Occluded);
         }
         return Colour(inter.Color * attenuation);
     }
 
     void ShadowRayIntersect(Intersection inter, float maxdis)
     {
-        SR.Start += SR.Direction * float.Epsilon;
+        //SR.Start += SR.Direction;// * 0.0001f;
         foreach (Sphere sphere in spheres)
         {
             difference = SR.Start - sphere.Position;
@@ -141,7 +148,7 @@ class Scene
                 {
                     if (result1 > 0 && result2 > 0)
                     {
-                        finalresult = Math.Min(result1, result2) - 2 * float.Epsilon;
+                        finalresult = Math.Min(result1, result2);// - 2 * 0.0001f;
                         SR.Distance = finalresult;
                         SR.Occluded = true;
                         return;
@@ -158,7 +165,7 @@ class Scene
     public float Distance(Vector3 first, Vector3 second)
     {
         Vector3 Difference = second - first;
-        return (float)Math.Sqrt(Math.Pow(Difference.X, 2) + Math.Pow(Difference.Y, 2) + Math.Pow(Difference.Z, 2));
+        return (float)Math.Sqrt((Difference.X * Difference.X) + (Difference.Y * Difference.Y) + (Difference.Z * Difference.Z));
     }
     public float Length(Vector3 L)
     {
