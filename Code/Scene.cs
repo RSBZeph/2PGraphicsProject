@@ -14,7 +14,7 @@ class Scene
     public List<Ray> shadowrays = new List<Ray>();
     Intersection i1;
     public Surface Screen;
-    float a, b, c, discriminant, result1, result2, finalresult, shadowlength, precalc1;
+    float a, b, c, discriminant, result1, result2, finalresult, shadowlength, precalc1, epsilon = 0.0001f;
     Vector3 difference, shadowray;
     Ray SR;
 
@@ -26,17 +26,17 @@ class Scene
 
     void FillLists()
     {
-        Sphere s1 = new Sphere(new Vector3(5, 5, 7), 3f, new Vector3(0.5f, 0.3f, 0));
+        Sphere s1 = new Sphere(new Vector3(3, 5, 5), 0.5f, new Vector3(0.5f, 0.3f, 0));
         spheres.Add(s1);
 
-        //Sphere s2 = new Sphere(new Vector3(7, 5, 6), 1f, new Vector3(0, 0.6f, 0.5f));
-        //spheres.Add(s2);
+        Sphere s2 = new Sphere(new Vector3(7, 5, 7), 2f, new Vector3(0, 0.6f, 0.5f));
+        spheres.Add(s2);
 
-        Light l1 = new Light(new Vector3(0, 5, 2), 2f);
+        Light l1 = new Light(new Vector3(0, 5, 3), 5f);
         lights.Add(l1);
 
-        //Light l2 = new Light(new Vector3(10, 5, 5), 3f);
-        //lights.Add(l2);
+        Light l2 = new Light(new Vector3(10, 5, 7), 3f);
+        lights.Add(l2);
     }
 
     public void DrawPrimitivesDebug()
@@ -103,9 +103,9 @@ class Scene
             {
                 x = inter.Ray.x,
                 y = inter.Ray.y,
-                MaxDistance = shadowlength,
+                MaxDistance = shadowlength - 2 * epsilon,
             };
-            ShadowRayIntersect(inter, shadowlength - float.Epsilon);
+            ShadowRayIntersect(inter, shadowlength);
             if (!SR.Occluded)
             {
                 //attenuation += Vector3.Dot(inter.Normal, difference) / (shadowlength * shadowlength) * light.Intensity;
@@ -124,7 +124,7 @@ class Scene
 
     void ShadowRayIntersect(Intersection inter, float maxdis)
     {
-        SR.Start += SR.Direction * float.Epsilon;
+        SR.Start += SR.Direction * epsilon;
         foreach (Sphere sphere in spheres)
         {
             difference = SR.Start - sphere.Position;
@@ -141,10 +141,13 @@ class Scene
                 {
                     if (result1 > 0 && result2 > 0)
                     {
-                        finalresult = Math.Min(result1, result2) - 2 * float.Epsilon;
-                        SR.Distance = finalresult;
-                        SR.Occluded = true;
-                        return;
+                        finalresult = Math.Min(result1, result2);
+                        if (finalresult < SR.MaxDistance)
+                        {
+                            SR.Distance = finalresult;
+                            SR.Occluded = true;
+                            return;
+                        }
                     }
                 }
             }
