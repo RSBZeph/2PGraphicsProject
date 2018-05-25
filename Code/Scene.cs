@@ -149,6 +149,10 @@ class Scene
                 }
             }
         }
+        foreach (Sphere s in spheres)
+        {
+
+        }
     }
 
     public float Distance(Vector3 first, Vector3 second)
