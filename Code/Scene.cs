@@ -32,8 +32,8 @@ class Scene
         Sphere s2 = new Sphere(new Vector3(8, 5, 7.5f), 1f, new Vector3(0, 0.6f, 0.5f));
         spheres.Add(s2);
 
-        //Light l1 = new Light(new Vector3(0, 5, 2), 2f);
-        //lights.Add(l1);
+        Light l1 = new Light(new Vector3(0, 5, 2), 2f);
+        lights.Add(l1);
 
         Light l2 = new Light(new Vector3(10, 5, 7), 3f);
         lights.Add(l2);
@@ -114,15 +114,10 @@ class Scene
                 attenuation = 1;
             }
             shadowrays.Add(SR);
-            if (Vector3.Dot(inter.Normal, difference) < 0)
-            {
-
-            }
-            if(SR.Occluded)
-            {
-                attenuation = 0;
-            }
-            //Console.WriteLine(SR.Occluded);
+            //if (SR.Occluded)
+            //{
+            //    attenuation = 0;
+            //}
         }
         return Colour(inter.Color * attenuation);
     }
