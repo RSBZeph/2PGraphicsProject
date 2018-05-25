@@ -72,7 +72,7 @@ class Raytracer
             {
                 Screen.pixels[x + Screen.width / 2 + y * Screen.width] = Colour(new Vector3(0, 0, 0));
             }
-
+        
         RayColor = new Vector3(0.3f, 0.8f, 0.5f);
         Screen.Line(512, 0, 512, 512, Colour(new Vector3(1, 1, 1)));
         Vector2 Origin = VectorToScreenPos(C.Position);
