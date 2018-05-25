@@ -32,11 +32,13 @@ class Scene
         Sphere s2 = new Sphere(new Vector3(8, 5, 7.5f), 1f, new Vector3(0, 0.6f, 0.5f));
         spheres.Add(s2);
 
-        //Light l1 = new Light(new Vector3(0, 5, 2), 2f);
-        //lights.Add(l1);
-
         Light l2 = new Light(new Vector3(10, 5, 7), 3f);
         lights.Add(l2);
+
+        Light l1 = new Light(new Vector3(0, 5, 2), 2f);
+        lights.Add(l1);
+
+
     }
 
     public void DrawPrimitivesDebug()
@@ -118,10 +120,10 @@ class Scene
             {
 
             }
-            if(SR.Occluded)
-            {
-                attenuation = 0;
-            }
+            //if(SR.Occluded)
+            //{
+            //    attenuation = 0;
+            //}
             //Console.WriteLine(SR.Occluded);
         }
         return Colour(inter.Color * attenuation);
