@@ -26,10 +26,10 @@ class Scene
 
     void FillLists()
     {
-        //Sphere s1 = new Sphere(new Vector3(4, 5, 7), 2f, new Vector3(0, 0.6f, 0.9f));
-        //spheres.Add(s1);
+        Sphere s1 = new Sphere(new Vector3(4, 5, 7), 2f, new Vector3(0, 0.6f, 0.9f));
+        spheres.Add(s1);
 
-        Sphere s2 = new Sphere(new Vector3(6, 5, 4), 0.1f, new Vector3(0, 0.8f, 0.3f));
+        Sphere s2 = new Sphere(new Vector3(6, 5, 4), 1f, new Vector3(0, 0.8f, 0.3f));
         spheres.Add(s2);
 
         Light l1 = new Light(new Vector3(0, 5, 2), 3f);
@@ -115,7 +115,7 @@ class Scene
                 if (attenuation > 1)
                     attenuation = 1;
                 else if (attenuation < 0)
-                    attenuation = 2;
+                    attenuation = 0;
             }
             shadowrays.Add(SR);
         }
@@ -136,20 +136,9 @@ class Scene
                 precalc1 = (float)(Math.Sqrt(discriminant));
                 result1 = ((-b + precalc1) / (2 * a));
                 result2 = ((-b - precalc1) / (2 * a));
-                finalresult = Math.Min(result1, result2);
-                if (finalresult > 0)
-                {
-                    SR.Distance = finalresult;
-                    SR.Occluded = true;
-                    return;
-                }
-                else
-                {
-                    finalresult = Math.Max(result1, result2);
-                }
-                if (finalresult > 0)
-                {
-                    SR.Distance = finalresult;
+                if(result1 > 0 && result2 > 0)
+                { 
+                    SR.Distance = Math.Min(result1, result1);
                     SR.Occluded = true;
                     return;
                 }                
