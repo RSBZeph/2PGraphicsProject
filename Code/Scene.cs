@@ -28,7 +28,7 @@ class Scene
 
     void FillLists()
     {
-        Sphere s1 = new Sphere(new Vector3(4, 5, 5), 1f, new Vector3(0, 0.6f, 0.9f), false);
+        Sphere s1 = new Sphere(new Vector3(4, 5, 5), 2f, new Vector3(0, 0.6f, 0.9f), false);
         spheres.Add(s1);
 
         Sphere s2 = new Sphere(new Vector3(6, 5, 4), 0.2f, new Vector3(0, 0.8f, 0.3f), false);
