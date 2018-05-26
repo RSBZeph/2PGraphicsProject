@@ -1,7 +1,6 @@
 ﻿using OpenTK;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using Template;
 using static Raytracer;
 
@@ -10,6 +9,7 @@ class Scene
     List<Sphere> spheres = new List<Sphere>();
     List<Plane> planes = new List<Plane>();
     List<Light> lights = new List<Light>();
+    Camera C;
     public List<Intersection> intersections = new List<Intersection>();
     public List<Ray> shadowrays = new List<Ray>();
     Intersection i1;
@@ -18,12 +18,12 @@ class Scene
     Vector3 difference1, difference2, difference3, shadowray;
     Ray SR;
     float dot = 100;
-    int Counter = 0;
 
     public Scene(Surface sur)
     {
         Screen = sur;
         FillLists();
+        C = Camera.Instance();
     }
 
     void FillLists()
@@ -37,7 +37,7 @@ class Scene
         Light l1 = new Light(new Vector3(0, 5, 2), 1f);
         lights.Add(l1);
 
-        Light l2 = new Light(new Vector3(10, 5, 3), 5f);
+        Light l2 = new Light(new Vector3(10, 5, 8), 5f);
         lights.Add(l2);
     }
 
@@ -73,6 +73,8 @@ class Scene
 
     public float CheckIntersect(Ray ray)
     {
+        bool replaced = false;
+        Primitive Object = null;
         finalresult = -1;
         foreach (Sphere sphere in spheres)
         {
@@ -85,12 +87,19 @@ class Scene
             {
                 result1 = (float)((-b + Math.Sqrt(discriminant)) / (2 * a));
                 result2 = (float)((-b - Math.Sqrt(discriminant)) / (2 * a));
-                if (result1 > 0 || result2 > 0)
-                    if (finalresult == -1 || result1 < finalresult && result1 > 0 || result2 < finalresult && result2 > 0)
+                if (result1 > ray.MinDistance || result2 > ray.MinDistance)
+                    if (finalresult == -1 || result1 < finalresult && result1 > ray.MinDistance || result2 < finalresult && result2 > ray.MinDistance)
+                    {
                         finalresult = Math.Min(result1, result2);
-                i1 = new Intersection(sphere, finalresult, ray, false);
-                intersections.Add(i1);
+                        replaced = true;
+                        Object = sphere;
+                    }
             }
+        }
+        if (replaced)
+        {
+            i1 = new Intersection(Object, finalresult, ray, false);
+            intersections.Add(i1);
         }
         if (finalresult == -1)
             finalresult = 8;
@@ -124,7 +133,6 @@ class Scene
     //    {
     //        Vector3 ReflectionRayDirection = ReflectionRay(i1, i1.Normal, difference);
 
-
     //        float ReflectionRayDiscriminant = (b * b) - (4 * a * c);
 
     //        if (ReflectionRayDiscriminant > 0)
@@ -141,9 +149,20 @@ class Scene
     public int ShadowRay(Intersection inter)
     {
         float attenuation = 0;
+        bool nothing = false;
+
+        if (inter.Ray.x == 60 && inter.Ray.y == 252)
+        {
+
+        }
         foreach (Light light in lights)
         {
             difference2 = light.Position - inter.Position;
+            if (Vector3.Dot(inter.Position, C.Direction) <= 0)
+            {
+                nothing = true;
+                continue;
+            }
             shadowray = Vector3.Normalize(difference2);
             shadowlength = Math.Abs(Length(difference2));
             SR = new Ray(inter.Position - difference2 * 0.0001f, shadowray)
@@ -162,8 +181,12 @@ class Scene
                     attenuation = 0;
             }
             shadowrays.Add(SR);
+            nothing = false;
         }
-        return Colour(inter.Color * attenuation);
+        if (!nothing)
+            return Colour(inter.Color * attenuation);
+        else
+            return Colour(new Vector3(0.2f, 0, 0));
     }
 
     void ShadowRayIntersect()

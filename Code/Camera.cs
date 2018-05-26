@@ -4,6 +4,7 @@ using System;
 class Camera
 {
     public Vector3 Position = new Vector3(5, 5, 0.5f), Direction = new Vector3(0, 0, 1), ScreenCentre, NormDirection, P0, P1, P2;
+    public Vector3 Right = new Vector3(1, 0, 0), Up = new Vector3(0, 1, 0);
     public float FOV = 90, ScreenWidth, DistanceToOrigin;
     static Camera C = new Camera();
 

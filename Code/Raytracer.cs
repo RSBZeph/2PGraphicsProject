@@ -26,20 +26,19 @@ class Raytracer
 
     public void Render()
     {
-        //Screen.pixels[0 + 512 * Screen.width] = Colour(new Vector3(0.4f, 0.4f, 0.4f));
         KBS = Keyboard.GetState();
         if (KBS.IsKeyDown(Key.A))
-            C.Position.X -= 0.25f;
+            C.Position -= 0.25f * C.Right;
         else if (KBS.IsKeyDown(Key.D))
-            C.Position.X += 0.25f;
+            C.Position += 0.25f * C.Right;
         if (KBS.IsKeyDown(Key.S))
-            C.Position.Z -= 0.25f;
+            C.Position -= 0.25f * C.Direction;
         else if (KBS.IsKeyDown(Key.W))
-            C.Position.Z += 0.25f;
+            C.Position += 0.25f * C.Direction;
         if (KBS.IsKeyDown(Key.Q))
-            C.Position.Y -= 0.25f;
+            C.Position -= 0.25f * C.Up;
         else if (KBS.IsKeyDown(Key.E))
-            C.Position.Y += 0.25f;
+            C.Position += 0.25f * C.Up;
         C.Tick();
         Draw3D();
     }
@@ -52,8 +51,7 @@ class Raytracer
                 r = new Ray(C.Position, CreateRayDirection(x, y));
                 r.x = x;
                 r.y = Screen.height - y;
-                if (r.x == 0 && r.y == 256)
-                { }
+                r.MinDistance = CreateMinDistance(x, y);
                 r.Distance = S.CheckIntersect(r);
                 if (y == CheckRayY)
                     arRay[x] = r;
@@ -168,6 +166,12 @@ class Raytracer
         return Vector3.Normalize(ScreenPoint - C.Position);
     }
 
+    float CreateMinDistance(float x, float y)
+    {
+        Vector3 ScreenPoint = C.P0 + x * (C.P1 - C.P0) / (Screen.width / 2) + y * (C.P2 - C.P0) / Screen.height;
+        return S.Length(ScreenPoint - C.Position);
+    }
+
     public static int Colour(Vector3 colorVec)
     {
         float colorx = MathHelper.Clamp(colorVec.X, 0, 1);
@@ -180,7 +184,7 @@ class Raytracer
     {
         public Vector3 Start, Direction;
         public int x, y;
-        public float Distance, MaxDistance;
+        public float Distance, MaxDistance, MinDistance;
         public bool Occluded;
 
         public Ray(Vector3 a, Vector3 b)
@@ -191,6 +195,7 @@ class Raytracer
             y = -1;
             Distance = 10;
             MaxDistance = 1;
+            MinDistance = 1;
             Occluded = false;
         }
     }
