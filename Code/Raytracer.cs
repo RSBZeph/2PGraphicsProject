@@ -47,7 +47,7 @@ class Raytracer
     void Draw3D()
     {
         for (int x = 0; x < Screen.width / 2; x++)
-            for (int y = 0; y < Screen.height; y++)
+            for (int y = 1; y < Screen.height - 1; y++)
             {
                 r = new Ray(C.Position, CreateRayDirection(x, y));
                 r.x = x;
