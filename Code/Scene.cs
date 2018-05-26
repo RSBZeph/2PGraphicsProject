@@ -85,15 +85,13 @@ class Scene
             {
                 result1 = (float)((-b + Math.Sqrt(discriminant)) / (2 * a));
                 result2 = (float)((-b - Math.Sqrt(discriminant)) / (2 * a));
-                if (finalresult == -1 || result1 < finalresult || result2 < finalresult)
-                    finalresult = Math.Min(result1, result2);
+                finalresult = Math.Min(result1, result2);
                 i1 = new Intersection(sphere, finalresult, ray);
                 intersections.Add(i1);
+                return finalresult;
             }
         }
-        if (finalresult == -1)
-            finalresult = 8;
-        return finalresult;
+        return 8;
     }
 
     //public void ReflectionRayIntersect(Intersection Inter, Ray ray)//, Vector3 SphereNormal, Vector3 Incoming, Ray ray)
@@ -170,8 +168,6 @@ class Scene
         }
         return Colour(inter.Color * attenuation);
     }
-
-  
 
     void ShadowRayIntersect(Intersection inter, float maxdis)
     {
