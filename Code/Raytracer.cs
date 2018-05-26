@@ -60,14 +60,14 @@ class Raytracer
 
         foreach (Intersection I in S.intersections)
         {
-            if (I.OnMirror)
-            {
+            //if (I.OnMirror)
+            //{
 
-            }
-            else
-            {
+            //}
+            //else
+            //{
                 Screen.pixels[I.Ray.x + I.Ray.y * Screen.width] = S.ShadowRay(I);
-            }
+            //}
         }
         S.intersections.Clear();
     }

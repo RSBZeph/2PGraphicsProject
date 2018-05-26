@@ -86,7 +86,7 @@ class Scene
                 result1 = (float)((-b + Math.Sqrt(discriminant)) / (2 * a));
                 result2 = (float)((-b - Math.Sqrt(discriminant)) / (2 * a));
                 finalresult = Math.Min(result1, result2);
-                i1 = new Intersection(sphere, finalresult, ray);
+                i1 = new Intersection(sphere, finalresult, ray, sphere.Mirror);
                 intersections.Add(i1);
                 return finalresult;
             }
@@ -169,7 +169,7 @@ class Scene
         return Colour(inter.Color * attenuation);
     }
 
-    void ShadowRayIntersect(Intersection inter, float maxdis)
+    void ShadowRayIntersect()
     {
         foreach (Sphere sphere in spheres)
         {
