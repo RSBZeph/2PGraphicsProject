@@ -85,7 +85,7 @@ class Scene
                 result2 = (float)((-b - Math.Sqrt(discriminant)) / (2 * a));
                 if (finalresult == -1 || result1 < finalresult || result2 < finalresult)
                     finalresult = Math.Min(result1, result2);
-                i1 = new Intersection(sphere, finalresult, ray);
+                i1 = new Intersection(sphere, finalresult, ray, sphere.Mirror);
                 intersections.Add(i1);
             }
         }
