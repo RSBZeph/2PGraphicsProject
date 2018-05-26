@@ -38,7 +38,7 @@ class Scene
         Light l2 = new Light(new Vector3(10, 5, 7), 3f);
         lights.Add(l2);
 
-        Light l1 = new Light(new Vector3(0, 5, 2), 2f);
+        Light l1 = new Light(new Vector3(0, 5, 2), 3f);
         lights.Add(l1);
 
         //Light l2 = new Light(new Vector3(10, 5, 2), 4f);
@@ -95,31 +95,34 @@ class Scene
                 intersections.Add(i1);
             }
         }
-        foreach (Plane p in planes)
-        {
-            float t = -(Vector3.Dot(ray.Start, p.NPlane) + p.DistanceToOrigin) / (Vector3.Dot(ray.Direction, p.NPlane));
-            if (t >= 0)// && t < intersect.intersctDist)
-            {
-                i1 = new Intersection(p, t, ray);
-                intersections.Add(i1);
-                return t;
-                //intersect = new Intersection(t, plane, r.origin + r.direction * t, -plane.normal);
-            }
+        //foreach (Plane p in planes)
+        //{
+        //    float t = -(Vector3.Dot(ray.Start, p.NPlane) + p.DistanceToOrigin) / (Vector3.Dot(ray.Direction, p.NPlane));
+        //    if (t >= 0)// && t < intersect.intersctDist)
+        //    {
+        //        i1 = new Intersection(p, t, ray);
+        //        //intersections.Add(i1);
+        //        return t;
+        //        //intersect = new Intersection(t, plane, r.origin + r.direction * t, -plane.normal);
+        //    }
 
-            /*float vx = ray.Direction.X, vy = ray.Direction.Y, vz = ray.Direction.Z;
-            float x0 = ray.Start.X, y0 = ray.Start.Y, z0 = ray.Start.Z;
-            float pa = p.Position.X, pb = p.Position.Y, pc = p.Position.Z, d = 10;
-            float denominator = pa * vx + pb * vy + pc * vz;
-            if (denominator >= 0)
-            {
-                float t = -(pa * x0 + pb * y0 + pc * z0 + d) / denominator;
-                i1 = new Intersection(p, t, ray);
-                intersections.Add(i1);
-                return t;
-            }*/
-        }
+        //    /*float vx = ray.Direction.X, vy = ray.Direction.Y, vz = ray.Direction.Z;
+        //    float x0 = ray.Start.X, y0 = ray.Start.Y, z0 = ray.Start.Z;
+        //    float pa = p.Position.X, pb = p.Position.Y, pc = p.Position.Z, d = 10;
+        //    float denominator = pa * vx + pb * vy + pc * vz;
+        //    if (denominator >= 0)
+        //    {
+        //        float t = -(pa * x0 + pb * y0 + pc * z0 + d) / denominator;
+        //        i1 = new Intersection(p, t, ray);
+        //        intersections.Add(i1);
+        //        return t;
+        //    }*/
+        //}
         if (finalresult == -1)
+        {
             finalresult = 8;
+        }
+        //intersections.Add(i1);
         return finalresult;
     }
 
