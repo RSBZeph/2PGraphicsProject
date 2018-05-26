@@ -52,6 +52,8 @@ class Raytracer
                 r = new Ray(C.Position, CreateRayDirection(x, y));
                 r.x = x;
                 r.y = Screen.height - y;
+                if (r.x == 0 && r.y == 256)
+                { }
                 r.Distance = S.CheckIntersect(r);
                 if (y == CheckRayY)
                     arRay[x] = r;
@@ -162,10 +164,8 @@ class Raytracer
 
     Vector3 CreateRayDirection(float x, float y)
     {
-        Vector3 Direction;
         Vector3 ScreenPoint = C.P0 + x * (C.P1 - C.P0) / (Screen.width / 2) + y * (C.P2 - C.P0) / Screen.height;
-        Direction = ScreenPoint - C.Position;
-        return Vector3.Normalize(Direction);
+        return Vector3.Normalize(ScreenPoint - C.Position);
     }
 
     public static int Colour(Vector3 colorVec)
