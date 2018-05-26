@@ -94,7 +94,54 @@ class Scene
         return finalresult;
     }
 
-    public int ShadowRay(Intersection inter)
+    //public void ReflectionRayIntersect(Intersection Inter, Ray ray)//, Vector3 SphereNormal, Vector3 Incoming, Ray ray)
+    //{
+        
+            
+    //            foreach (Sphere S in spheres)
+    //            {
+                    
+    //                Vector3 ReflectionDirection = difference - 2 * (difference * Inter.Normal) * Inter.Normal;
+    //                Vector3 Reflectdifference = i1.Position + 0.0001f * ReflectionDirection - S.Position;
+    //                a = Vector3.Dot(ReflectionDirection, ReflectionDirection);
+    //                b = 2 * Vector3.Dot(Reflectdifference, ReflectionDirection);
+    //                c = Vector3.Dot(Reflectdifference, Reflectdifference) - (S.Radius * S.Radius);
+    //                discriminant = (b * b) - (4 * a * c);
+    //                if (discriminant > 0)
+    //                {
+    //                    result1 = (float)((-b + Math.Sqrt(discriminant)) / (2 * a));
+    //                    result2 = (float)((-b - Math.Sqrt(discriminant)) / (2 * a));
+    //                    finalresult = Math.Min(result1, result2);
+    //                    i1 = new Intersection(S, finalresult, ray, S.Mirror);
+    //                    intersections.Add(i1);
+    //                    // return finalresult;
+    //                }
+    //            }
+    //            // return 8;
+
+            
+        //return 0;
+        //if (sphere.Mirror == true)
+        //{
+        //    Vector3 ReflectionRayDirection = ReflectionRay(i1, i1.Normal, difference);
+
+
+        //    float ReflectionRayDiscriminant = (b * b) - (4 * a * c);
+
+        //    if (ReflectionRayDiscriminant > 0)
+        //    {
+        //        result1 = (float)((-b + Math.Sqrt(discriminant)) / (2 * a));
+        //        result2 = (float)((-b - Math.Sqrt(discriminant)) / (2 * a));
+        //        finalresult = Math.Min(result1, result2);
+        //        i1 = new Intersection(sphere, finalresult, ray, sphere.Mirror);
+        //        intersections.Add(i1);
+        //    }
+
+
+
+        //}
+   // }
+        public int ShadowRay(Intersection inter)
     {
         float attenuation = 0;
         foreach (Light light in lights)
