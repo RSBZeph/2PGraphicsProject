@@ -28,10 +28,10 @@ class Scene
 
     void FillLists()
     {
-        Sphere s1 = new Sphere(new Vector3(4, 5, 5), 1f, new Vector3(0, 0.6f, 0.9f));
+        Sphere s1 = new Sphere(new Vector3(4, 5, 5), 1f, new Vector3(0, 0.6f, 0.9f), false);
         spheres.Add(s1);
 
-        Sphere s2 = new Sphere(new Vector3(6, 5, 4), 0.2f, new Vector3(0, 0.8f, 0.3f));
+        Sphere s2 = new Sphere(new Vector3(6, 5, 4), 0.2f, new Vector3(0, 0.8f, 0.3f), false);
         spheres.Add(s2);
 
         Light l1 = new Light(new Vector3(0, 5, 2), 1f);
@@ -87,7 +87,7 @@ class Scene
                 result2 = (float)((-b - Math.Sqrt(discriminant)) / (2 * a));
                 if (finalresult == -1 || result1 < finalresult || result2 < finalresult)
                     finalresult = Math.Min(result1, result2);
-                i1 = new Intersection(sphere, finalresult, ray);
+                i1 = new Intersection(sphere, finalresult, ray, false);
                 intersections.Add(i1);
             }
         }
