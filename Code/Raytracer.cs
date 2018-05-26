@@ -89,7 +89,7 @@ class Raytracer
         Vector2 Origin = VectorToScreenPos(C.Position);
         Screen.Line((int)(Origin.X - 5), (int)(Origin.Y + 5), (int)(Origin.X), (int)(Origin.Y - 10), Colour(new Vector3(1, 1, 1)));
         Screen.Line((int)(Origin.X + 5), (int)(Origin.Y + 5), (int)(Origin.X), (int)(Origin.Y - 10), Colour(new Vector3(1, 1, 1)));
-        Screen.Line((int)(Origin.X - C.ScreenWidth / 2 * Screen.width / 20), (int)(Origin.Y - C.LeftScreen.DistanceToOrigin * Screen.height / 10), (int)(Origin.X + C.ScreenWidth / 2 * Screen.width / 20), (int)(Origin.Y - C.LeftScreen.DistanceToOrigin * Screen.height / 10), Colour(new Vector3(1, 1, 1)));
+        Screen.Line((int)(Origin.X - C.ScreenWidth / 2 * Screen.width / 20), (int)(Origin.Y - C.DistanceToOrigin * Screen.height / 10), (int)(Origin.X + C.ScreenWidth / 2 * Screen.width / 20), (int)(Origin.Y - C.DistanceToOrigin * Screen.height / 10), Colour(new Vector3(1, 1, 1)));
         Screen.Line(0, CheckRayY, Screen.width / 2, CheckRayY, Colour(RayColor));
 
         int counter = 0;
@@ -130,8 +130,7 @@ class Raytracer
                                 srend = VectorToScreenPos(sr.Start + sr.Direction * sr.MaxDistance);
                                 shadowcolor = new Vector3(1, 1, 1);
                             }
-                            Screen.Line((int)(srstart.X), (int)(srstart.Y), (int)(srend.X), (int)(srend.Y), Colour(shadowcolor));
-                            break;
+                            Screen.Line((int)(srstart.X), (int)(srstart.Y), (int)(srend.X), (int)(srend.Y), Colour(shadowcolor));                            
                         }
                 }
             }
@@ -164,7 +163,7 @@ class Raytracer
     Vector3 CreateRayDirection(float x, float y)
     {
         Vector3 Direction;
-        Vector3 ScreenPoint = C.LeftScreen.P0 + x * (C.LeftScreen.P1 - C.LeftScreen.P0) / (Screen.width / 2) + y * (C.LeftScreen.P2 - C.LeftScreen.P0) / Screen.height;
+        Vector3 ScreenPoint = C.P0 + x * (C.P1 - C.P0) / (Screen.width / 2) + y * (C.P2 - C.P0) / Screen.height;
         Direction = ScreenPoint - C.Position;
         return Vector3.Normalize(Direction);
     }
