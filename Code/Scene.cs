@@ -87,13 +87,38 @@ class Scene
             {
                 result1 = (float)((-b + Math.Sqrt(discriminant)) / (2 * a));
                 result2 = (float)((-b - Math.Sqrt(discriminant)) / (2 * a));
-                if (result1 > ray.MinDistance || result2 > ray.MinDistance)
-                    if (finalresult == -1 || result1 < finalresult && result1 > ray.MinDistance || result2 < finalresult && result2 > ray.MinDistance)
+
+                if (result1 > ray.MinDistance && (finalresult == -1 || result1 < finalresult))
+                {
+                    if (result2 > ray.MinDistance)
                     {
                         finalresult = Math.Min(result1, result2);
                         replaced = true;
                         Object = sphere;
                     }
+                    else
+                    {
+                        finalresult = result1;
+                        replaced = true;
+                        Object = sphere;
+                    }
+                }
+
+                if (result2 > ray.MinDistance && (finalresult == -1 || result2 < finalresult))
+                {
+                    if (result1 > ray.MinDistance)
+                    {
+                        finalresult = Math.Min(result1, result2);
+                        replaced = true;
+                        Object = sphere;
+                    }
+                    else
+                    {
+                        finalresult = result2;
+                        replaced = true;
+                        Object = sphere;
+                    }
+                }
             }
         }
         if (replaced)
