@@ -17,6 +17,8 @@ class Scene
     float a, b, c, discriminant, result1, result2, finalresult, shadowlength, precalc1;
     Vector3 difference1, difference2, difference3, shadowray;
     Ray SR;
+    float dot = 100;
+    int Counter = 0;
 
     public Scene(Surface sur)
     {
@@ -85,7 +87,7 @@ class Scene
                 result2 = (float)((-b - Math.Sqrt(discriminant)) / (2 * a));
                 if (finalresult == -1 || result1 < finalresult || result2 < finalresult)
                     finalresult = Math.Min(result1, result2);
-                i1 = new Intersection(sphere, finalresult, ray, sphere.Mirror);
+                i1 = new Intersection(sphere, finalresult, ray);
                 intersections.Add(i1);
             }
         }
