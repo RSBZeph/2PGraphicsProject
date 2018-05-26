@@ -17,6 +17,7 @@ class Intersection
         Ray = r;
         Position = Ray.Start + Ray.Direction * dis;
         Color = prim.Color;
-        Normal = Vector3.Normalize(Position - Object.Position);
+        if (Object is Sphere)
+            Normal = Vector3.Normalize(Position - Object.Position);
     }
 }
