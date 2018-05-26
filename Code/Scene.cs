@@ -32,6 +32,9 @@ class Scene
         Sphere s2 = new Sphere(new Vector3(8, 5, 7.5f), 1f, new Vector3(0, 0.6f, 0.5f));
         spheres.Add(s2);
 
+        Plane p1 = new Plane(new Vector3(3, 2, 7.5f), 4f, new Vector3(0.2f, 0.6f, 0.4f));
+        planes.Add(p1);
+
         Light l2 = new Light(new Vector3(10, 5, 7), 3f);
         lights.Add(l2);
 
@@ -89,6 +92,29 @@ class Scene
                 intersections.Add(i1);
                 return finalresult;
             }
+        }
+        foreach (Plane p in planes)
+        {
+            float t = -(Vector3.Dot(ray.Start, p.NPlane) + p.DistanceToOrigin) / (Vector3.Dot(ray.Direction, p.NPlane));
+            if (t >= 0)// && t < intersect.intersctDist)
+            {
+                i1 = new Intersection(p, t, ray);
+                intersections.Add(i1);
+                return t;
+                //intersect = new Intersection(t, plane, r.origin + r.direction * t, -plane.normal);
+            }
+
+            /*float vx = ray.Direction.X, vy = ray.Direction.Y, vz = ray.Direction.Z;
+            float x0 = ray.Start.X, y0 = ray.Start.Y, z0 = ray.Start.Z;
+            float pa = p.Position.X, pb = p.Position.Y, pc = p.Position.Z, d = 10;
+            float denominator = pa * vx + pb * vy + pc * vz;
+            if (denominator >= 0)
+            {
+                float t = -(pa * x0 + pb * y0 + pc * z0 + d) / denominator;
+                i1 = new Intersection(p, t, ray);
+                intersections.Add(i1);
+                return t;
+            }*/
         }
         return 8;
     }
@@ -155,10 +181,6 @@ class Scene
                     }
                 }
             }
-        }
-        foreach (Sphere s in spheres)
-        {
-
         }
     }
 
