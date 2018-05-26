@@ -17,7 +17,6 @@ class Scene
     float a, b, c, discriminant, result1, result2, finalresult, shadowlength, precalc1;
     Vector3 difference1, difference2, difference3, shadowray;
     Ray SR;
-    float dot = 100;
 
     public Scene(Surface sur)
     {
@@ -33,10 +32,10 @@ class Scene
         Sphere s2 = new Sphere(new Vector3(6, 5, 4), 0.2f, new Vector3(0, 0.8f, 0.3f));
         spheres.Add(s2);
 
-        //Light l1 = new Light(new Vector3(0, 5, 2), 5f);
-        //lights.Add(l1);
+        Light l1 = new Light(new Vector3(0, 5, 2), 1f);
+        lights.Add(l1);
 
-        Light l2 = new Light(new Vector3(10, 5, 3), 7f);
+        Light l2 = new Light(new Vector3(10, 5, 3), 5f);
         lights.Add(l2);
     }
 
