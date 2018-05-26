@@ -17,6 +17,7 @@ class Scene
     float a, b, c, discriminant, result1, result2, finalresult, shadowlength, precalc1;
     Vector3 difference, shadowray;
     Ray SR;
+    int Counter = 0;
 
     public Scene(Surface sur)
     {
@@ -26,10 +27,10 @@ class Scene
 
     void FillLists()
     {
-        Sphere s1 = new Sphere(new Vector3(3, 5, 7), 3f, new Vector3(0.5f, 0.3f, 0));
+        Sphere s1 = new Sphere(new Vector3(3, 5, 7), 3f, new Vector3(0.5f, 0.3f, 0), true);
         spheres.Add(s1);
 
-        Sphere s2 = new Sphere(new Vector3(8, 5, 7.5f), 1f, new Vector3(0, 0.6f, 0.5f));
+        Sphere s2 = new Sphere(new Vector3(8, 5, 7.5f), 1f, new Vector3(0, 0.6f, 0.5f), false);
         spheres.Add(s2);
 
         Light l2 = new Light(new Vector3(10, 5, 7), 3f);
@@ -85,15 +86,72 @@ class Scene
                 result1 = (float)((-b + Math.Sqrt(discriminant)) / (2 * a));
                 result2 = (float)((-b - Math.Sqrt(discriminant)) / (2 * a));
                 finalresult = Math.Min(result1, result2);
-                i1 = new Intersection(sphere, finalresult, ray);
-                intersections.Add(i1);
-                return finalresult;
+                i1 = new Intersection(sphere, finalresult, ray, sphere.Mirror);
+                if (sphere.Mirror && Counter < 10)
+                {
+                    Counter++;
+                    ray = new Ray(i1.Position, i1.Position - 2 * (difference * i1.Normal) * i1.Normal);
+                    CheckIntersect(ray);  
+                }
+                else
+                {
+                    intersections.Add(i1);
+
+                    return finalresult;
+                }
             }
         }
         return 8;
     }
 
-    public int ShadowRay(Intersection inter)
+    //public void ReflectionRayIntersect(Intersection Inter, Ray ray)//, Vector3 SphereNormal, Vector3 Incoming, Ray ray)
+    //{
+        
+            
+    //            foreach (Sphere S in spheres)
+    //            {
+                    
+    //                Vector3 ReflectionDirection = difference - 2 * (difference * Inter.Normal) * Inter.Normal;
+    //                Vector3 Reflectdifference = i1.Position + 0.0001f * ReflectionDirection - S.Position;
+    //                a = Vector3.Dot(ReflectionDirection, ReflectionDirection);
+    //                b = 2 * Vector3.Dot(Reflectdifference, ReflectionDirection);
+    //                c = Vector3.Dot(Reflectdifference, Reflectdifference) - (S.Radius * S.Radius);
+    //                discriminant = (b * b) - (4 * a * c);
+    //                if (discriminant > 0)
+    //                {
+    //                    result1 = (float)((-b + Math.Sqrt(discriminant)) / (2 * a));
+    //                    result2 = (float)((-b - Math.Sqrt(discriminant)) / (2 * a));
+    //                    finalresult = Math.Min(result1, result2);
+    //                    i1 = new Intersection(S, finalresult, ray, S.Mirror);
+    //                    intersections.Add(i1);
+    //                    // return finalresult;
+    //                }
+    //            }
+    //            // return 8;
+
+            
+        //return 0;
+        //if (sphere.Mirror == true)
+        //{
+        //    Vector3 ReflectionRayDirection = ReflectionRay(i1, i1.Normal, difference);
+
+
+        //    float ReflectionRayDiscriminant = (b * b) - (4 * a * c);
+
+        //    if (ReflectionRayDiscriminant > 0)
+        //    {
+        //        result1 = (float)((-b + Math.Sqrt(discriminant)) / (2 * a));
+        //        result2 = (float)((-b - Math.Sqrt(discriminant)) / (2 * a));
+        //        finalresult = Math.Min(result1, result2);
+        //        i1 = new Intersection(sphere, finalresult, ray, sphere.Mirror);
+        //        intersections.Add(i1);
+        //    }
+
+
+
+        //}
+   // }
+        public int ShadowRay(Intersection inter)
     {
         float attenuation = 0;
         foreach (Light light in lights)
@@ -128,6 +186,8 @@ class Scene
         }
         return Colour(inter.Color * attenuation);
     }
+
+  
 
     void ShadowRayIntersect(Intersection inter, float maxdis)
     {

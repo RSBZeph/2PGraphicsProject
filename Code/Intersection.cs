@@ -9,8 +9,8 @@ class Intersection
     public Primitive Object;
     public float Distance, ColorFactor = 1;
     public Ray Ray;
-
-    public Intersection(Primitive prim, float dis, Ray r)
+    public bool OnMirror;
+    public Intersection(Primitive prim, float dis, Ray r, bool onmirror)
     {
         Object = prim;
         Distance = dis;
@@ -18,5 +18,6 @@ class Intersection
         Position = Ray.Start + Ray.Direction * dis;
         Color = prim.Color;
         Normal = Vector3.Normalize(Position - Object.Position);
+        OnMirror = onmirror;
     }
 }
