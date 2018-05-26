@@ -55,7 +55,7 @@ class Raytracer
                 r.Distance = S.CheckIntersect(r);
                 if (y == CheckRayY)
                     arRay[x] = r;
-                Screen.pixels[x + y * Screen.width] = Colour(new Vector3(0, 0, 0));
+                Screen.pixels[x + y * Screen.width] = Colour(new Vector3(0.2f, 0, 0));
             }
 
         foreach (Intersection I in S.intersections)
@@ -134,6 +134,20 @@ class Raytracer
             counter--;
         }
         S.DrawPrimitivesDebug();
+
+        //foreach (Ray sr in S.shadowrays)
+        //{
+        //    if (sr.y == CheckRayY)
+        //    {
+        //        srstart = VectorToScreenPos(sr.Start);
+        //        if (sr.Occluded)
+        //        {
+        //            srend = VectorToScreenPos(sr.Start + sr.Direction * sr.Distance);
+        //            shadowcolor = new Vector3(0.7f, 0.1f, 0);
+        //            Screen.Line((int)(srstart.X), (int)(srstart.Y), (int)(srend.X), (int)(srend.Y), Colour(shadowcolor));
+        //        }
+        //    }
+        //}
         S.shadowrays.Clear();
     }
 

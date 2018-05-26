@@ -18,6 +18,5 @@ class Intersection
         Position = Ray.Start + Ray.Direction * dis;
         Color = prim.Color;
         Normal = Vector3.Normalize(Position - Object.Position);
-        OnMirror = onmirror;
     }
 }
