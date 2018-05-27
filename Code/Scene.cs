@@ -166,8 +166,7 @@ class Scene
                 reflectrays.Add(ray);
                 FromMirror = false;
             }
-        }
-        }
+        }        
         return finalresult;
     }
 
