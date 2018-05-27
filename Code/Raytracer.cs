@@ -26,6 +26,7 @@ class Raytracer
 
     public void Render()
     {
+        //Screen.pixels[0 + 512 * Screen.width] = Colour(new Vector3(0.4f, 0.4f, 0.4f));
         KBS = Keyboard.GetState();
         if (KBS.IsKeyDown(Key.A))
             C.Position.X -= 0.25f;
@@ -39,15 +40,14 @@ class Raytracer
             C.Position.Y -= 0.25f;
         else if (KBS.IsKeyDown(Key.E))
             C.Position.Y += 0.25f;
-
+        C.Tick();
         Draw3D();
-        DrawDebug();
     }
 
     void Draw3D()
     {
         for (int x = 0; x < Screen.width / 2; x++)
-            for (int y = 0; y < Screen.height; y++)
+            for (int y = 1; y < Screen.height - 1; y++)
             {
                 r = new Ray(C.Position, CreateRayDirection(x, y));
                 r.x = x;
@@ -55,12 +55,24 @@ class Raytracer
                 r.Distance = S.CheckIntersect(r);
                 if (y == CheckRayY)
                     arRay[x] = r;
-                Screen.pixels[x + y * Screen.width] = Colour(new Vector3(0.2f, 0, 0));
             }
+
+        DrawDebug();
+
+        for (int x = 0; x < Screen.width / 2; x++)
+            for (int y = 0; y < Screen.height; y++)
+                Screen.pixels[x + y * Screen.width] = Colour(new Vector3(0.2f, 0, 0));
 
         foreach (Intersection I in S.intersections)
         {
-            Screen.pixels[I.Ray.x + I.Ray.y * Screen.width] = S.ShadowRay(I);
+            //if (I.OnMirror)
+            //{
+
+            //}
+            //else
+            //{
+                Screen.pixels[I.Ray.x + I.Ray.y * Screen.width] = S.ShadowRay(I);
+            //}
         }
         S.intersections.Clear();
     }
@@ -74,7 +86,6 @@ class Raytracer
             }
         
         RayColor = new Vector3(0.3f, 0.8f, 0.5f);
-        Screen.Line(512, 0, 512, 512, Colour(new Vector3(1, 1, 1)));
         Vector2 Origin = VectorToScreenPos(C.Position);
         Screen.Line((int)(Origin.X - 5), (int)(Origin.Y + 5), (int)(Origin.X), (int)(Origin.Y - 10), Colour(new Vector3(1, 1, 1)));
         Screen.Line((int)(Origin.X + 5), (int)(Origin.Y + 5), (int)(Origin.X), (int)(Origin.Y - 10), Colour(new Vector3(1, 1, 1)));
@@ -142,6 +153,7 @@ class Raytracer
         //    }
         //}
         S.shadowrays.Clear();
+        Screen.Line(512, 0, 512, 512, Colour(new Vector3(1, 1, 1)));
     }
 
     Vector2 VectorToScreenPos(Vector3 v)
