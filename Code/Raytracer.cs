@@ -9,7 +9,6 @@ class Raytracer
     Camera C;
     public Surface Screen;
     Scene S;
-    Ray r;
     Ray[] arRay;
     int CheckRayY;
     Vector3 RayColor;
@@ -48,11 +47,15 @@ class Raytracer
         for (int x = 0; x < Screen.width / 2; x++)
             for (int y = 1; y < Screen.height - 1; y++)
             {
-                r = new Ray(C.Position, CreateRayDirection(x, y));
+                Ray r = new Ray(C.Position, CreateRayDirection(x, y));
                 r.x = x;
                 r.y = Screen.height - y;
                 r.MinDistance = CreateMinDistance(x, y);
                 r.Distance = S.CheckIntersect(r);
+                if (r.Distance == -1)
+                {
+                    r.Distance = 10;
+                }
                 if (y == CheckRayY)
                     arRay[x] = r;
             }
@@ -65,14 +68,15 @@ class Raytracer
 
         foreach (Intersection I in S.intersections)
         {
-            //if (I.OnMirror)
-            //{
-
-            //}
-            //else
-            //{
+            if (I.Object.Mirror)
+            {
+                S.recursions = 0;
+                Screen.pixels[I.Ray.x + I.Ray.y * Screen.width] = S.CheckReflectIntersect(I);
+            }
+            else
+            {
                 Screen.pixels[I.Ray.x + I.Ray.y * Screen.width] = S.ShadowRay(I);
-            //}
+            }
         }
         S.intersections.Clear();
     }
@@ -94,7 +98,7 @@ class Raytracer
 
         int counter = 0;
         float t;
-        Vector2 end, srstart, srend;
+        Vector2 end, srstart, srend, rrstart, rrend;
         Vector3 shadowcolor = new Vector3(1, 1, 1);
 
         foreach (Ray r in arRay)
@@ -133,11 +137,23 @@ class Raytracer
                             Screen.Line((int)(srstart.X), (int)(srstart.Y), (int)(srend.X), (int)(srend.Y), Colour(shadowcolor));                            
                         }
                 }
+
+                foreach (Ray rr in S.reflectrays)
+                {
+                    if (r.y == rr.y)
+                        if (r.x == rr.x)
+                        {
+                            rrstart = VectorToScreenPos(rr.Start);
+                            rrend = VectorToScreenPos(rr.Start + rr.Direction * rr.Distance);
+                            Screen.Line((int)(rrstart.X), (int)(rrstart.Y), (int)(rrend.X), (int)(rrend.Y), Colour(new Vector3(0, 0, 0.8f)));
+                        }
+                }
             }
             counter--;
         }
         S.DrawPrimitivesDebug();
 
+        S.reflectrays.Clear();
         //foreach (Ray sr in S.shadowrays)
         //{
         //    if (sr.y == CheckRayY)
