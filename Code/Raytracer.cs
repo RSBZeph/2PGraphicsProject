@@ -26,20 +26,19 @@ class Raytracer
 
     public void Render()
     {
-        //Screen.pixels[0 + 512 * Screen.width] = Colour(new Vector3(0.4f, 0.4f, 0.4f));
         KBS = Keyboard.GetState();
         if (KBS.IsKeyDown(Key.A))
-            C.Position.X -= 0.25f;
+            C.Position -= 0.25f * C.Right;
         else if (KBS.IsKeyDown(Key.D))
-            C.Position.X += 0.25f;
+            C.Position += 0.25f * C.Right;
         if (KBS.IsKeyDown(Key.S))
-            C.Position.Z -= 0.25f;
+            C.Position -= 0.25f * C.Direction;
         else if (KBS.IsKeyDown(Key.W))
-            C.Position.Z += 0.25f;
+            C.Position += 0.25f * C.Direction;
         if (KBS.IsKeyDown(Key.Q))
-            C.Position.Y -= 0.25f;
+            C.Position -= 0.25f * C.Up;
         else if (KBS.IsKeyDown(Key.E))
-            C.Position.Y += 0.25f;
+            C.Position += 0.25f * C.Up;
         C.Tick();
         Draw3D();
     }
@@ -52,6 +51,7 @@ class Raytracer
                 r = new Ray(C.Position, CreateRayDirection(x, y));
                 r.x = x;
                 r.y = Screen.height - y;
+                r.MinDistance = CreateMinDistance(x, y);
                 r.Distance = S.CheckIntersect(r);
                 if (y == CheckRayY)
                     arRay[x] = r;
@@ -89,7 +89,7 @@ class Raytracer
         Vector2 Origin = VectorToScreenPos(C.Position);
         Screen.Line((int)(Origin.X - 5), (int)(Origin.Y + 5), (int)(Origin.X), (int)(Origin.Y - 10), Colour(new Vector3(1, 1, 1)));
         Screen.Line((int)(Origin.X + 5), (int)(Origin.Y + 5), (int)(Origin.X), (int)(Origin.Y - 10), Colour(new Vector3(1, 1, 1)));
-        Screen.Line((int)(Origin.X - C.ScreenWidth / 2 * Screen.width / 20), (int)(Origin.Y - C.LeftScreen.Distance * Screen.height / 10), (int)(Origin.X + C.ScreenWidth / 2 * Screen.width / 20), (int)(Origin.Y - C.LeftScreen.Distance * Screen.height / 10), Colour(new Vector3(1, 1, 1)));
+        Screen.Line((int)(Origin.X - C.ScreenWidth / 2 * Screen.width / 20), (int)(Origin.Y - C.DistanceToOrigin * Screen.height / 10), (int)(Origin.X + C.ScreenWidth / 2 * Screen.width / 20), (int)(Origin.Y - C.DistanceToOrigin * Screen.height / 10), Colour(new Vector3(1, 1, 1)));
         Screen.Line(0, CheckRayY, Screen.width / 2, CheckRayY, Colour(RayColor));
 
         int counter = 0;
@@ -130,8 +130,7 @@ class Raytracer
                                 srend = VectorToScreenPos(sr.Start + sr.Direction * sr.MaxDistance);
                                 shadowcolor = new Vector3(1, 1, 1);
                             }
-                            Screen.Line((int)(srstart.X), (int)(srstart.Y), (int)(srend.X), (int)(srend.Y), Colour(shadowcolor));
-                            break;
+                            Screen.Line((int)(srstart.X), (int)(srstart.Y), (int)(srend.X), (int)(srend.Y), Colour(shadowcolor));                            
                         }
                 }
             }
@@ -163,10 +162,14 @@ class Raytracer
 
     Vector3 CreateRayDirection(float x, float y)
     {
-        Vector3 Direction;
-        Vector3 ScreenPoint = C.LeftScreen.P0 + x * (C.LeftScreen.P1 - C.LeftScreen.P0) / (Screen.width / 2) + y * (C.LeftScreen.P2 - C.LeftScreen.P0) / Screen.height;
-        Direction = ScreenPoint - C.Position;
-        return Vector3.Normalize(Direction);
+        Vector3 ScreenPoint = C.P0 + x * (C.P1 - C.P0) / (Screen.width / 2) + y * (C.P2 - C.P0) / Screen.height;
+        return Vector3.Normalize(ScreenPoint - C.Position);
+    }
+
+    float CreateMinDistance(float x, float y)
+    {
+        Vector3 ScreenPoint = C.P0 + x * (C.P1 - C.P0) / (Screen.width / 2) + y * (C.P2 - C.P0) / Screen.height;
+        return S.Length(ScreenPoint - C.Position);
     }
 
     public static int Colour(Vector3 colorVec)
@@ -181,7 +184,7 @@ class Raytracer
     {
         public Vector3 Start, Direction;
         public int x, y;
-        public float Distance, MaxDistance;
+        public float Distance, MaxDistance, MinDistance;
         public bool Occluded;
 
         public Ray(Vector3 a, Vector3 b)
@@ -192,6 +195,7 @@ class Raytracer
             y = -1;
             Distance = 10;
             MaxDistance = 1;
+            MinDistance = 1;
             Occluded = false;
         }
     }

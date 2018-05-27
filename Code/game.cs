@@ -4,7 +4,6 @@ using System.IO;
 using Template;
 using OpenTK;
 
-
 class Game
 {
     public Surface screen;

@@ -5,14 +5,17 @@ using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
+using System.Diagnostics;
 
 namespace Template
 {
     public class OpenTKApp : GameWindow
     {
+        Stopwatch sw = new Stopwatch();
         static int screenID;
         static Game game;
         static bool terminated = false;
+
         protected override void OnLoad(EventArgs e)
         {
             // called upon app init
@@ -51,7 +54,14 @@ namespace Template
             GL.Enable(EnableCap.Texture2D);
             GL.Disable(EnableCap.DepthTest);
             GL.Color3(1.0f, 1.0f, 1.0f);
+
+            sw.Stop();
+            if (sw.ElapsedMilliseconds != 0)
+                Console.WriteLine(1 / (sw.ElapsedMilliseconds / 1000f));
+            sw.Reset();
             game.Tick();
+            sw.Start();
+
             if (terminated)
             {
                 Exit();

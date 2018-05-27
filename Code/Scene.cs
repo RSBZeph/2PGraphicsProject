@@ -1,7 +1,6 @@
 ﻿using OpenTK;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using Template;
 using static Raytracer;
 
@@ -10,6 +9,7 @@ class Scene
     List<Sphere> spheres = new List<Sphere>();
     List<Plane> planes = new List<Plane>();
     List<Light> lights = new List<Light>();
+    Camera C;
     public List<Intersection> intersections = new List<Intersection>();
     public List<Ray> shadowrays = new List<Ray>();
     Intersection i1;
@@ -18,17 +18,17 @@ class Scene
     Vector3 difference1, difference2, difference3, shadowray;
     Ray SR;
     float dot = 100;
-    int Counter = 0;
 
     public Scene(Surface sur)
     {
         Screen = sur;
         FillLists();
+        C = Camera.Instance();
     }
 
     void FillLists()
     {
-        Sphere s1 = new Sphere(new Vector3(4, 5, 5), 1f, new Vector3(0, 0.6f, 0.9f), false);
+        Sphere s1 = new Sphere(new Vector3(4, 5, 5), 2f, new Vector3(0, 0.6f, 0.9f), false);
         spheres.Add(s1);
 
         Sphere s2 = new Sphere(new Vector3(6, 5, 4), 0.2f, new Vector3(0, 0.8f, 0.3f), false);
@@ -37,10 +37,7 @@ class Scene
         Light l1 = new Light(new Vector3(0, 5, 2), 1f);
         lights.Add(l1);
 
-        Plane p1 = new Plane(new Vector3(0, -1, 0), 6f, new Vector3(1f, 0.5f, 0.4f));
-        planes.Add(p1);
-
-        Light l2 = new Light(new Vector3(10, 5, 3), 5f);
+        Light l2 = new Light(new Vector3(10, 5, 8), 5f);
         lights.Add(l2);
     }
 
@@ -76,6 +73,8 @@ class Scene
 
     public float CheckIntersect(Ray ray)
     {
+        bool replaced = false;
+        Primitive Object = null;
         finalresult = -1;
         Primitive prim = null;
         foreach (Sphere sphere in spheres)
@@ -89,33 +88,44 @@ class Scene
             {
                 result1 = (float)((-b + Math.Sqrt(discriminant)) / (2 * a));
                 result2 = (float)((-b - Math.Sqrt(discriminant)) / (2 * a));
-                if (finalresult == -1 || result1 < finalresult || result2 < finalresult)
-                    finalresult = Math.Min(result1, result2);
-                prim = sphere;
-            }
-            //foreach (Plane plane in planes)
-            //{
-            //    float vx = ray.Direction.X, vy = ray.Direction.Y, vz = ray.Direction.Z;
-            //    float x0 = ray.Start.X, y0 = ray.Start.Y, z0 = ray.Start.Z;
-            //    float pa = plane.Position.X, pb = plane.Position.Y, pc = plane.Position.Z, d = plane.Distance;
-            //    float denominator = pa * vx + pb * vy + pc * vz;
-            //    if (denominator >= 0)
-            //    {
-            //        float t = -(pa * x0 + pb * y0 + pc * z0 + d) / denominator;
-            //        if (t < finalresult)
-            //        {
-            //            finalresult = t;
-            //            prim = plane;
-            //        }
-            //    }
-            //    //float t = -((Vector3.Dot(ray.Start, plane.NPlane) + plane.DistanceToOrigin) / (Vector3.Dot(ray.Direction, plane.NPlane)));
-            //    //if (t <= 0 && t < finalresult)
-            //    //{
-            //    //    finalresult = t;
-            //    //    prim = plane;
-            //    //}
-            //}
 
+                if (result1 > ray.MinDistance && (finalresult == -1 || result1 < finalresult))
+                {
+                    if (result2 > ray.MinDistance)
+                    {
+                        finalresult = Math.Min(result1, result2);
+                        replaced = true;
+                        Object = sphere;
+                    }
+                    else
+                    {
+                        finalresult = result1;
+                        replaced = true;
+                        Object = sphere;
+                    }
+                }
+
+                if (result2 > ray.MinDistance && (finalresult == -1 || result2 < finalresult))
+                {
+                    if (result1 > ray.MinDistance)
+                    {
+                        finalresult = Math.Min(result1, result2);
+                        replaced = true;
+                        Object = sphere;
+                    }
+                    else
+                    {
+                        finalresult = result2;
+                        replaced = true;
+                        Object = sphere;
+                    }
+                }
+            }
+        }
+        if (replaced)
+        {
+            i1 = new Intersection(Object, finalresult, ray, false);
+            intersections.Add(i1);
         }
         if (finalresult == -1)
         {
@@ -131,57 +141,61 @@ class Scene
 
     //public void ReflectionRayIntersect(Intersection Inter, Ray ray)//, Vector3 SphereNormal, Vector3 Incoming, Ray ray)
     //{
-        
-            
-    //            foreach (Sphere S in spheres)
-    //            {
-                    
-    //                Vector3 ReflectionDirection = difference - 2 * (difference * Inter.Normal) * Inter.Normal;
-    //                Vector3 Reflectdifference = i1.Position + 0.0001f * ReflectionDirection - S.Position;
-    //                a = Vector3.Dot(ReflectionDirection, ReflectionDirection);
-    //                b = 2 * Vector3.Dot(Reflectdifference, ReflectionDirection);
-    //                c = Vector3.Dot(Reflectdifference, Reflectdifference) - (S.Radius * S.Radius);
-    //                discriminant = (b * b) - (4 * a * c);
-    //                if (discriminant > 0)
-    //                {
-    //                    result1 = (float)((-b + Math.Sqrt(discriminant)) / (2 * a));
-    //                    result2 = (float)((-b - Math.Sqrt(discriminant)) / (2 * a));
-    //                    finalresult = Math.Min(result1, result2);
-    //                    i1 = new Intersection(S, finalresult, ray, S.Mirror);
-    //                    intersections.Add(i1);
-    //                    // return finalresult;
-    //                }
-    //            }
-    //            // return 8;
+    //    foreach (Sphere S in spheres)
+    //    {
 
-            
-        //return 0;
-        //if (sphere.Mirror == true)
-        //{
-        //    Vector3 ReflectionRayDirection = ReflectionRay(i1, i1.Normal, difference);
+    //        Vector3 ReflectionDirection = difference - 2 * (difference * Inter.Normal) * Inter.Normal;
+    //        Vector3 Reflectdifference = i1.Position + 0.0001f * ReflectionDirection - S.Position;
+    //        a = Vector3.Dot(ReflectionDirection, ReflectionDirection);
+    //        b = 2 * Vector3.Dot(Reflectdifference, ReflectionDirection);
+    //        c = Vector3.Dot(Reflectdifference, Reflectdifference) - (S.Radius * S.Radius);
+    //        discriminant = (b * b) - (4 * a * c);
+    //        if (discriminant > 0)
+    //        {
+    //            result1 = (float)((-b + Math.Sqrt(discriminant)) / (2 * a));
+    //            result2 = (float)((-b - Math.Sqrt(discriminant)) / (2 * a));
+    //            finalresult = Math.Min(result1, result2);
+    //            i1 = new Intersection(S, finalresult, ray, S.Mirror);
+    //            intersections.Add(i1);
+    //            // return finalresult;
+    //        }
+    //    }
+    //    // return 8;            
+    //    return 0;
+    //    if (sphere.Mirror == true)
+    //    {
+    //        Vector3 ReflectionRayDirection = ReflectionRay(i1, i1.Normal, difference);
 
+    //        float ReflectionRayDiscriminant = (b * b) - (4 * a * c);
 
-        //    float ReflectionRayDiscriminant = (b * b) - (4 * a * c);
+    //        if (ReflectionRayDiscriminant > 0)
+    //        {
+    //            result1 = (float)((-b + Math.Sqrt(discriminant)) / (2 * a));
+    //            result2 = (float)((-b - Math.Sqrt(discriminant)) / (2 * a));
+    //            finalresult = Math.Min(result1, result2);
+    //            i1 = new Intersection(sphere, finalresult, ray, sphere.Mirror);
+    //            intersections.Add(i1);
+    //        }
+    //    }
+    //}
 
-        //    if (ReflectionRayDiscriminant > 0)
-        //    {
-        //        result1 = (float)((-b + Math.Sqrt(discriminant)) / (2 * a));
-        //        result2 = (float)((-b - Math.Sqrt(discriminant)) / (2 * a));
-        //        finalresult = Math.Min(result1, result2);
-        //        i1 = new Intersection(sphere, finalresult, ray, sphere.Mirror);
-        //        intersections.Add(i1);
-        //    }
-
-
-
-        //}
-   // }
-        public int ShadowRay(Intersection inter)
+    public int ShadowRay(Intersection inter)
     {
         float attenuation = 0;
+        bool nothing = false;
+
+        if (inter.Ray.x == 60 && inter.Ray.y == 252)
+        {
+
+        }
         foreach (Light light in lights)
         {
             difference2 = light.Position - inter.Position;
+            if (Vector3.Dot(inter.Position, C.Direction) <= 0)
+            {
+                nothing = true;
+                continue;
+            }
             shadowray = Vector3.Normalize(difference2);
             shadowlength = Math.Abs(Length(difference2));
             SR = new Ray(inter.Position - difference2 * 0.0001f, shadowray)
@@ -200,8 +214,12 @@ class Scene
                     attenuation = 0;
             }
             shadowrays.Add(SR);
+            nothing = false;
         }
-        return Colour(inter.Color * attenuation);
+        if (!nothing)
+            return Colour(inter.Color * attenuation);
+        else
+            return Colour(new Vector3(0.2f, 0, 0));
     }
 
     void ShadowRayIntersect()
