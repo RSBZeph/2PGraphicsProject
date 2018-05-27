@@ -16,7 +16,7 @@ class Scene
     Intersection i1;
     public Surface Screen;
     float a, b, c, discriminant, result1, result2, finalresult, shadowlength, precalc1;
-    Vector3 difference1, difference2, difference3, shadowray, MirrorColor;
+    Vector3 difference1, difference2, difference3, shadowray, MirrorColor,test = Vector3.Zero;
     bool FromMirror = false;
     int recursioncap = 5;
     public int recursions;
@@ -292,7 +292,6 @@ class Scene
 
         //    }
         //}
-        return;
         return ray;
     }
 
