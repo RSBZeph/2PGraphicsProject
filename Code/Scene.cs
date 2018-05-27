@@ -41,6 +41,9 @@ class Scene
         Sphere s2 = new Sphere(new Vector3(5, 5, 7), 0.5f, new Vector3(0, 0.8f, 0.3f), false);
         spheres.Add(s2);
 
+        Plane p1 = new Plane(new Vector3(0, -1, 0), 6f, new Vector3(1f, 1f, 1f));
+        planes.Add(p1);
+
         Light l1 = new Light(new Vector3(5, 5, 0), 5f);
         lights.Add(l1);
 
@@ -129,6 +132,28 @@ class Scene
                 }
             }
         }
+        //foreach (Plane plane in planes)
+        //{
+        //    float vx = ray.Direction.X, vy = ray.Direction.Y, vz = ray.Direction.Z;
+        //    float x0 = ray.Start.X, y0 = ray.Start.Y, z0 = ray.Start.Z;
+        //    float pa = plane.Position.X, pb = plane.Position.Y, pc = plane.Position.Z, d = plane.Distance;
+        //    float denominator = pa * vx + pb * vy + pc * vz;
+        //    if (denominator >= 0)
+        //    {
+        //        float t = -(pa * x0 + pb * y0 + pc * z0 + d) / denominator;
+        //        if (t < finalresult)
+        //        {
+        //            finalresult = t;
+        //            Object = plane;
+        //        }
+        //    }
+        //    //float t = -((Vector3.Dot(ray.Start, plane.NPlane) + plane.DistanceToOrigin) / (Vector3.Dot(ray.Direction, plane.NPlane)));
+        //    //if (t <= 0 && t < finalresult)
+        //    //{
+        //    //    finalresult = t;
+        //    //    prim = plane;
+        //    //}
+        //}
         if (replaced)
         {
             i1 = new Intersection(Object, finalresult, ray);
@@ -141,6 +166,7 @@ class Scene
                 reflectrays.Add(ray);
                 FromMirror = false;
             }
+        }
         }
         return finalresult;
     }
