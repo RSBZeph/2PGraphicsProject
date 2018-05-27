@@ -13,13 +13,13 @@ class Camera
         double a = Math.Asin((FOV / 180) * Math.PI);
         LeftScreen = new Plane(new Vector3(3, 2, 7.5f), 4f, new Vector3(0.2f, 0.6f, 0.4f));
         ScreenWidth = 2;
-        LeftScreen.DistanceToOrigin = (float)(1 / Math.Sin(((FOV / 2) / 180) * Math.PI));
+        LeftScreen.Distance = (float)(1 / Math.Sin(((FOV / 2) / 180) * Math.PI));
         NormDirection = Vector3.Normalize(Direction);
     }
 
     public void Tick()
     {
-        ScreenCentre = Position + Direction * LeftScreen.DistanceToOrigin;
+        ScreenCentre = Position + Direction * LeftScreen.Distance;
         LeftScreen.P0 = ScreenCentre + new Vector3(-1, -1, 0);
         LeftScreen.P1 = ScreenCentre + new Vector3(1, -1, 0);
         LeftScreen.P2 = ScreenCentre + new Vector3(-1, 1, 0);

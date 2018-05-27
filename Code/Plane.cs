@@ -8,13 +8,13 @@ using OpenTK;
 class Plane : Primitive
 {
     public Vector3 NPlane, P0, P1, P2;
-    public float DistanceToOrigin, width, height;
+    public float Distance, width, height;
 
-    public Plane(Vector3 pos, float distanceOrgin, Vector3 Col)
+    public Plane(Vector3 normal, float distanceOrgin, Vector3 Col)
     {
-        Position = pos;
-        NPlane = Vector3.Normalize(pos);
-        DistanceToOrigin = distanceOrgin;
+        Position = normal;//?
+        NPlane = Vector3.Normalize(normal);
+        Distance = distanceOrgin;
         Color = Col;
     }
 }

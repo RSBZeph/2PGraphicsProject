@@ -36,7 +36,8 @@ class Scene
 
         Light l1 = new Light(new Vector3(0, 5, 2), 1f);
         lights.Add(l1);
-        Plane p1 = new Plane(new Vector3(3, 2, 7.5f), 4f, new Vector3(0.2f, 0.6f, 0.4f));
+
+        Plane p1 = new Plane(new Vector3(0, -1, 0), 6f, new Vector3(1f, 0.5f, 0.4f));
         planes.Add(p1);
 
         Light l2 = new Light(new Vector3(10, 5, 3), 5f);
@@ -90,21 +91,31 @@ class Scene
                 result2 = (float)((-b - Math.Sqrt(discriminant)) / (2 * a));
                 if (finalresult == -1 || result1 < finalresult || result2 < finalresult)
                     finalresult = Math.Min(result1, result2);
-                i1 = new Intersection(sphere, finalresult, ray);
-                intersections.Add(i1);
+                prim = sphere;
             }
-
-            //    /*float vx = ray.Direction.X, vy = ray.Direction.Y, vz = ray.Direction.Z;
+            //foreach (Plane plane in planes)
+            //{
+            //    float vx = ray.Direction.X, vy = ray.Direction.Y, vz = ray.Direction.Z;
             //    float x0 = ray.Start.X, y0 = ray.Start.Y, z0 = ray.Start.Z;
-            //    float pa = p.Position.X, pb = p.Position.Y, pc = p.Position.Z, d = 10;
+            //    float pa = plane.Position.X, pb = plane.Position.Y, pc = plane.Position.Z, d = plane.Distance;
             //    float denominator = pa * vx + pb * vy + pc * vz;
             //    if (denominator >= 0)
             //    {
             //        float t = -(pa * x0 + pb * y0 + pc * z0 + d) / denominator;
-            //        i1 = new Intersection(p, t, ray);
-            //        intersections.Add(i1);
-            //        return t;
-            //    }*/
+            //        if (t < finalresult)
+            //        {
+            //            finalresult = t;
+            //            prim = plane;
+            //        }
+            //    }
+            //    //float t = -((Vector3.Dot(ray.Start, plane.NPlane) + plane.DistanceToOrigin) / (Vector3.Dot(ray.Direction, plane.NPlane)));
+            //    //if (t <= 0 && t < finalresult)
+            //    //{
+            //    //    finalresult = t;
+            //    //    prim = plane;
+            //    //}
+            //}
+
         }
         if (finalresult == -1)
         {
@@ -112,7 +123,7 @@ class Scene
         }
         if (prim != null)
         {
-            i1 = new Intersection(prim, finalresult, ray);
+            i1 = new Intersection(prim, finalresult, ray, false);
             intersections.Add(i1);
         }
         return finalresult;
