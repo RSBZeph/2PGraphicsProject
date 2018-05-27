@@ -71,11 +71,11 @@ class Raytracer
             if (I.Object.Mirror)
             {
                 S.recursions = 0;
-                Screen.pixels[I.Ray.x + I.Ray.y * Screen.width] = S.CheckReflectIntersect(I);
+                Screen.pixels[I.Ray.x + I.Ray.y * Screen.width] = Colour(S.CheckReflectIntersect(I));
             }
             else
             {
-                Screen.pixels[I.Ray.x + I.Ray.y * Screen.width] = S.ShadowRay(I);
+                Screen.pixels[I.Ray.x + I.Ray.y * Screen.width] = Colour(S.ShadowRay(I));
             }
         }
         S.intersections.Clear();

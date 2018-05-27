@@ -16,9 +16,9 @@ class Scene
     Intersection i1;
     public Surface Screen;
     float a, b, c, discriminant, result1, result2, finalresult, shadowlength, precalc1;
-    Vector3 difference1, difference2, difference3, shadowray;
+    Vector3 difference1, difference2, difference3, shadowray, MirrorColor;
     bool FromMirror = false;
-    int recursioncap = 10;
+    int recursioncap = 5;
     public int recursions;
 
     public Scene(Surface sur)
@@ -30,8 +30,9 @@ class Scene
 
     void FillLists()
     {
-        Sphere s1 = new Sphere(new Vector3(2, 5, 8), 2f, new Vector3(0, 0.9f, 0.5f), false);
+        Sphere s1 = new Sphere(new Vector3(2, 5, 8), 2f, new Vector3(0.7f, 0.7f, 0.7f), false);
         s1.Mirror = true;
+        s1.ReflectFactor = 0.5f;
         spheres.Add(s1);
 
         s1 = new Sphere(new Vector3(8, 5, 7), 1f, new Vector3(0, 0.6f, 0.9f), false);
@@ -95,74 +96,35 @@ class Scene
                 result1 = (float)((-b + Math.Sqrt(discriminant)) / (2 * a));
                 result2 = (float)((-b - Math.Sqrt(discriminant)) / (2 * a));
 
-                if (!FromMirror)
+                if (((!FromMirror && result1 > ray.MinDistance) || (FromMirror && result1 > 0.001f)) && (finalresult == -1 || result1 < finalresult))
                 {
-                    if (result1 > ray.MinDistance && (finalresult == -1 || result1 < finalresult))
+                    if (!FromMirror && result2 > ray.MinDistance || FromMirror && result2 > 0.001f)
                     {
-                        if (result2 > ray.MinDistance)
-                        {
-
-                            finalresult = Math.Min(result1, result2);
-                            replaced = true;
-                            Object = sphere;
-                        }
-                        else
-                        {
-                            finalresult = result1;
-                            replaced = true;
-                            Object = sphere;
-                        }
+                        finalresult = Math.Min(result1, result2);
+                        replaced = true;
+                        Object = sphere;
                     }
-
-                    if (result2 > ray.MinDistance && (finalresult == -1 || result2 < finalresult))
+                    else
                     {
-                        if (result1 > ray.MinDistance)
-                        {
-                            finalresult = Math.Min(result1, result2);
-                            replaced = true;
-                            Object = sphere;
-                        }
-                        else
-                        {
-                            finalresult = result2;
-                            replaced = true;
-                            Object = sphere;
-                        }
+                        finalresult = result1;
+                        replaced = true;
+                        Object = sphere;
                     }
                 }
-                else
+
+                if (((!FromMirror && result2 > ray.MinDistance) || (FromMirror && result2 > 0.001f)) && (finalresult == -1 || result1 < finalresult))
                 {
-                    if (result1 > 0.001f && (finalresult == -1 || result1 < finalresult))
+                    if (!FromMirror && result1 > ray.MinDistance || FromMirror && result1 > 0.001f)
                     {
-                        if (result2 > 0.001f)
-                        {
-
-                            finalresult = Math.Min(result1, result2);
-                            replaced = true;
-                            Object = sphere;
-                        }
-                        else
-                        {
-                            finalresult = result1;
-                            replaced = true;
-                            Object = sphere;
-                        }
+                        finalresult = Math.Min(result1, result2);
+                        replaced = true;
+                        Object = sphere;
                     }
-
-                    if (result2 > 0.001f && (finalresult == -1 || result2 < finalresult))
+                    else
                     {
-                        if (result1 > 0.001f)
-                        {
-                            finalresult = Math.Min(result1, result2);
-                            replaced = true;
-                            Object = sphere;
-                        }
-                        else
-                        {
-                            finalresult = result2;
-                            replaced = true;
-                            Object = sphere;
-                        }
+                        finalresult = result2;
+                        replaced = true;
+                        Object = sphere;
                     }
                 }
             }
@@ -183,8 +145,13 @@ class Scene
         return finalresult;
     }
 
-    public int CheckReflectIntersect(Intersection inter)
+    public Vector3 CheckReflectIntersect(Intersection inter)
     {
+        if (recursions == 0)
+        {
+            MirrorColor = inter.Color;
+        }
+
         reflectintersect = null;
         double angle = Math.Acos(Vector3.Dot(inter.Ray.Direction, inter.Normal)) * 180 / Math.PI;
         Vector3 Reflect = -2 * Vector3.Dot(inter.Ray.Direction, inter.Normal) * inter.Normal + inter.Ray.Direction;
@@ -197,7 +164,8 @@ class Scene
         {
             RRay.Distance = 10;
             reflectrays.Add(RRay);
-            return Colour(new Vector3(0, 0, 1f));
+            recursions--;
+            return new Vector3(0.2f, 0, 0) * inter.Object.ReflectFactor + ShadowRay(inter) * (1 - inter.Object.ReflectFactor);
         }
         else
         {
@@ -207,11 +175,13 @@ class Scene
                 return CheckReflectIntersect(reflectintersect);
             }
             else
-                return ShadowRay(reflectintersect);
+            {
+                return ShadowRay(reflectintersect) * inter.Object.ReflectFactor + ShadowRay(inter) * (1 - inter.Object.ReflectFactor);
+            }
         }
     }
 
-    public int ShadowRay(Intersection inter)
+    public Vector3 ShadowRay(Intersection inter)
     {
         float attenuation = 0;
         foreach (Light light in lights)
@@ -234,7 +204,7 @@ class Scene
             }
             shadowrays.Add(SR);
         }
-        return Colour(inter.Color * attenuation);
+        return inter.Color * attenuation;
     }
 
     Ray ShadowRayIntersect(Ray ray)
