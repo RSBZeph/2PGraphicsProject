@@ -15,7 +15,7 @@ class Scene
     Intersection i1;
     public Surface Screen;
     float a, b, c, discriminant, result1, result2, finalresult, shadowlength, precalc1;
-    Vector3 difference1, difference2, difference3, shadowray;
+    Vector3 difference1, difference2, difference3, shadowray, test = Vector3.Zero;
     Ray SR;
     float dot = 100;
 
@@ -24,6 +24,7 @@ class Scene
         Screen = sur;
         FillLists();
         C = Camera.Instance();
+        test = C.Position;
     }
 
     void FillLists()
@@ -34,7 +35,7 @@ class Scene
         Sphere s2 = new Sphere(new Vector3(6, 5, 4), 0.2f, new Vector3(0, 0.8f, 0.3f), false);
         spheres.Add(s2);
 
-        Plane p1 = new Plane(new Vector3(0, -1, 0), 6f, new Vector3(1f, 1f, 1f));
+        Plane p1 = new Plane(new Vector3(0, -1, 0), test, new Vector3(1f, 1f, 1f));
         planes.Add(p1);
 
         Light l1 = new Light(new Vector3(0, 5, 2), 1f);
@@ -76,7 +77,7 @@ class Scene
 
     public float CheckIntersect(Ray ray)
     {
-        bool replaced = false;
+        bool replaced = false , sphereFound = false;
         Primitive Object = null;
         finalresult = -1;
         foreach (Sphere sphere in spheres)
@@ -93,6 +94,7 @@ class Scene
 
                 if (result1 > ray.MinDistance && (finalresult == -1 || result1 < finalresult))
                 {
+                    sphereFound = true;
                     if (result2 > ray.MinDistance)
                     {
                         finalresult = Math.Min(result1, result2);
@@ -124,28 +126,41 @@ class Scene
                 }
             }
         }
-        //foreach (Plane plane in planes)
-        //{
-        //    float vx = ray.Direction.X, vy = ray.Direction.Y, vz = ray.Direction.Z;
-        //    float x0 = ray.Start.X, y0 = ray.Start.Y, z0 = ray.Start.Z;
-        //    float pa = plane.Position.X, pb = plane.Position.Y, pc = plane.Position.Z, d = plane.Distance;
-        //    float denominator = pa * vx + pb * vy + pc * vz;
-        //    if (denominator >= 0)
-        //    {
-        //        float t = -(pa * x0 + pb * y0 + pc * z0 + d) / denominator;
-        //        if (t < finalresult)
-        //        {
-        //            finalresult = t;
-        //            Object = plane;
-        //        }
-        //    }
-        //    //float t = -((Vector3.Dot(ray.Start, plane.NPlane) + plane.DistanceToOrigin) / (Vector3.Dot(ray.Direction, plane.NPlane)));
-        //    //if (t <= 0 && t < finalresult)
-        //    //{
-        //    //    finalresult = t;
-        //    //    prim = plane;
-        //    //}
-        //}
+        if(!sphereFound)
+        {
+            foreach (Plane plane in planes)
+            {
+                //float vx = ray.Direction.X, vy = ray.Direction.Y, vz = ray.Direction.Z;
+                //float x0 = ray.Start.X, y0 = ray.Start.Y, z0 = ray.Start.Z;
+                //float pa = plane.Position.X, pb = plane.Position.Y, pc = plane.Position.Z, d = plane.Distance;
+                //float denominator = pa * vx + pb * vy + pc * vz;
+                //if (denominator >= 0)
+                //{
+                //    float t = -(pa * x0 + pb * y0 + pc * z0 + d) / denominator;
+                //    if (t < finalresult)
+                //    {
+                //        finalresult = t;
+                //        replaced = true;
+                //        Object = plane;
+                //    }
+                //}
+                /*float t = -((Vector3.Dot(ray.Start, plane.NPlane) + plane.Distance) / (Vector3.Dot(ray.Direction, plane.NPlane)));
+                if (t <= 0 && t < finalresult)
+                {
+                    finalresult = t;
+                    replaced = true;
+                    Object = plane;
+                }*/
+                float denominator = Vector3.Dot(plane.NPlane, ray.Direction);
+                if (denominator > Math.Pow(10, -6))
+                {
+                    Vector3 p0l0 = plane.Distance - ray.Start;
+                    finalresult = Vector3.Dot(p0l0, plane.NPlane) / denominator;
+                    Object = plane;
+                    //finalresult = ray.Start + ray.Direction * t;
+                }
+            }
+        }
         if (replaced)
         {
             i1 = new Intersection(Object, finalresult, ray, false);
@@ -263,6 +278,30 @@ class Scene
                 }                
             }
         }
+        //foreach (Plane plane in planes)
+        //{
+        //    //    float vx = ray.Direction.X, vy = ray.Direction.Y, vz = ray.Direction.Z;
+        //    //    float x0 = ray.Start.X, y0 = ray.Start.Y, z0 = ray.Start.Z;
+        //    //    float pa = plane.Position.X, pb = plane.Position.Y, pc = plane.Position.Z, d = plane.Distance;
+        //    //    float denominator = pa * vx + pb * vy + pc * vz;
+        //    //    if (denominator >= 0)
+        //    //    {
+        //    //        float t = -(pa * x0 + pb * y0 + pc * z0 + d) / denominator;
+        //    //        if (t < finalresult)
+        //    //        {
+        //    //            finalresult = t;
+        //    //            replaced = true;
+        //    //            Object = plane;
+        //    //        }
+        //    //    }
+        //    float t = -((Vector3.Dot(SR.Start, plane.NPlane) + plane.Distance) / (Vector3.Dot(SR.Direction, plane.NPlane)));
+        //    if (t <= 0 && t < finalresult)
+        //    {
+        //        SR.Distance = t;
+        //        SR.Occluded = true;
+
+        //    }
+        //}
         return;
     }
 
