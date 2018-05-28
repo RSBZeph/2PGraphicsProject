@@ -222,9 +222,9 @@ class Scene
             recursions--;
             return new Vector3(0.2f, 0, 0) * inter.Object.ReflectFactor + ShadowRay(inter) * (1 - inter.Object.ReflectFactor);
         }
-        else
+        else //if(reflectintersect != null)
         {
-            if (reflectintersect.Object.Mirror && recursions < recursioncap)
+            if (reflectintersect != null && reflectintersect.Object.Mirror && recursions < recursioncap)
             {
                 recursions++;
                 return CheckReflectIntersect(reflectintersect);
