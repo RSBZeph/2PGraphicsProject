@@ -3,7 +3,6 @@
 class Sphere : Primitive
 {
     public float Radius;
-    public bool Mirror;
     public Sphere(Vector3 pos, float radius, Vector3 Col, bool mirror)
     {
         Position = pos;
