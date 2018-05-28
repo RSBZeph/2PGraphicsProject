@@ -105,6 +105,10 @@ class Raytracer
             }
             else
             {
+                if (I.Object is Plane)
+                {
+
+                }
                 Screen.pixels[I.Ray.x + I.Ray.y * Screen.width] = Colour(S.ShadowRay(I));
             }
         }
