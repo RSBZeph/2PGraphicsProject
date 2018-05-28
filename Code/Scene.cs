@@ -41,12 +41,12 @@ class Scene
         Sphere s2 = new Sphere(new Vector3(5, 3.5f, 7), 0.5f, new Vector3(0, 0.8f, 0.3f), false);
         spheres.Add(s2);
 
-        Plane p1 = new Plane(new Vector3(0, 3, 0), new Vector3(1,0,0), new Vector3(0,0,1), new Vector3(0.7f, 0.6f, 0));
+        Plane p1 = new Plane(new Vector3(5, 3, 5), new Vector3(1,0,0), new Vector3(0,0,1), new Vector3(0.7f, 0.6f, 0));
         p1.width = 7;
         p1.height = 5;
         planes.Add(p1);
 
-        Light l1 = new Light(new Vector3(0, 5, 3), 10f);
+        Light l1 = new Light(new Vector3(0, 7, 3), 10f);
         lights.Add(l1);
 
         //Light l2 = new Light(new Vector3(10, 5, 8), 5f);
@@ -142,46 +142,46 @@ class Scene
         {
             foreach (Plane plane in planes)
             {
-                if (Vector3.Dot(plane.Normal, ray.Direction) >= 0)
+                if (Vector3.Dot(plane.Normal, ray.Direction) <= 0)
                     continue;
                 finalresult = -Vector3.Dot((ray.Start - plane.Position), plane.Normal) / Vector3.Dot(ray.Direction, plane.Normal);
-                if (finalresult < 100)
-                {
-                    Object = plane;
-                    replaced = true;
-                }
-                else
-                {
-                    finalresult = -1;
-                }
-
-                //Vector3 intersectpos = ray.Start + ray.Direction * finalresult;
-                //Vector3 middletointer = intersectpos - plane.Position;
-                //float dota = 0, dotb = 0;
-                //dota = Vector3.Dot(middletointer, plane.Dimension1);
-                //if (dota < 0)
-                //    dota = Vector3.Dot(middletointer, -plane.Dimension1);
-                //if (dota < plane.width)
+                //if (finalresult < 100)
                 //{
-                //    dotb = Vector3.Dot(middletointer, plane.Dimension1);
-                //    if (dotb < 0)
-                //        dotb = Vector3.Dot(middletointer, -plane.Dimension1);
-                //    if (dotb < plane.height)
-                //    {
-                //        Object = plane;
-                //        replaced = true;
-                //    }
-                //    else
-                //    {
-                //        finalresult = -1;
-                //        continue;
-                //    }
+                //    Object = plane;
+                //    replaced = true;
                 //}
                 //else
                 //{
                 //    finalresult = -1;
-                //    continue;
                 //}
+
+                Vector3 intersectpos = ray.Start + ray.Direction * finalresult;
+                Vector3 middletointer = intersectpos - plane.Position;
+                float dota = 0, dotb = 0;
+                dota = Vector3.Dot(middletointer, plane.Dimension1);
+                if (dota < 0)
+                    dota = Vector3.Dot(middletointer, -plane.Dimension1);
+                if (dota < plane.width)
+                {
+                    dotb = Vector3.Dot(middletointer, plane.Dimension2);
+                    if (dotb < 0)
+                        dotb = Vector3.Dot(middletointer, -plane.Dimension2);
+                    if (dotb < plane.height)
+                    {
+                        Object = plane;
+                        replaced = true;
+                    }
+                    else
+                    {
+                        finalresult = -1;
+                        continue;
+                    }
+                }
+                else
+                {
+                    finalresult = -1;
+                    continue;
+                }
             }
         }
         if (replaced)
@@ -264,6 +264,10 @@ class Scene
         }
         if (inter.Object is Plane)
         {
+            if (attenuation == 0)
+            {
+
+            }
             Vector3 planedistance = inter.Position - inter.Object.Position;
             if (Math.Sin(planedistance.X) <= 0 || Math.Sin(planedistance.Z) <= 0)
                 inter.Color = new Vector3(0, 0, 0);
@@ -299,7 +303,7 @@ class Scene
         }
         foreach (Plane plane in planes)
         {
-            if (Vector3.Dot(plane.Normal, ray.Direction) == 0)
+            if (Vector3.Dot(plane.Normal, ray.Direction) >= 0)
                 continue;
             result1 = -Vector3.Dot((ray.Start - plane.Position), plane.Normal) / Vector3.Dot(ray.Direction, plane.Normal);
             if (result1 < ray.MaxDistance && result1 > 0.001f)

@@ -15,7 +15,7 @@ class Plane : Primitive
         Position = P0;
         Dimension1 = Vector3.Normalize(dimension1);
         Dimension2 = Vector3.Normalize(dimension2);
-        Normal = Vector3.Normalize(Vector3.Cross(dimension1,dimension2));
+        Normal = -Vector3.Normalize(Vector3.Cross(dimension1,dimension2));
         Color = Col;
     }
 }
