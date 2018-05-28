@@ -27,42 +27,70 @@ class Raytracer
     {
         KBS = Keyboard.GetState();
         if (KBS.IsKeyDown(Key.A))
+        {
             C.Position -= 0.25f * C.Right;
+            C.P0 -= 0.25f * C.Right;
+            C.P1 -= 0.25f * C.Right;
+            C.P2 -= 0.25f * C.Right;
+        }
         else if (KBS.IsKeyDown(Key.D))
+        {
             C.Position += 0.25f * C.Right;
+            C.P0 += 0.25f * C.Right;
+            C.P1 += 0.25f * C.Right;
+            C.P2 += 0.25f * C.Right;
+        }
         if (KBS.IsKeyDown(Key.S))
+        {
             C.Position -= 0.25f * C.Direction;
+            C.P0 -= 0.25f * C.Direction;
+            C.P1 -= 0.25f * C.Direction;
+            C.P2 -= 0.25f * C.Direction;
+        }
         else if (KBS.IsKeyDown(Key.W))
+        {
             C.Position += 0.25f * C.Direction;
+            C.P0 += 0.25f * C.Direction;
+            C.P1 += 0.25f * C.Direction;
+            C.P2 += 0.25f * C.Direction;
+        }
         if (KBS.IsKeyDown(Key.Q))
+        {
             C.Position -= 0.25f * C.Up;
+            C.P0 -= 0.25f * C.Up;
+            C.P1 -= 0.25f * C.Up;
+            C.P2 -= 0.25f * C.Up;
+        }
         else if (KBS.IsKeyDown(Key.E))
+        {
             C.Position += 0.25f * C.Up;
+            C.P0 += 0.25f * C.Up;
+            C.P1 += 0.25f * C.Up;
+            C.P2 += 0.25f * C.Up;
+        }
 
         if (KBS.IsKeyDown(Key.U))
         {
-            C.B = 0.1f;
-            C.RotateX();
-            //C.B++;
+            C.Direction += Vector3.Normalize(C.Direction + Vector3.UnitX);            //C.B++;
         }
-        else if (KBS.IsKeyDown(Key.J))
-        {
-            C.B = -0.1f;
-            C.RotateX();
-            //C.B--;
-        }
+        //else if (KBS.IsKeyDown(Key.J))
+        //{
+        //    //C.B = -0.1f;
+        //    C.RotateX();
+        //    //C.B--;
+        //}
 
         //    if(KBS.IsKeyDown())
 
-        //else if (KBS.IsKeyDown(Key.J))
-        //{
-        //    C.B = -1;
-        //    C.Position = C.Position * C.RotateX;
-        //    //ScreenCentre = Position + Direction * DistanceToOrigin;
-        //    C.P0 = (C.ScreenCentre + new Vector3(-1, -1, 0)) * C.RotateX;
-        //    C.P1 = (C.ScreenCentre + new Vector3(1, -1, 0)) * C.RotateX;
-        //    C.P2 = (C.ScreenCentre + new Vector3(-1, 1, 0)) * C.RotateX;
-        //}
+        else if (KBS.IsKeyDown(Key.J))
+        {
+            //C.B = -1;
+            C.Position = C.Position * C.RotateX;
+            //ScreenCentre = Position + Direction * DistanceToOrigin;
+            C.P0 = C.P0 * C.RotateX;
+            C.P1 = C.P1 * C.RotateX;
+            C.P2 = C.P2 * C.RotateX;
+        }
         //if (KBS.IsKeyDown(Key.I))
         //{
         //    C.Position = C.Position * C.RotateY;
