@@ -7,9 +7,8 @@ class Intersection
 {
     public Vector3 Position, Color, Normal;
     public Primitive Object;
-    public float Distance, ColorFactor = 1;
+    public float Distance;
     public Ray Ray;
-
     public Intersection(Primitive prim, float dis, Ray r)
     {
         Object = prim;
@@ -17,6 +16,7 @@ class Intersection
         Ray = r;
         Position = Ray.Start + Ray.Direction * dis;
         Color = prim.Color;
-        Normal = Vector3.Normalize(Position - Object.Position);
+        if (Object is Sphere)
+            Normal = Vector3.Normalize(Position - Object.Position);
     }
 }
