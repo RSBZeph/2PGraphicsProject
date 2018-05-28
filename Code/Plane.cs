@@ -7,14 +7,13 @@ using OpenTK;
 
 class Plane : Primitive
 {
-    public Vector3 NPlane, P0, P1, P2, Distance;
+    public Vector3 Normal;
     public float  width, height;
 
-    public Plane(Vector3 normal, Vector3 distance, Vector3 Col)
+    public Plane(Vector3 P0, Vector3 normal, Vector3 Col)
     {
-        NPlane = Vector3.Normalize(normal);
-        Distance = distance;
+        Position = P0;
+        Normal = Vector3.Normalize(normal);
         Color = Col;
-        Position = new Vector3(0, 0, 0) + normal * distance;//?
     }
 }
