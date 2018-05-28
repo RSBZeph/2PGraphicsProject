@@ -44,6 +44,9 @@ class Scene
         Plane p1 = new Plane(new Vector3(0, 3, 0), new Vector3(0,1,0), new Vector3(0.7f, 0.6f, 0));
         planes.Add(p1);
 
+        /*Plane p2 = new Plane(new Vector3(0, 5, 0), new Vector3(0, 0, 1), new Vector3(0.7f, 0.6f, 0));
+        planes.Add(p2);*/
+
         Light l1 = new Light(new Vector3(0, 5, 3), 10f);
         lights.Add(l1);
 
