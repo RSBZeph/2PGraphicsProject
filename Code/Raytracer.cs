@@ -82,15 +82,15 @@ class Raytracer
 
         //    if(KBS.IsKeyDown())
 
-        else if (KBS.IsKeyDown(Key.J))
-        {
-            //C.B = -1;
-            C.Position = C.Position * C.RotateX;
-            //ScreenCentre = Position + Direction * DistanceToOrigin;
-            C.P0 = C.P0 * C.RotateX;
-            C.P1 = C.P1 * C.RotateX;
-            C.P2 = C.P2 * C.RotateX;
-        }
+        //else if (KBS.IsKeyDown(Key.J))
+        //{
+        //    //C.B = -1;
+        //    C.Position = C.Position * C.RotateX;
+        //    //ScreenCentre = Position + Direction * DistanceToOrigin;
+        //    C.P0 = C.P0 * C.RotateX;
+        //    C.P1 = C.P1 * C.RotateX;
+        //    C.P2 = C.P2 * C.RotateX;
+        //}
         //if (KBS.IsKeyDown(Key.I))
         //{
         //    C.Position = C.Position * C.RotateY;
