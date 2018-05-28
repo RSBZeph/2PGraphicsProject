@@ -43,7 +43,7 @@ class Camera
             (float)Math.Sin(x), (float)Math.Cos(x), 0,
             0, 0, 1);
 
-        Console.WriteLine(Direction);
+        //Console.WriteLine(Direction);
     }
 
     //public void RotateX()
