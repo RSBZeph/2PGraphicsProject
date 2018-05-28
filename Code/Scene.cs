@@ -144,12 +144,7 @@ class Scene
             {
                 if (Vector3.Dot(plane.Normal, ray.Direction) >= 0)
                     continue;
-                finalresult = Vector3.Dot((ray.Start - plane.Position), plane.Normal) / Vector3.Dot(ray.Direction, plane.Normal);
-                if (finalresult < 0)
-                {
-                    finalresult = -1;
-                    continue;
-                }
+                finalresult = -Vector3.Dot((ray.Start - plane.Position), plane.Normal) / Vector3.Dot(ray.Direction, plane.Normal);
                 if (finalresult < 100)
                 {
                     Object = plane;
@@ -158,7 +153,6 @@ class Scene
                 else
                 {
                     finalresult = -1;
-                    continue;
                 }
 
                 //Vector3 intersectpos = ray.Start + ray.Direction * finalresult;
