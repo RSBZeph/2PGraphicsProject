@@ -68,20 +68,6 @@ class Raytracer
             C.P1 += 0.25f * C.Up;
             C.P2 += 0.25f * C.Up;
         }
-
-        if (KBS.IsKeyDown(Key.U))
-        {
-            C.Direction += Vector3.Normalize(C.Direction + Vector3.UnitX);            //C.B++;
-        }
-        //else if (KBS.IsKeyDown(Key.J))
-        //{
-        //    //C.B = -0.1f;
-        //    C.RotateX();
-        //    //C.B--;
-        //}
-
-        //    if(KBS.IsKeyDown())
-
         else if (KBS.IsKeyDown(Key.J))
         {
             //C.B = -1;
@@ -91,6 +77,24 @@ class Raytracer
             C.P1 = C.P1 * C.RotateX;
             C.P2 = C.P2 * C.RotateX;
         }
+
+        C.Tick();
+        Draw3D();
+        //if (KBS.IsKeyDown(Key.U))
+        //{
+        //    C.Direction += Vector3.Normalize(C.Direction + Vector3.UnitX);            
+        //    //C.B++;
+        //}
+        //else if (KBS.IsKeyDown(Key.J))
+        //{
+        //    //C.B = -0.1f;
+        //    C.RotateX();
+        //    //C.B--;
+        //}
+
+        //    if(KBS.IsKeyDown())
+
+
         //if (KBS.IsKeyDown(Key.I))
         //{
         //    C.Position = C.Position * C.RotateY;
@@ -106,9 +110,9 @@ class Raytracer
         //else if (KBS.IsKeyDown(Key.K))
         //    C.RotateThatShit += new Vector3(0, 0, 0.1f);
 
-        C.Tick();
+        
         //C.RotateThatShit = new Vector3(1, 1, 1);
-        Draw3D();
+        
     }
 
     void Draw3D()
