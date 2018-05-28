@@ -41,25 +41,36 @@ class Raytracer
 
         if (KBS.IsKeyDown(Key.U))
         {
-            C.Direction.X += 1f * 0.1f; 
+            C.B = 0.1f;
+            C.RotateX();
+            //C.B++;
         }
         else if (KBS.IsKeyDown(Key.J))
         {
-            C.B = -1;
-            C.Position = C.Position * C.RotateX;
-            //ScreenCentre = Position + Direction * DistanceToOrigin;
-            C.P0 = (C.ScreenCentre + new Vector3(-1, -1, 0)) * C.RotateX;
-            C.P1 = (C.ScreenCentre + new Vector3(1, -1, 0)) * C.RotateX;
-            C.P2 = (C.ScreenCentre + new Vector3(-1, 1, 0)) * C.RotateX;
+            C.B = -0.1f;
+            C.RotateX();
+            //C.B--;
         }
-        if (KBS.IsKeyDown(Key.I))
-        {
-            C.Position = C.Position * C.RotateY;
-            //ScreenCentre = Position + Direction * DistanceToOrigin;
-            C.P0 = (C.ScreenCentre + new Vector3(-1, -1, 0)) * C.RotateY;
-            C.P1 = (C.ScreenCentre + new Vector3(1, -1, 0)) * C.RotateY;
-            C.P2 = (C.ScreenCentre + new Vector3(-1, 1, 0)) * C.RotateY;
-        }
+
+        //    if(KBS.IsKeyDown())
+
+        //else if (KBS.IsKeyDown(Key.J))
+        //{
+        //    C.B = -1;
+        //    C.Position = C.Position * C.RotateX;
+        //    //ScreenCentre = Position + Direction * DistanceToOrigin;
+        //    C.P0 = (C.ScreenCentre + new Vector3(-1, -1, 0)) * C.RotateX;
+        //    C.P1 = (C.ScreenCentre + new Vector3(1, -1, 0)) * C.RotateX;
+        //    C.P2 = (C.ScreenCentre + new Vector3(-1, 1, 0)) * C.RotateX;
+        //}
+        //if (KBS.IsKeyDown(Key.I))
+        //{
+        //    C.Position = C.Position * C.RotateY;
+        //    //ScreenCentre = Position + Direction * DistanceToOrigin;
+        //    C.P0 = (C.ScreenCentre + new Vector3(-1, -1, 0)) * C.RotateY;
+        //    C.P1 = (C.ScreenCentre + new Vector3(1, -1, 0)) * C.RotateY;
+        //    C.P2 = (C.ScreenCentre + new Vector3(-1, 1, 0)) * C.RotateY;
+        //}
         //else if (KBS.IsKeyDown(Key.L))
         //    C.RotateThatShit += new Vector3(0, 0.1f, 0);
         //if(KBS.IsKeyDown(Key.O))
@@ -78,8 +89,8 @@ class Raytracer
             for (int y = 1; y < Screen.height - 1; y++)
             {
                 Ray r = new Ray(C.Position, CreateRayDirection(x, y));
-                r.x = x;
-                r.y = Screen.height - y;
+                r.x = Screen.width / 2 - x;
+                r.y = y;
                 r.MinDistance = CreateMinDistance(x, y);
                 r.Distance = S.CheckIntersect(r);
                 if (r.Distance == -1)
