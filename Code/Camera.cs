@@ -21,11 +21,10 @@ class Camera
         ScreenWidth = 2;
         DistanceToOrigin = (float)(1 / Math.Sin(((FOV / 2) / 180) * Math.PI));
         NormDirection = Vector3.Normalize(Direction);
-        Position = Position;// * RotateX;
         ScreenCentre = Position + Direction * DistanceToOrigin;
-        P0 = (ScreenCentre - test1 + UnitU);// * RotateX;
-        P1 = (ScreenCentre + test1 + UnitU);// *  RotateX;
-        P2 = (ScreenCentre - test1 - UnitU);// * RotateX;
+        P0 = (ScreenCentre - test1 + UnitU);
+        P1 = (ScreenCentre + test1 + UnitU);
+        P2 = (ScreenCentre - test1 - UnitU);
     }
 
     public void Tick()
@@ -52,7 +51,6 @@ class Camera
     //    x = (float)(Math.Cos(B) * Direction.X - Math.Sin(B) * Direction.Z);
     //    Direction.X = x;
     //}
-
 
     public static Camera Instance()
     {
