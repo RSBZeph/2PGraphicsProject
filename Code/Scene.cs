@@ -39,10 +39,10 @@ class Scene
         s1 = new Sphere(new Vector3(8, 5, 7), 1f, new Vector3(0, 0.6f, 0.9f), false);
         spheres.Add(s1);
 
-        Sphere s2 = new Sphere(new Vector3(5, 5, 7), 0.5f, new Vector3(0, 0.8f, 0.3f), false);
+        Sphere s2 = new Sphere(new Vector3(8, 5, 5), 0.5f, new Vector3(0, 0.8f, 0.3f), false);
         spheres.Add(s2);
 
-        Plane p1 = new Plane(new Vector3(0, -1, 0), test, new Vector3(1f, 1f, 1f));
+        Plane p1 = new Plane(new Vector3(0, 1, 0), test, new Vector3(1f, 1f, 1f));
         planes.Add(p1);
 
         Light l1 = new Light(new Vector3(5, 5, 0), 5f);
@@ -158,14 +158,14 @@ class Scene
                     replaced = true;
                     Object = plane;
                 }*/
-                float denominator = Vector3.Dot(plane.NPlane, ray.Direction);
-                if (denominator > Math.Pow(10, -6))
-                {
-                    Vector3 p0l0 = plane.Distance - ray.Start;
-                    finalresult = Vector3.Dot(p0l0, plane.NPlane) / denominator;
-                    Object = plane;
-                    //finalresult = ray.Start + ray.Direction * t;
-                }
+                //float denominator = Vector3.Dot(plane.NPlane, ray.Direction);
+                //if (denominator > Math.Pow(10, -6))
+                //{
+                //    Vector3 p0l0 = plane.Distance - ray.Start;
+                //    finalresult = Vector3.Dot(p0l0, plane.NPlane) / denominator;
+                //    Object = plane;
+                //    //finalresult = ray.Start + ray.Direction * t;
+                //}
             }
         }
         if (replaced)

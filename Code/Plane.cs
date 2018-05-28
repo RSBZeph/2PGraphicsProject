@@ -12,9 +12,9 @@ class Plane : Primitive
 
     public Plane(Vector3 normal, Vector3 distance, Vector3 Col)
     {
-        Position = normal;//?
         NPlane = Vector3.Normalize(normal);
         Distance = distance;
         Color = Col;
+        Position = new Vector3(0, 0, 0) + normal * distance;//?
     }
 }
