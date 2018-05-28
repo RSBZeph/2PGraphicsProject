@@ -16,7 +16,7 @@ class Scene
     Intersection i1;
     public Surface Screen;
     float a, b, c, discriminant, result1, result2, finalresult, shadowlength, precalc1;
-    Vector3 difference1, difference2, difference3, shadowray, MirrorColor,test = Vector3.Zero;
+    Vector3 difference1, difference2, difference3, shadowray, MirrorColor;
     bool FromMirror = false;
     int recursioncap = 5;
     public int recursions;
@@ -26,7 +26,6 @@ class Scene
         Screen = sur;
         FillLists();
         C = Camera.Instance();
-        test = C.Position;
     }
 
     void FillLists()
@@ -36,16 +35,16 @@ class Scene
         s1.ReflectFactor = 0.5f;
         spheres.Add(s1);
 
-        s1 = new Sphere(new Vector3(8, 5, 7), 1f, new Vector3(0, 0.6f, 0.9f), false);
+        s1 = new Sphere(new Vector3(8, 4, 9), 1f, new Vector3(0, 0.6f, 0.9f), false);
         spheres.Add(s1);
 
-        Sphere s2 = new Sphere(new Vector3(5, 5, 7), 0.5f, new Vector3(0, 0.8f, 0.3f), false);
+        Sphere s2 = new Sphere(new Vector3(5, 3.5f, 7), 0.5f, new Vector3(0, 0.8f, 0.3f), false);
         spheres.Add(s2);
 
-        Plane p1 = new Plane(new Vector3(0, -1, 0), test, new Vector3(1f, 1f, 1f));
+        Plane p1 = new Plane(new Vector3(0, 3, 0), new Vector3(0,1,0), new Vector3(0.7f, 0.6f, 0));
         planes.Add(p1);
 
-        Light l1 = new Light(new Vector3(5, 5, 0), 5f);
+        Light l1 = new Light(new Vector3(0, 5, 3), 10f);
         lights.Add(l1);
 
         //Light l2 = new Light(new Vector3(10, 5, 8), 5f);
@@ -107,12 +106,14 @@ class Scene
                         finalresult = Math.Min(result1, result2);
                         replaced = true;
                         Object = sphere;
+                        sphereFound = true;
                     }
                     else
                     {
                         finalresult = result1;
                         replaced = true;
                         Object = sphere;
+                        sphereFound = true;
                     }
                 }
 
@@ -123,12 +124,14 @@ class Scene
                         finalresult = Math.Min(result1, result2);
                         replaced = true;
                         Object = sphere;
+                        sphereFound = true;
                     }
                     else
                     {
                         finalresult = result2;
                         replaced = true;
                         Object = sphere;
+                        sphereFound = true;
                     }
                 }
             }
@@ -137,34 +140,17 @@ class Scene
         {
             foreach (Plane plane in planes)
             {
-                //float vx = ray.Direction.X, vy = ray.Direction.Y, vz = ray.Direction.Z;
-                //float x0 = ray.Start.X, y0 = ray.Start.Y, z0 = ray.Start.Z;
-                //float pa = plane.Position.X, pb = plane.Position.Y, pc = plane.Position.Z, d = plane.Distance;
-                //float denominator = pa * vx + pb * vy + pc * vz;
-                //if (denominator >= 0)
-                //{
-                //    float t = -(pa * x0 + pb * y0 + pc * z0 + d) / denominator;
-                //    if (t < finalresult)
-                //    {
-                //        finalresult = t;
-                //        replaced = true;
-                //        Object = plane;
-                //    }
-                //}
-                /*float t = -((Vector3.Dot(ray.Start, plane.NPlane) + plane.Distance) / (Vector3.Dot(ray.Direction, plane.NPlane)));
-                if (t <= 0 && t < finalresult)
+                if (Vector3.Dot(plane.Normal, ray.Direction) >= 0)
+                    continue;
+                finalresult = -Vector3.Dot((ray.Start - plane.Position), plane.Normal) / Vector3.Dot(ray.Direction, plane.Normal);
+                if (finalresult < 100)
                 {
-                    finalresult = t;
+                    Object = plane;
                     replaced = true;
-                    Object = plane;
-                }*/
-                float denominator = Vector3.Dot(plane.NPlane, ray.Direction);
-                if (denominator > Math.Pow(10, -6))
+                }
+                else
                 {
-                    Vector3 p0l0 = plane.Distance - ray.Start;
-                    finalresult = Vector3.Dot(p0l0, plane.NPlane) / denominator;
-                    Object = plane;
-                    //finalresult = ray.Start + ray.Direction * t;
+                    finalresult = -1;
                 }
             }
         }
@@ -228,7 +214,7 @@ class Scene
             difference2 = light.Position - inter.Position;
             shadowray = Vector3.Normalize(difference2);
             shadowlength = Math.Abs(Length(difference2));
-            Ray SR = new Ray(inter.Position - shadowray * 0.0001f, shadowray)
+            Ray SR = new Ray(inter.Position - shadowray * 0.0001f * 2, shadowray)
             {
                 x = inter.Ray.x,
                 y = inter.Ray.y,
@@ -237,11 +223,24 @@ class Scene
             SR = ShadowRayIntersect(SR);
             if (!SR.Occluded)
             {
+                float ja = Vector3.Dot(inter.Normal, difference2);
                 attenuation += Vector3.Dot(inter.Normal, difference2) / (shadowlength * shadowlength) * light.Intensity;
                 if (attenuation > 1)
                     attenuation = 1;
+                if (attenuation < 0)
+                    attenuation = 0;
             }
             shadowrays.Add(SR);
+        }
+        if (inter.Object is Plane)
+        {
+            Vector3 planedistance = inter.Position - inter.Object.Position;
+            if (Math.Sin(planedistance.X) <= 0 || Math.Sin(planedistance.Z) <= 0)
+                inter.Color = new Vector3(0, 0, 0);
+            else
+                inter.Color = new Vector3(1, 1, 1);
+            if (Math.Sin(planedistance.X) <= 0 && Math.Sin(planedistance.Z) <= 0)
+                inter.Color = new Vector3(1, 1, 1);
         }
         return inter.Color * attenuation;
     }
@@ -260,38 +259,26 @@ class Scene
                 precalc1 = (float)(Math.Sqrt(discriminant));
                 result1 = ((-b + precalc1) / (2 * a));
                 result2 = ((-b - precalc1) / (2 * a));
-                if(result1 > 0 && result2 > 0)
-                { 
+                if (result1 > 0 && result2 > 0)
+                {
                     ray.Distance = Math.Min(result1, result2);
                     ray.Occluded = true;
                     return ray;
-                }                
+                }
             }
         }
-        //foreach (Plane plane in planes)
-        //{
-        //    //    float vx = ray.Direction.X, vy = ray.Direction.Y, vz = ray.Direction.Z;
-        //    //    float x0 = ray.Start.X, y0 = ray.Start.Y, z0 = ray.Start.Z;
-        //    //    float pa = plane.Position.X, pb = plane.Position.Y, pc = plane.Position.Z, d = plane.Distance;
-        //    //    float denominator = pa * vx + pb * vy + pc * vz;
-        //    //    if (denominator >= 0)
-        //    //    {
-        //    //        float t = -(pa * x0 + pb * y0 + pc * z0 + d) / denominator;
-        //    //        if (t < finalresult)
-        //    //        {
-        //    //            finalresult = t;
-        //    //            replaced = true;
-        //    //            Object = plane;
-        //    //        }
-        //    //    }
-        //    float t = -((Vector3.Dot(SR.Start, plane.NPlane) + plane.Distance) / (Vector3.Dot(SR.Direction, plane.NPlane)));
-        //    if (t <= 0 && t < finalresult)
-        //    {
-        //        SR.Distance = t;
-        //        SR.Occluded = true;
-
-        //    }
-        //}
+        foreach (Plane plane in planes)
+        {
+            if (Vector3.Dot(plane.Normal, ray.Direction) == 0)
+                continue;
+            result1 = -Vector3.Dot((ray.Start - plane.Position), plane.Normal) / Vector3.Dot(ray.Direction, plane.Normal);
+            if (result1 < ray.MaxDistance && result1 > 0.001f)
+            {
+                ray.Distance = result1;
+                ray.Occluded = true;
+                return ray;
+            }
+        }
         return ray;
     }
 
