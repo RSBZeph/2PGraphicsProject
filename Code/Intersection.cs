@@ -18,5 +18,8 @@ class Intersection
         Color = prim.Color;
         if (Object is Sphere)
             Normal = Vector3.Normalize(Position - Object.Position);
+        else        
+            Normal = Object.Position;
+        
     }
 }
