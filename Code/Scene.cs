@@ -32,7 +32,7 @@ class Scene
         //Sphere s2 = new Sphere(new Vector3(7, 5, 6), 1f, new Vector3(0, 0.6f, 0.5f));
         //spheres.Add(s2);
 
-        Light l1 = new Light(new Vector3(0, 5, 2), 2f);
+        Light l1 = new Light(new Vector3(0, 5, 2), 4f);
         lights.Add(l1);
 
         //Light l2 = new Light(new Vector3(10, 5, 5), 3f);
@@ -108,16 +108,11 @@ class Scene
             ShadowRayIntersect(inter, shadowlength - float.Epsilon);
             if (!SR.Occluded)
             {
-                //attenuation += Vector3.Dot(inter.Normal, difference) / (shadowlength * shadowlength) * light.Intensity;
-                //if (attenuation > 1)
-                //    attenuation = 1;
-                attenuation = 1;
+                attenuation += Vector3.Dot(inter.Normal, difference) / (shadowlength * shadowlength) * light.Intensity;
+                if (attenuation > 1)
+                    attenuation = 1;
             }
             shadowrays.Add(SR);
-            if (Vector3.Dot(inter.Normal, difference) < 0)
-            {
-
-            }
         }
         return Colour(inter.Color * attenuation);
     }

@@ -14,6 +14,7 @@ class Raytracer
     int CheckRayY;
     Vector3 RayColor;
     KeyboardState KBS;
+    Vector2 Origin;
 
     public Raytracer(Surface sur)
     {
@@ -75,7 +76,7 @@ class Raytracer
 
         RayColor = new Vector3(0.3f, 0.8f, 0.5f);
         Screen.Line(512, 0, 512, 512, Colour(new Vector3(1, 1, 1)));
-        Vector2 Origin = VectorToScreenPos(C.Position);
+        Origin = VectorToScreenPos(C.Position);
         Screen.Line((int)(Origin.X - 5), (int)(Origin.Y + 5), (int)(Origin.X), (int)(Origin.Y - 10), Colour(new Vector3(1, 1, 1)));
         Screen.Line((int)(Origin.X + 5), (int)(Origin.Y + 5), (int)(Origin.X), (int)(Origin.Y - 10), Colour(new Vector3(1, 1, 1)));
         Screen.Line((int)(Origin.X - C.ScreenWidth / 2 * Screen.width / 20), (int)(Origin.Y - C.LeftScreen.DistanceToOrigin * Screen.height / 10), (int)(Origin.X + C.ScreenWidth / 2 * Screen.width / 20), (int)(Origin.Y - C.LeftScreen.DistanceToOrigin * Screen.height / 10), Colour(new Vector3(1, 1, 1)));
@@ -88,7 +89,7 @@ class Raytracer
 
         foreach (Ray r in arRay)
         {
-            if (counter == 0)
+            //if (counter == 0)
             {
                 t = 8;
                 for (int o = 0; o < arRay.Length; o++)
