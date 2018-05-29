@@ -282,12 +282,6 @@ class Scene
     //it uses the same way to find intersections as in CheckIntersect
     Ray ShadowRayIntersect(Ray ray)
     {
-        if (ray.x == 332)
-            if (ray.y == 256)
-            {
-                //ray.Occluded = false;
-                //return ray;
-            }
         foreach (Sphere sphere in spheres)
         {
             Vector3 difference3 = ray.Start - sphere.Position;
