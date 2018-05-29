@@ -11,7 +11,7 @@ class Raytracer
     Scene S;
     Ray[] arRay;
     int CheckRayY;
-    Vector3 RayColor;
+    Vector3 RayColor = new Vector3(0.3f, 0.8f, 0.5f);
     KeyboardState KBS;
 
     public Raytracer(Surface sur)
@@ -27,31 +27,74 @@ class Raytracer
     {
         KBS = Keyboard.GetState();
         if (KBS.IsKeyDown(Key.A))
-            C.Position -= 0.25f * C.Right;
-        else if (KBS.IsKeyDown(Key.D))
-            C.Position += 0.25f * C.Right;
-        if (KBS.IsKeyDown(Key.S))
-            C.Position -= 0.25f * C.Direction;
-        else if (KBS.IsKeyDown(Key.W))
-            C.Position += 0.25f * C.Direction;
-        if (KBS.IsKeyDown(Key.Q))
-            C.Position -= 0.25f * C.Up;
-        else if (KBS.IsKeyDown(Key.E))
-            C.Position += 0.25f * C.Up;
-
-        if (KBS.IsKeyDown(Key.U))
         {
-            C.Direction.X += 1f * 0.1f; 
+            C.Position -= 0.25f * C.Right;
+            C.P0 -= 0.25f * C.Right;
+            C.P1 -= 0.25f * C.Right;
+            C.P2 -= 0.25f * C.Right;
         }
+        else if (KBS.IsKeyDown(Key.D))
+        {
+            C.Position += 0.25f * C.Right;
+            C.P0 += 0.25f * C.Right;
+            C.P1 += 0.25f * C.Right;
+            C.P2 += 0.25f * C.Right;
+        }
+        if (KBS.IsKeyDown(Key.S))
+        {
+            C.Position -= 0.25f * C.Direction;
+            C.P0 -= 0.25f * C.Direction;
+            C.P1 -= 0.25f * C.Direction;
+            C.P2 -= 0.25f * C.Direction;
+        }
+        else if (KBS.IsKeyDown(Key.W))
+        {
+            C.Position += 0.25f * C.Direction;
+            C.P0 += 0.25f * C.Direction;
+            C.P1 += 0.25f * C.Direction;
+            C.P2 += 0.25f * C.Direction;
+        }
+        if (KBS.IsKeyDown(Key.Q))
+        {
+            C.Position -= 0.25f * C.Up;
+            C.P0 -= 0.25f * C.Up;
+            C.P1 -= 0.25f * C.Up;
+            C.P2 -= 0.25f * C.Up;
+        }
+        else if (KBS.IsKeyDown(Key.E))
+        {
+            C.Position += 0.25f * C.Up;
+            C.P0 += 0.25f * C.Up;
+            C.P1 += 0.25f * C.Up;
+            C.P2 += 0.25f * C.Up;
+        }
+        else if (KBS.IsKeyDown(Key.J))
+        {
+            //C.B = -1;
+            C.Position = C.Position * C.RotateX;
+            //ScreenCentre = Position + Direction * DistanceToOrigin;
+            C.P0 = C.P0 * C.RotateX;
+            C.P1 = C.P1 * C.RotateX;
+            C.P2 = C.P2 * C.RotateX;
+        }
+
+        C.Tick();
+        Draw3D();
+        //if (KBS.IsKeyDown(Key.U))
+        //{
+        //    C.Direction += Vector3.Normalize(C.Direction + Vector3.UnitX);            
+        //    //C.B++;
+        //}
         //else if (KBS.IsKeyDown(Key.J))
         //{
-        //    C.B = -1;
-        //    C.Position = C.Position * C.RotateX;
-        //    //ScreenCentre = Position + Direction * DistanceToOrigin;
-        //    C.P0 = (C.ScreenCentre + new Vector3(-1, -1, 0)) * C.RotateX;
-        //    C.P1 = (C.ScreenCentre + new Vector3(1, -1, 0)) * C.RotateX;
-        //    C.P2 = (C.ScreenCentre + new Vector3(-1, 1, 0)) * C.RotateX;
+        //    //C.B = -0.1f;
+        //    C.RotateX();
+        //    //C.B--;
         //}
+
+        //    if(KBS.IsKeyDown())
+
+
         //if (KBS.IsKeyDown(Key.I))
         //{
         //    C.Position = C.Position * C.RotateY;
@@ -67,9 +110,9 @@ class Raytracer
         //else if (KBS.IsKeyDown(Key.K))
         //    C.RotateThatShit += new Vector3(0, 0, 0.1f);
 
-        C.Tick();
+        
         //C.RotateThatShit = new Vector3(1, 1, 1);
-        Draw3D();
+        
     }
 
     void Draw3D()
@@ -78,8 +121,8 @@ class Raytracer
             for (int y = 1; y < Screen.height - 1; y++)
             {
                 Ray r = new Ray(C.Position, CreateRayDirection(x, y));
-                r.x = x;
-                r.y = Screen.height - y;
+                r.x = Screen.width / 2 - x;
+                r.y = y;
                 r.MinDistance = CreateMinDistance(x, y);
                 r.Distance = S.CheckIntersect(r);
                 if (r.Distance == -1)
@@ -109,6 +152,9 @@ class Raytracer
             }
         }
         S.intersections.Clear();
+
+        Screen.Line(0, CheckRayY, Screen.width / 2, CheckRayY, Colour(RayColor));
+        Screen.Line(512, 0, 512, 512, Colour(new Vector3(1, 1, 1)));
     }
 
     public void DrawDebug()
@@ -119,12 +165,10 @@ class Raytracer
                 Screen.pixels[x + Screen.width / 2 + y * Screen.width] = Colour(new Vector3(0, 0, 0));
             }
         
-        RayColor = new Vector3(0.3f, 0.8f, 0.5f);
         Vector2 Origin = VectorToScreenPos(C.Position);
         Screen.Line((int)(Origin.X - 5), (int)(Origin.Y + 5), (int)(Origin.X), (int)(Origin.Y - 10), Colour(new Vector3(1, 1, 1)));
         Screen.Line((int)(Origin.X + 5), (int)(Origin.Y + 5), (int)(Origin.X), (int)(Origin.Y - 10), Colour(new Vector3(1, 1, 1)));
         Screen.Line((int)(Origin.X - C.ScreenWidth / 2 * Screen.width / 20), (int)(Origin.Y - C.DistanceToOrigin * Screen.height / 10), (int)(Origin.X + C.ScreenWidth / 2 * Screen.width / 20), (int)(Origin.Y - C.DistanceToOrigin * Screen.height / 10), Colour(new Vector3(1, 1, 1)));
-        Screen.Line(0, CheckRayY, Screen.width / 2, CheckRayY, Colour(RayColor));
 
         int counter = 0;
         float t;
@@ -182,23 +226,8 @@ class Raytracer
             counter--;
         }
         S.DrawPrimitivesDebug();
-
         S.reflectrays.Clear();
-        //foreach (Ray sr in S.shadowrays)
-        //{
-        //    if (sr.y == CheckRayY)
-        //    {
-        //        srstart = VectorToScreenPos(sr.Start);
-        //        if (sr.Occluded)
-        //        {
-        //            srend = VectorToScreenPos(sr.Start + sr.Direction * sr.Distance);
-        //            shadowcolor = new Vector3(0.7f, 0.1f, 0);
-        //            Screen.Line((int)(srstart.X), (int)(srstart.Y), (int)(srend.X), (int)(srend.Y), Colour(shadowcolor));
-        //        }
-        //    }
-        //}
         S.shadowrays.Clear();
-        Screen.Line(512, 0, 512, 512, Colour(new Vector3(1, 1, 1)));
     }
 
     Vector2 VectorToScreenPos(Vector3 v)
