@@ -9,16 +9,13 @@ class Camera
     static Camera C = new Camera();
     float x, y, z;
     public Matrix3 RotateX, RotateY, RotateZ;
-    Vector3 V = new Vector3(0, 0, 1), upp = new Vector3(0, 1, 0), UnitR, UnitU, test, test1;
+    public Vector3 V = new Vector3(0, 0, 1), upp = new Vector3(0, 1, 0), UnitR, UnitU, test, test1;
     public double B = 1;
     float angle, hypotenuse, Oppositeside;
     public Camera()
     {
         double a = Math.Asin((FOV / 180) * Math.PI);
-        test = Vector3.Cross(V, upp);
-        test1 = Vector3.Normalize(test);
-        UnitR = Vector3.Divide(Vector3.Cross(V, upp), Vector3.Normalize(Vector3.Cross(V, upp)));
-        UnitU = Vector3.Cross(test1, V);
+
         ScreenWidth = 2;
         DistanceToOrigin = (float)(1 / Math.Sin(((FOV / 2) / 180) * Math.PI));
         NormDirection = Vector3.Normalize(Direction);
@@ -27,6 +24,10 @@ class Camera
 
     public void Tick()
     {
+        test = Vector3.Cross(Direction, upp);
+        test1 = Vector3.Normalize(test);
+        UnitR = Vector3.Divide(Vector3.Cross(V, upp), Vector3.Normalize(Vector3.Cross(V, upp)));
+        UnitU = Vector3.Cross(test1, Direction);
         double x = B / 180 * Math.PI;
         RotateX = new Matrix3
          (1, 0, 0,
@@ -43,9 +44,15 @@ class Camera
         DistanceToOrigin2D = (float)Math.Sqrt((ScreenCentre - Position).X * (ScreenCentre - Position).X + (ScreenCentre - Position).Z * (ScreenCentre - Position).Z);
         //Console.WriteLine(Direction);
         ScreenCentre = Position + Direction * DistanceToOrigin;
-        P0 = (ScreenCentre - test1 + UnitU);
-        P1 = (ScreenCentre + test1 + UnitU);
-        P2 = (ScreenCentre - test1 - UnitU);
+        //P0 = (ScreenCentre - test1 + UnitU);
+        //P1 = (ScreenCentre + test1 + UnitU);
+        //P2 = (ScreenCentre - test1 - UnitU);
+        P0 = (Position + Direction * DistanceToOrigin - test1 + UnitU);
+        P1 = (P0 + (test * 2));
+        P2 = (P0 - UnitU * 2);
+
+        Console.WriteLine(Position);
+        Console.WriteLine(P0);
         //Console.WriteLine(Position);
     }
 
