@@ -55,7 +55,7 @@ class Raytracer
         //here we give every pixel the backgroundcolor
         for (int x = 0; x < Screen.width / 2; x++)
             for (int y = 0; y < Screen.height; y++)
-                Screen.pixels[x + y * Screen.width] = Colour(new Vector3(0f, 0.1f, 0f));
+                Screen.pixels[x + y * Screen.width] = Colour(new Vector3(0.1f, 0.1f, 0.1f));
 
         //here we give every pixel with intersections a color
         foreach (Intersection I in S.intersections)
