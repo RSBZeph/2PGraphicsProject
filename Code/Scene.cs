@@ -47,7 +47,7 @@ class Scene
         p1.checkerboard = true;
         planes.Add(p1);
 
-        //dit is een parallelogram
+        //This is a parallelogram
         p1 = new Plane(new Vector3(5, 9, 15), new Vector3(1, 0.3f, 0), new Vector3(0.3f, 1, 0), new Vector3(0.7f, 0.6f, 0.2f));
         p1.height = 3;
         p1.width = 6;
