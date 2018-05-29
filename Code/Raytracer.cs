@@ -13,6 +13,7 @@ class Raytracer
     int CheckRayY;
     Vector3 RayColor;
     KeyboardState KBS;
+    public float K;
 
     public Raytracer(Surface sur)
     {
@@ -21,6 +22,7 @@ class Raytracer
         S = new Scene(Screen);
         arRay = new Ray[Screen.width / 2];
         CheckRayY = Screen.height / 2;
+        K = (float)((10 / 180) * Math.PI);
     }
 
     public void Render()
@@ -68,15 +70,84 @@ class Raytracer
             C.P1 += 0.25f * C.Up;
             C.P2 += 0.25f * C.Up;
         }
-        else if (KBS.IsKeyDown(Key.J))
+
+        if (KBS.IsKeyDown(Key.U))
         {
-            ////C.B = -1;
-            //C.Position = C.Position * C.RotateX;
-            ////ScreenCentre = Position + Direction * DistanceToOrigin;
+            if (C.B < 0)
+                C.B = -C.B;
+
+            //float x = (float)(Math.Cos(0.17) * C.Direction.X - Math.Sin(0.17) * C.Direction.Z);
+            //C.Direction = C.Direction * Matrix4.CreateRotationY(0.1f); 
+            //C.Direction = Vector3.Normalize(C.Direction + Vector3.UnitX);
+            //C.Direction =  C.Direction * new Vector3((float)(C.Direction.X * Math.Cos(0.17) + C.Direction.Z * Math.Sin(0.17)), C.Direction.Y, (float)(-C.Direction.X * Math.Sin(0.17) + C.Direction.Z * Math.Cos(0.17)));
+            //ScreenCentre = Position + Direction * DistanceToOrigin;
             //C.P0 = C.P0 * C.RotateX;
             //C.P1 = C.P1 * C.RotateX;
             //C.P2 = C.P2 * C.RotateX;
         }
+
+        else if (KBS.IsKeyDown(Key.J))
+        {
+            if (C.B > 0)
+                C.B = -C.B;
+            C.Direction = C.Direction * Matrix3.CreateRotationZ(1f);
+            //if (C.Direction != new Vector3(0, 0, 1))
+            //{
+            //   C.Direction = C.Direction * new Vector3((float)(C.Direction.X * Math.Cos(-0.17) - C.Direction.Y * Math.Sin(-0.17)), (float)(C.Direction.X * Math.Sin(-0.17) + C.Direction.Y * Math.Cos(-0.17)), C.Direction.Z);
+
+            //}
+            //if (C.Direction == new Vector3(0, 0, 1))
+            //    C.Direction = new Vector3(0, -1f, 1);
+            //C.Direction = C.RotateX * C.Direction;
+            //ScreenCentre = Position + Direction * DistanceToOrigin;
+            //C.P0 =  C.RotateX * C.P0;
+            //C.P1 =  C.RotateX * C.P1;
+            //C.P2 = C.RotateX * C.P2;
+        }
+
+        //if(KBS.IsKeyDown(Key.I))
+        //{
+        //    if(C.B < 0)
+        //        C.B = -C.B;
+        //    //C.Position = C.Position * C.RotateY;
+        //    //ScreenCentre = Position + Direction * DistanceToOrigin;
+        //    C.P0 = C.P0 * C.RotateY;
+        //    C.P1 = C.P1 * C.RotateY;
+        //    C.P2 = C.P2 * C.RotateY;
+        //}
+
+        //else if (KBS.IsKeyDown(Key.K))
+        //{
+        //    if (C.B > 0)
+        //        C.B = -C.B;
+        //    C.Direction = C.Direction * C.RotateY;
+        //    //ScreenCentre = Position + Direction * DistanceToOrigin;
+        //    C.P0 = C.P0 * C.RotateY;
+        //    C.P1 = C.P1 * C.RotateY;
+        //    C.P2 = C.P2 * C.RotateY;
+        //}
+
+        //if (KBS.IsKeyDown(Key.O))
+        //{
+        //    if (C.B < 0)
+        //        C.B = -C.B;
+        //    C.Direction = C.Direction * C.RotateZ;
+        //    //ScreenCentre = Position + Direction * DistanceToOrigin;
+        //    C.P0 = C.P0 * C.RotateZ;
+        //    C.P1 = C.P1 * C.RotateZ;
+        //    C.P2 = C.P2 * C.RotateZ;
+        //}
+
+        //else if (KBS.IsKeyDown(Key.L))
+        //{
+        //    if (C.B > 0)
+        //        C.B = -C.B;
+        //    C.Direction = C.Direction * C.RotateZ;
+        //    //ScreenCentre = Position + Direction * DistanceToOrigin;
+        //    C.P0 = C.P0 * C.RotateZ;
+        //    C.P1 = C.P1 * C.RotateZ;
+        //    C.P2 = C.P2 * C.RotateZ;
+        //}
 
         C.Tick();
         Draw3D();
