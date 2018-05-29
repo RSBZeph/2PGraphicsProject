@@ -28,6 +28,7 @@ class Scene
         C = Camera.Instance();
     }
 
+    //filling the the scene with instances of objects (every object has his own list)
     void FillLists()
     {
         Sphere s1 = new Sphere(new Vector3(2, 5, 8), 2f, new Vector3(0.7f, 0.7f, 0.7f), false);
@@ -50,14 +51,16 @@ class Scene
         Light l1 = new Light(new Vector3(0, 7, 3), 10f);
         lights.Add(l1);
 
-        l1 = new Light(new Vector3(10, 5, 8), 5f);
-        lights.Add(l1);
+        Light l2 = new Light(new Vector3(10, 5, 8), 5f);
+        lights.Add(l2);
     }
 
+    //here we draw our primitives (sphere and light) for the debug
     public void DrawPrimitivesDebug()
     {
         int width = Screen.width / 2, height = Screen.height;
         int width1 = width / 10, height1 = height / 10;
+        //drawing the spheres
         foreach (Sphere sphere in spheres)
         {
             for (double rad = 0.0; rad < 360; rad++)
@@ -70,7 +73,7 @@ class Scene
                     Screen.pixels[Location] = Colour(sphere.Color);
             }
         }
-
+        //drawing the lights
         foreach (Light light in lights)
         {
             for (double rad = 0.0; rad < 360; rad++)
@@ -85,11 +88,16 @@ class Scene
         }
     }
 
+    //here we check for intersections with rays and our primitives(sphere and planes)
+    //it returns the distance of the intersection and the start of the ray
+    //and adds the intersection to the intersection list (with the object, the ray and the distance
     public float CheckIntersect(Ray ray)
-    {
-        bool replaced = false;
+    { 
+        bool replaced = false , sphereFound = false;
+        //the object and distance that we return
         Primitive Object = null;
         finalresult = -1;
+        //this is for intersections with rays and spheres
         foreach (Sphere sphere in spheres)
         {
             difference1 = ray.Start - sphere.Position;
@@ -135,6 +143,9 @@ class Scene
                 }
             }
         }
+        //this is for intersections with rays and rays (if a sphere is found we dont need to check for a plane)
+        if (!sphereFound)
+        {
             foreach (Plane plane in planes)
             {
                 if (Vector3.Dot(plane.Normal, ray.Direction) >= 0)
@@ -167,6 +178,8 @@ class Scene
                     continue;                
             }            
         }
+        //when there is a intersection we add it to the list 
+        //we also check if it is from a mirror then we add it to the reflection intersection list
         if (replaced)
         {
             i1 = new Intersection(Object, finalresult, ray);
@@ -183,6 +196,7 @@ class Scene
         return finalresult;
     }
 
+    //
     public Vector3 CheckReflectIntersect(Intersection inter)
     {
         reflectintersect = null;
@@ -214,6 +228,7 @@ class Scene
         }
     }
 
+    //this makes the shadowrays
     public Vector3 ShadowRay(Intersection inter)
     {
         float attenuation = 0;
@@ -237,6 +252,7 @@ class Scene
             }
             shadowrays.Add(SR);
         }
+        //this is for checkerboard patron   
         if (inter.Object is Plane)
         {
             Plane plane = (Plane)inter.Object;
@@ -250,7 +266,8 @@ class Scene
         }
         return inter.Color * attenuation;
     }
-
+    //this is finds our shadow ray intersects
+    //it uses the same way to find intersects like in the CheckIntersect funtion
     Ray ShadowRayIntersect(Ray ray)
     {
         foreach (Sphere sphere in spheres)
@@ -289,6 +306,7 @@ class Scene
         return ray;
     }
 
+    //simple function to check distance between two point and distance of a vector
     public float Distance(Vector3 first, Vector3 second)
     {
         Vector3 offset = second - first;
