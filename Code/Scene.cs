@@ -28,7 +28,7 @@ class Scene
         C = Camera.Instance();
     }
 
-    //filling the the scene with instances of objects (every object has his own list)
+    //filling the the scene with instances of objects (spheres, planes and lights have their own lists)
     void FillLists()
     {
         Sphere s1 = new Sphere(new Vector3(5, 5, 9), 2f, new Vector3(0.7f, 0.7f, 0.7f), false);
@@ -89,15 +89,15 @@ class Scene
     }
 
     //here we check for intersections with rays and our primitives(sphere and planes)
-    //it returns the distance of the intersection and the start of the ray
-    //and adds the intersection to the intersection list (with the object, the ray and the distance
+    //it returns the distance from the start of the ray to the intersection
+    //and adds the intersection to the intersection list (with the object, the ray and the distance)
     public float CheckIntersect(Ray ray)
     {
-        bool replaced = false, sphereFound = false;
+        bool replaced = false;
         //the object and distance that we return
         Primitive Object = null;
         finalresult = -1;
-        //this is for intersections with rays and spheres
+        //re-write the the formula for sphere intersection with lines to one which consists of an a * t^2, b * t and c, allowing us to use the ABC formula to solve t
         foreach (Sphere sphere in spheres)
         {
             difference1 = ray.Start - sphere.Position;
@@ -113,37 +113,25 @@ class Scene
                 if (((!FromMirror && result1 > ray.MinDistance) || (FromMirror && result1 > 0.001f)) && (!replaced || result1 < finalresult))
                 {
                     if (!FromMirror && result2 > ray.MinDistance || FromMirror && result2 > 0.001f)
-                    {
                         finalresult = Math.Min(result1, result2);
-                        replaced = true;
-                        Object = sphere;
-                    }
                     else
-                    {
                         finalresult = result1;
-                        replaced = true;
-                        Object = sphere;
-                    }
+                    replaced = true;
+                    Object = sphere;                    
                 }
 
                 if (((!FromMirror && result2 > ray.MinDistance) || (FromMirror && result2 > 0.001f)) && (!replaced || result1 < finalresult))
                 {
-                    if (!FromMirror && result1 > ray.MinDistance || FromMirror && result1 > 0.001f)
-                    {
-                        finalresult = Math.Min(result1, result2);
-                        replaced = true;
-                        Object = sphere;
-                    }
-                    else
-                    {
+                    if (!FromMirror && result1 > ray.MinDistance || FromMirror && result1 > 0.001f)                    
+                        finalresult = Math.Min(result1, result2);                    
+                    else                    
                         finalresult = result2;
-                        replaced = true;
-                        Object = sphere;
-                    }
+                    replaced = true;
+                    Object = sphere;                   
                 }
             }
         }
-        //this is for intersections with rays and rays
+        //calculate intersections between rays and planes
         foreach (Plane plane in planes)
         {
             if (FromMirror && Vector3.Dot(plane.Normal, ray.Direction) >= 0 || Vector3.Dot(plane.Normal, ray.Direction) == 0)

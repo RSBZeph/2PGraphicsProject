@@ -5,7 +5,6 @@ class Application
 {
     KeyboardState KBS;
     Camera C;
-    //doesn't do much only makes sure the renderfuntion in raytracer is called
     public Raytracer R;
 
     public Application(Surface sur)
@@ -16,13 +15,14 @@ class Application
 
     public void Tick()
     {
-        KBS = Keyboard.GetState();
         Input();
         R.Render();
     }
 
+    //checks for input and moves or turns the camera accordingly
     void Input()
     {
+        KBS = Keyboard.GetState();
         if (KBS.IsKeyDown(Key.Plus))
         {
             R.angle += 10;
