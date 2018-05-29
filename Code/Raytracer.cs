@@ -81,11 +81,11 @@ class Raytracer
         else if (KBS.IsKeyDown(Key.J))
         {
             //C.B = -1;
-            C.Position = C.Position * C.RotateX;
-            //ScreenCentre = Position + Direction * DistanceToOrigin;
-            C.P0 = C.P0 * C.RotateX;
-            C.P1 = C.P1 * C.RotateX;
-            C.P2 = C.P2 * C.RotateX;
+            //C.Position = C.Position * C.RotateX;
+            ////ScreenCentre = Position + Direction * DistanceToOrigin;
+            //C.P0 = C.P0 * C.RotateX;
+            //C.P1 = C.P1 * C.RotateX;
+            //C.P2 = C.P2 * C.RotateX;
         }
 
         C.Tick();
@@ -125,16 +125,20 @@ class Raytracer
         
     }
 
+    //draws the pixels on the left screen (the 3d world)
     void Draw3D()
     {
+        //here it shoots a ray foreach pixel
         for (int x = 0; x < Screen.width / 2; x++)
             for (int y = 1; y < Screen.height - 1; y++)
             {
+                //making a ray of the pixel on x,y
                 Ray r = new Ray(C.Position, CreateRayDirection(x, y));
                 r.x = Screen.width / 2 - x;
                 r.y = y;
                 r.MinDistance = CreateMinDistance(x, y);
                 r.Distance = S.CheckIntersect(r);
+                //if r.Distance = -1 there is no intersection
                 if (r.Distance == -1)
                 {
                     r.Distance = 10;
@@ -142,15 +146,17 @@ class Raytracer
                 if (y == CheckRayY)
                     arRay[x] = r;
             }
-
+        //calls the debug function
         DrawDebug();
-
+        //here we give every pixel the backgroundcolor
         for (int x = 0; x < Screen.width / 2; x++)
             for (int y = 0; y < Screen.height; y++)
                 Screen.pixels[x + y * Screen.width] = Colour(new Vector3(0.2f, 0, 0));
 
+        //here we give every pixel with intersections a color
         foreach (Intersection I in S.intersections)
         {
+            //if it is a mirror it looks for reflection rays
             if (I.Object.Mirror)
             {
                 S.recursions = 0;
@@ -162,8 +168,9 @@ class Raytracer
             }
         }
         S.intersections.Clear();
-
+        //draws the horizontal line in the middle of the left screen
         Screen.Line(0, CheckRayY, Screen.width / 2, CheckRayY, Colour(RayColor));
+        //draw the vertical line between the degub and the 3d world
         Screen.Line(512, 0, 512, 512, Colour(new Vector3(1, 1, 1)));
     }
 
@@ -177,6 +184,7 @@ class Raytracer
         return new Vector2(x, y);
     }
 
+    //draws the pixels on the right screen (debug)
     public void DrawDebug()
     {
         for (int x = 0; x < Screen.width / 2; x++)
@@ -184,7 +192,7 @@ class Raytracer
             {
                 Screen.pixels[x + Screen.width / 2 + y * Screen.width] = Colour(new Vector3(0, 0, 0));
             }
-
+        //draws the debug camera and sreen
         Vector2 Origin = VectorToScreenPos(C.Position);
 
         int counter = 0;
@@ -192,6 +200,7 @@ class Raytracer
         Vector2 end, srstart, srend, rrstart, rrend;
         Vector3 shadowcolor = new Vector3(1, 1, 1);
 
+        //draws the rays in the debug
         foreach (Ray r in arRay)
         {
             if (counter == 0)
@@ -209,6 +218,7 @@ class Raytracer
                 Screen.Line((int)(Origin.X), (int)(Origin.Y), (int)(end.X), (int)(end.Y), Colour(RayColor));
                 counter = 30;
 
+                //draws the shadowrays in the debug
                 foreach (Ray sr in S.shadowrays)
                 {
                     if (r.y == sr.y)
@@ -228,7 +238,7 @@ class Raytracer
                             Screen.Line((int)(srstart.X), (int)(srstart.Y), (int)(srend.X), (int)(srend.Y), Colour(shadowcolor));
                         }
                 }
-
+                //draws the reflection rays in the debug
                 foreach (Ray rr in S.reflectrays)
                 {
                     if (r.y == rr.y)
@@ -242,7 +252,9 @@ class Raytracer
             }
             counter--;
         }
+        //calling the function in Scene to draw the primitives in the debug
         S.DrawPrimitivesDebug();
+        //clearing the ray lists
         S.reflectrays.Clear();
         S.shadowrays.Clear();
         float angleoffset = (float)(Math.Atan((C.ScreenWidth / 2) / C.DistanceToOrigin2D) * 180 / Math.PI), w, e;
@@ -254,23 +266,27 @@ class Raytracer
         Screen.Line((int)(pointoncircle(angle -90).X), (int)(pointoncircle(angle -90).Y), (int)(pointoncircle(angle + 40).X), (int)(pointoncircle(angle + 40).Y), Colour(new Vector3(1, 1, 1)));
     }
 
+    //simple function to translate a 3d point to a point on the debug
     Vector2 VectorToScreenPos(Vector3 v)
     {
         return new Vector2(v.X * Screen.width / 20 + Screen.width / 2, Screen.height - v.Z * Screen.height / 10);
     }
 
+    //creates the direction from camera to screen
     Vector3 CreateRayDirection(float x, float y)
     {
         Vector3 ScreenPoint = C.P0 + x * (C.P1 - C.P0) / (Screen.width / 2) + y * (C.P2 - C.P0) / Screen.height;
         return Vector3.Normalize(ScreenPoint - C.Position);
     }
 
+    //gets the distance from camera to a point on the screen, any intersection of rays that's smaller than this value is on the wrong end of the screen, thus not visible
     float CreateMinDistance(float x, float y)
     {
         Vector3 ScreenPoint = C.P0 + x * (C.P1 - C.P0) / (Screen.width / 2) + y * (C.P2 - C.P0) / Screen.height;
         return S.Length(ScreenPoint - C.Position);
     }
 
+    //translates vecor3 colors to int color for GL
     public static int Colour(Vector3 colorVec)
     {
         float colorx = MathHelper.Clamp(colorVec.X, 0, 1);
@@ -279,6 +295,7 @@ class Raytracer
         return ((int)(colorx * 255f) << 16) + ((int)(colory * 255f) << 8) + (int)(colorz * 255f);
     }
 
+    //the ray struct which stores all the values for a ray
     public struct Ray
     {
         public Vector3 Start, Direction;

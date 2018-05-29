@@ -7,6 +7,7 @@ using Template;
 
 class Application
 {
+    //doesn't do much only makes sure the renderfuntion in raytracer is called
     public Raytracer R;
 
     public Application(Surface sur)
