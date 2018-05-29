@@ -11,6 +11,7 @@ class Camera
     public Matrix3 RotateX, RotateY, RotateZ;
     Vector3 V = new Vector3(0, 0, 1), upp = new Vector3(0, 1, 0), UnitR, UnitU, test, test1;
     public double B = 1;
+    float angle, hypotenuse, Oppositeside;
     public Camera()
     {
         double a = Math.Asin((FOV / 180) * Math.PI);
@@ -58,4 +59,23 @@ class Camera
     {
         return C;
     }
+
+    public void RotateRight(float A)
+    {
+        double RotateAngleR = A / 180 * Math.PI;
+        Oppositeside = ScreenCentre.Z - Position.Z;
+        angle = (float)Math.Sin(1 / (Oppositeside));
+        hypotenuse = (float)(Math.Sqrt(1 + (Oppositeside * Oppositeside)));
+
+        P0.X = (Position.X + hypotenuse * (float)Math.Cos(RotateAngleR + angle));
+        P0.Z = (Position.Z + hypotenuse * (float)Math.Sin(RotateAngleR + angle));
+        P1.X = (Position.X + hypotenuse * (float)Math.Cos(RotateAngleR + angle));
+        P1.Z = (Position.Z + hypotenuse * (float)Math.Sin(RotateAngleR + angle));
+        P2.X = (Position.X + hypotenuse * (float)Math.Cos(RotateAngleR - angle));
+        P2.Z = (Position.Z + hypotenuse * (float)Math.Sin(RotateAngleR - angle));
+    }
+        
+            
+
+    
 }

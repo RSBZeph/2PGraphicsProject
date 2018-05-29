@@ -15,6 +15,7 @@ class Raytracer
     KeyboardState KBS;
     public float angle = 0;
     public float K;
+    int RotateAngleRight = 90;
 
     public Raytracer(Surface sur)
     {
@@ -32,11 +33,19 @@ class Raytracer
 
         if (KBS.IsKeyDown(Key.U))
         {
-            if (C.B < 0)
-                C.B = -C.B;
+            RotateAngleRight++;
+            if(RotateAngleRight >= 450)
+            {
+                RotateAngleRight = 90;
+            }
+            C.RotateRight(RotateAngleRight);
+           
+
+            //if (C.B < 0)
+            //    C.B = -C.B;
 
             //float x = (float)(Math.Cos(0.17) * C.Direction.X - Math.Sin(0.17) * C.Direction.Z);
-            //C.Direction = C.Direction * Matrix4.CreateRotationY(0.1f); 
+            //C.Direction = C.Direction * Matrix3.CreateRotationY(0.1f); 
             //C.Direction = Vector3.Normalize(C.Direction + Vector3.UnitX);
             //C.Direction =  C.Direction * new Vector3((float)(C.Direction.X * Math.Cos(0.17) + C.Direction.Z * Math.Sin(0.17)), C.Direction.Y, (float)(-C.Direction.X * Math.Sin(0.17) + C.Direction.Z * Math.Cos(0.17)));
             //ScreenCentre = Position + Direction * DistanceToOrigin;
