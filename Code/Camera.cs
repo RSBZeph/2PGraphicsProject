@@ -20,7 +20,7 @@ class Camera
     {
         DistanceToOrigin = (float)(1 / Math.Sin(((FOV / 2) / 180) * Math.PI));
         ScreenCentre = Position + Direction * DistanceToOrigin;
-        Console.WriteLine(ScreenCentre);
+        Console.WriteLine(ScreenCentre - Position);
         DistanceToOrigin2D = (float)Math.Sqrt((ScreenCentre - Position).X * (ScreenCentre - Position).X + (ScreenCentre - Position).Z * (ScreenCentre - Position).Z);
         P0 = ScreenCentre + Right + Up;
         P1 = ScreenCentre - Right + Up;

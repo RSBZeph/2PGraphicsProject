@@ -67,7 +67,7 @@ class Application
         if (vertical)
         {
             C.Direction.Z = pointoncircle(R.yangle, false).X;
-            //C.Direction.Y = pointoncircle(R.yangle, false).Y;
+            C.Direction.Y = pointoncircle(R.yangle, false).Y;
             C.Direction = Vector3.Normalize(C.Direction);
             C.Up = Vector3.Normalize(Vector3.Cross(C.Direction, C.Right));
         }
@@ -120,10 +120,10 @@ class Application
     {
         float radius = (float)Math.Sqrt(C.DistanceToOrigin * C.DistanceToOrigin + 1);
         double radangle = angle * Math.PI / 180;
-        float x = (int)(C.Position.X + radius * Math.Cos(radangle));
-        float z = (int)(C.Position.Z + radius * Math.Sin(radangle));
+        float x = (float)(Math.Cos(radangle));
+        float z = (float)(Math.Sin(radangle));
         if (!horizontal)
-            return new Vector2(x, z) - new Vector2(C.Position.X, C.Position.Y);
-        return new Vector2(x, z) - new Vector2(C.Position.X, C.Position.Z);
+            return new Vector2(x, z);
+        return new Vector2(x, z);
     }
 }

@@ -12,7 +12,7 @@ class Raytracer
     Ray[] arRay;
     int CheckRayY;
     Vector3 RayColor = new Vector3(0.3f, 0.8f, 0.5f);
-    public float angle = 90, yangle = 0;
+    public float angle = 0, yangle = 0;
 
     public Raytracer(Surface sur)
     {
