@@ -257,11 +257,13 @@ class Raytracer
         //clearing the ray lists
         S.reflectrays.Clear();
         S.shadowrays.Clear();
-        float angleoffset = (float)(Math.Atan((C.ScreenWidth / 2) / C.DistanceToOrigin2D) * 180 / Math.PI), w, e;
+
+        //here the camera and the virtual screen are drawn, both dependant on the horizontal angle of the camera
+        //the changing of the vertical angle is simulated by changing the distance from camera to screen for the debug window
+        float angleoffset = (float)(Math.Atan((C.ScreenWidth / 2) / C.DistanceToOrigin2D) * 180 / Math.PI);
         float screencirclediameter = (float)Math.Sqrt(C.DistanceToOrigin2D * C.DistanceToOrigin2D + (C.ScreenWidth) * (C.ScreenWidth) / 4);
         Vector2 leftcorner = pointoncircle(angle - angleoffset - 90, screencirclediameter), rightcorner = pointoncircle(angle + angleoffset - 90, screencirclediameter);
         Screen.Line((int)leftcorner.X, (int)leftcorner.Y, (int)rightcorner.X, (int)rightcorner.Y, Colour(new Vector3(1, 1, 1)));
-        // Screen.Line((int)(Origin.X - C.ScreenWidth / 2 * Screen.width / 20), (int)(Origin.Y - C.DistanceToOrigin * Screen.height / 10), (int)(Origin.X + C.ScreenWidth / 2 * Screen.width / 20), (int)(Origin.Y - C.DistanceToOrigin * Screen.height / 10), Colour(new Vector3(1, 1, 1)));
         Screen.Line((int)(pointoncircle(angle -90).X), (int)(pointoncircle(angle -90).Y), (int)(pointoncircle(angle - 220).X), (int)(pointoncircle(angle -220).Y), Colour(new Vector3(1, 1, 1)));
         Screen.Line((int)(pointoncircle(angle -90).X), (int)(pointoncircle(angle -90).Y), (int)(pointoncircle(angle + 40).X), (int)(pointoncircle(angle + 40).Y), Colour(new Vector3(1, 1, 1)));
     }
