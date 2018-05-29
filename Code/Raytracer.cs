@@ -12,7 +12,7 @@ class Raytracer
     Ray[] arRay;
     int CheckRayY;
     Vector3 RayColor = new Vector3(0.3f, 0.8f, 0.5f);
-    public float angle = 90, yangle = 0;
+    public float angle = 0, yangle = 0;
 
     public Raytracer(Surface sur)
     {
@@ -21,6 +21,8 @@ class Raytracer
         S = new Scene(Screen);
         arRay = new Ray[Screen.width / 2];
         CheckRayY = Screen.height / 2;
+        angle = (float)(Math.Asin(C.Direction.Z) * 180 / Math.PI);
+        yangle = (float)(Math.Asin(C.Direction.Y) * 180 / Math.PI);
     }
 
     public void Render()
