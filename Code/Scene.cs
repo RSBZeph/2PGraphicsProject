@@ -92,8 +92,8 @@ class Scene
     //it returns the distance of the intersection and the start of the ray
     //and adds the intersection to the intersection list (with the object, the ray and the distance
     public float CheckIntersect(Ray ray)
-    { 
-        bool replaced = false , sphereFound = false;
+    {
+        bool replaced = false, sphereFound = false;
         //the object and distance that we return
         Primitive Object = null;
         finalresult = -1;
@@ -155,44 +155,45 @@ class Scene
                 Vector3 middletointer = intersectpos - plane.Position;
                 float dota = 0, dotb = 0;
 
-            if (result1 < finalresult && result1 > 0 || !replaced)
-            {
-                dota = Vector3.Dot(middletointer, plane.Dimension1);
-                if (dota < 0)
-                    dota = Vector3.Dot(middletointer, -plane.Dimension1);
-                if (dota < plane.width)
+                if (result1 < finalresult && result1 > 0 || !replaced)
                 {
-                    dotb = Vector3.Dot(middletointer, plane.Dimension2);
-                    if (dotb < 0)
-                        dotb = Vector3.Dot(middletointer, -plane.Dimension2);
-                    if (dotb < plane.height)
+                    dota = Vector3.Dot(middletointer, plane.Dimension1);
+                    if (dota < 0)
+                        dota = Vector3.Dot(middletointer, -plane.Dimension1);
+                    if (dota < plane.width)
                     {
-                        finalresult = result1;
-                        Object = plane;
-                        replaced = true;
+                        dotb = Vector3.Dot(middletointer, plane.Dimension2);
+                        if (dotb < 0)
+                            dotb = Vector3.Dot(middletointer, -plane.Dimension2);
+                        if (dotb < plane.height)
+                        {
+                            finalresult = result1;
+                            Object = plane;
+                            replaced = true;
+                        }
+                        else
+                            continue;
                     }
-                    else                    
-                        continue;                    
+                    else
+                        continue;
                 }
-                else
-                    continue;                
-            }            
-        }
-        //when there is a intersection we add it to the list 
-        //we also check if it is from a mirror then we add it to the reflection intersection list
-        if (replaced)
-        {
-            i1 = new Intersection(Object, finalresult, ray);
-            if (!FromMirror)
-                intersections.Add(i1);
-            else
-            {
-                reflectintersect = i1;
-                ray.Distance = finalresult;
-                reflectrays.Add(ray);
-                FromMirror = false;
             }
-        }        
+            //when there is a intersection we add it to the list 
+            //we also check if it is from a mirror then we add it to the reflection intersection list
+            if (replaced)
+            {
+                i1 = new Intersection(Object, finalresult, ray);
+                if (!FromMirror)
+                    intersections.Add(i1);
+                else
+                {
+                    reflectintersect = i1;
+                    ray.Distance = finalresult;
+                    reflectrays.Add(ray);
+                    FromMirror = false;
+                }
+            } 
+        }
         return finalresult;
     }
 
