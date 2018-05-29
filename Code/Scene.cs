@@ -16,7 +16,7 @@ class Scene
     Intersection i1;
     public Surface Screen;
     float a, b, c, discriminant, result1, result2, finalresult, shadowlength, precalc1;
-    Vector3 difference1, difference2, difference3, shadowray, MirrorColor;
+    Vector3 difference1, difference2, difference3, shadowray;
     bool FromMirror = false;
     int recursioncap = 5;
     public int recursions;
@@ -28,35 +28,39 @@ class Scene
         C = Camera.Instance();
     }
 
+    //filling the the scene with instances of objects (every object has his own list)
     void FillLists()
     {
-        Sphere s1 = new Sphere(new Vector3(2, 5, 8), 2f, new Vector3(0.7f, 0.7f, 0.7f), false);
+        Sphere s1 = new Sphere(new Vector3(5, 5, 9), 2f, new Vector3(0.7f, 0.7f, 0.7f), false);
         s1.Mirror = true;
         s1.ReflectFactor = 0.5f;
         spheres.Add(s1);
 
-        s1 = new Sphere(new Vector3(8, 4, 9), 1f, new Vector3(0, 0.6f, 0.9f), false);
+        s1 = new Sphere(new Vector3(8, 5, 6), 1.5f, new Vector3(0, 0.6f, 0.9f), false);
         spheres.Add(s1);
 
-        Sphere s2 = new Sphere(new Vector3(5, 3.5f, 7), 0.5f, new Vector3(0, 0.8f, 0.3f), false);
-        spheres.Add(s2);
+        s1 = new Sphere(new Vector3(1, 5, 6), 0.8f, new Vector3(0, 0.8f, 0.3f), false);
+        spheres.Add(s1);
 
-        Plane p1 = new Plane(new Vector3(5, 3, 9), new Vector3(1,0,0), new Vector3(0,0,1), new Vector3(0.7f, 0.6f, 0));
-        p1.height = 4;
-        p1.width = 5;
+        Plane p1 = new Plane(new Vector3(5, 3, 11), new Vector3(1, 0, 0), new Vector3(0, 0, 1), new Vector3(0.7f, 0.6f, 0));
+        p1.height = 5;
+        p1.width = 6;
+        p1.checkerboard = true;
         planes.Add(p1);
 
-        Light l1 = new Light(new Vector3(0, 7, 3), 10f);
+        Light l1 = new Light(new Vector3(0, 7, 3), 3f);
         lights.Add(l1);
 
-        //Light l2 = new Light(new Vector3(10, 5, 8), 5f);
-        //lights.Add(l2);
+        l1 = new Light(new Vector3(10, 7, 3), 3f);
+        lights.Add(l1);
     }
 
+    //here we draw our primitives (sphere and light) for the debug
     public void DrawPrimitivesDebug()
     {
         int width = Screen.width / 2, height = Screen.height;
         int width1 = width / 10, height1 = height / 10;
+        //drawing the spheres
         foreach (Sphere sphere in spheres)
         {
             for (double rad = 0.0; rad < 360; rad++)
@@ -69,7 +73,7 @@ class Scene
                     Screen.pixels[Location] = Colour(sphere.Color);
             }
         }
-
+        //drawing the lights
         foreach (Light light in lights)
         {
             for (double rad = 0.0; rad < 360; rad++)
@@ -84,11 +88,16 @@ class Scene
         }
     }
 
+    //here we check for intersections with rays and our primitives(sphere and planes)
+    //it returns the distance of the intersection and the start of the ray
+    //and adds the intersection to the intersection list (with the object, the ray and the distance
     public float CheckIntersect(Ray ray)
     {
-        bool replaced = false , sphereFound = false;
+        bool replaced = false, sphereFound = false;
+        //the object and distance that we return
         Primitive Object = null;
         finalresult = -1;
+        //this is for intersections with rays and spheres
         foreach (Sphere sphere in spheres)
         {
             difference1 = ray.Start - sphere.Position;
@@ -96,68 +105,56 @@ class Scene
             b = 2 * Vector3.Dot(difference1, ray.Direction);
             c = Vector3.Dot(difference1, difference1) - (sphere.Radius * sphere.Radius);
             discriminant = (b * b) - (4 * a * c);
-            if (discriminant > 0)
+            if (discriminant >= 0)
             {
                 result1 = (float)((-b + Math.Sqrt(discriminant)) / (2 * a));
                 result2 = (float)((-b - Math.Sqrt(discriminant)) / (2 * a));
 
-                if (((!FromMirror && result1 > ray.MinDistance) || (FromMirror && result1 > 0.001f)) && (finalresult == -1 || result1 < finalresult))
+                if (((!FromMirror && result1 > ray.MinDistance) || (FromMirror && result1 > 0.001f)) && (!replaced || result1 < finalresult))
                 {
                     if (!FromMirror && result2 > ray.MinDistance || FromMirror && result2 > 0.001f)
                     {
                         finalresult = Math.Min(result1, result2);
                         replaced = true;
                         Object = sphere;
-                        sphereFound = true;
                     }
                     else
                     {
                         finalresult = result1;
                         replaced = true;
                         Object = sphere;
-                        sphereFound = true;
                     }
                 }
 
-                if (((!FromMirror && result2 > ray.MinDistance) || (FromMirror && result2 > 0.001f)) && (finalresult == -1 || result1 < finalresult))
+                if (((!FromMirror && result2 > ray.MinDistance) || (FromMirror && result2 > 0.001f)) && (!replaced || result1 < finalresult))
                 {
                     if (!FromMirror && result1 > ray.MinDistance || FromMirror && result1 > 0.001f)
                     {
                         finalresult = Math.Min(result1, result2);
                         replaced = true;
                         Object = sphere;
-                        sphereFound = true;
                     }
                     else
                     {
                         finalresult = result2;
                         replaced = true;
                         Object = sphere;
-                        sphereFound = true;
                     }
                 }
             }
         }
-        if(!sphereFound)
+        //this is for intersections with rays and rays
+        foreach (Plane plane in planes)
         {
-            foreach (Plane plane in planes)
-            {
-                if (Vector3.Dot(plane.Normal, ray.Direction) >= 0)
-                    continue;
-                finalresult = -Vector3.Dot((ray.Start - plane.Position), plane.Normal) / Vector3.Dot(ray.Direction, plane.Normal);
-                //if (finalresult < 100)
-                //{
-                //    Object = plane;
-                //    replaced = true;
-                //}
-                //else
-                //{
-                //    finalresult = -1;
-                //}
+            if (FromMirror && Vector3.Dot(plane.Normal, ray.Direction) >= 0 || Vector3.Dot(plane.Normal, ray.Direction) == 0)
+                continue;
+            result1 = -Vector3.Dot((ray.Start - plane.Position), plane.Normal) / Vector3.Dot(ray.Direction, plane.Normal);
+            Vector3 intersectpos = ray.Start + ray.Direction * result1;
+            Vector3 middletointer = intersectpos - plane.Position;
+            float dota = 0, dotb = 0;
 
-                Vector3 intersectpos = ray.Start + ray.Direction * finalresult;
-                Vector3 middletointer = intersectpos - plane.Position;
-                float dota = 0, dotb = 0;
+            if (result1 < finalresult && result1 > 0 || !replaced)
+            {
                 dota = Vector3.Dot(middletointer, plane.Dimension1);
                 if (dota < 0)
                     dota = Vector3.Dot(middletointer, -plane.Dimension1);
@@ -168,22 +165,19 @@ class Scene
                         dotb = Vector3.Dot(middletointer, -plane.Dimension2);
                     if (dotb < plane.height)
                     {
+                        finalresult = result1;
                         Object = plane;
                         replaced = true;
                     }
                     else
-                    {
-                        finalresult = -1;
                         continue;
-                    }
                 }
                 else
-                {
-                    finalresult = -1;
                     continue;
-                }
             }
         }
+        //when there is a intersection we add it to the list 
+        //we also check if it is from a mirror then we add it to the reflection intersection list
         if (replaced)
         {
             i1 = new Intersection(Object, finalresult, ray);
@@ -202,11 +196,6 @@ class Scene
 
     public Vector3 CheckReflectIntersect(Intersection inter)
     {
-        if (recursions == 0)
-        {
-            MirrorColor = inter.Color;
-        }
-
         reflectintersect = null;
         double angle = Math.Acos(Vector3.Dot(inter.Ray.Direction, inter.Normal)) * 180 / Math.PI;
         Vector3 Reflect = -2 * Vector3.Dot(inter.Ray.Direction, inter.Normal) * inter.Normal + inter.Ray.Direction;
@@ -236,14 +225,12 @@ class Scene
         }
     }
 
+    //this makes the shadowrays
     public Vector3 ShadowRay(Intersection inter)
     {
-        float attenuation = 0;
+        float attenuation = 0.1f;
         foreach (Light light in lights)
         {
-            if (inter.Object is Plane)
-            {
-            }
             difference2 = light.Position - inter.Position;
             shadowray = Vector3.Normalize(difference2);
             shadowlength = Math.Abs(Length(difference2));
@@ -252,32 +239,32 @@ class Scene
                 x = inter.Ray.x,
                 y = inter.Ray.y,
                 MaxDistance = shadowlength,
+                Distance = shadowlength,
             };
             SR = ShadowRayIntersect(SR);
             if (!SR.Occluded)
             {
-                float ja = Vector3.Dot(inter.Normal, difference2);
                 attenuation += Vector3.Dot(inter.Normal, difference2) / (shadowlength * shadowlength) * light.Intensity;
-                if (attenuation > 1)
-                    attenuation = 1;
-                if (attenuation < 0)
-                    attenuation = 0;
+                attenuation = MathHelper.Clamp(attenuation, 0, 1);
             }
             shadowrays.Add(SR);
         }
+        //this is for checkerboard pattern   
         if (inter.Object is Plane)
         {
+            Plane plane = (Plane)inter.Object;
             Vector3 planedistance = inter.Position - inter.Object.Position;
-            if (Math.Sin(planedistance.X) <= 0 || Math.Sin(planedistance.Z) <= 0)
+            if (Math.Sin(Vector3.Dot(planedistance, plane.Dimension1)) <= 0 && Math.Sin(Vector3.Dot(planedistance, plane.Dimension2)) <= 0)
+                inter.Color = new Vector3(1, 1, 1);
+            else if (Math.Sin(Vector3.Dot(planedistance, plane.Dimension1)) <= 0 || Math.Sin(Vector3.Dot(planedistance, plane.Dimension2)) <= 0)
                 inter.Color = new Vector3(0, 0, 0);
-            else
-                inter.Color = new Vector3(1, 1, 1);
-            if (Math.Sin(planedistance.X) <= 0 && Math.Sin(planedistance.Z) <= 0)
-                inter.Color = new Vector3(1, 1, 1);
+            else            
+                inter.Color = new Vector3(1, 1, 1);            
         }
         return inter.Color * attenuation;
     }
-
+    //this finds our shadow ray intersects
+    //it uses the same way to find intersects like in the CheckIntersect funtion
     Ray ShadowRayIntersect(Ray ray)
     {
         foreach (Sphere sphere in spheres)
@@ -287,16 +274,18 @@ class Scene
             b = 2 * Vector3.Dot(difference3, ray.Direction);
             c = Vector3.Dot(difference3, difference3) - (sphere.Radius * sphere.Radius);
             discriminant = (b * b) - (4 * a * c);
-            if (discriminant > 0)
+            if (discriminant >= 0)
             {
                 precalc1 = (float)(Math.Sqrt(discriminant));
                 result1 = ((-b + precalc1) / (2 * a));
                 result2 = ((-b - precalc1) / (2 * a));
                 if (result1 > 0 && result2 > 0)
                 {
-                    ray.Distance = Math.Min(result1, result2);
-                    ray.Occluded = true;
-                    return ray;
+                    if (Math.Min(result1, result2) < ray.Distance)
+                    {
+                        ray.Distance = Math.Min(result1, result2);
+                        ray.Occluded = true;
+                    }
                 }
             }
         }
@@ -305,16 +294,16 @@ class Scene
             if (Vector3.Dot(plane.Normal, ray.Direction) >= 0)
                 continue;
             result1 = -Vector3.Dot((ray.Start - plane.Position), plane.Normal) / Vector3.Dot(ray.Direction, plane.Normal);
-            if (result1 < ray.MaxDistance && result1 > 0.001f)
+            if (result1 < ray.Distance)
             {
                 ray.Distance = result1;
                 ray.Occluded = true;
-                return ray;
             }
         }
         return ray;
     }
 
+    //simple function to check distance between two point and lenght of a vector
     public float Distance(Vector3 first, Vector3 second)
     {
         Vector3 offset = second - first;
