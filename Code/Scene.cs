@@ -132,40 +132,55 @@ class Scene
             }
         }
         //calculate intersections between rays and planes
+        //if the plane is finite, check if the intersection position is within the boundries of the plane
+        //else, acknowledge the intersection if it is not too ridiculously far away (<100)
         foreach (Plane plane in planes)
         {
             if (FromMirror && Vector3.Dot(plane.Normal, ray.Direction) >= 0 || Vector3.Dot(plane.Normal, ray.Direction) == 0)
                 continue;
             result1 = -Vector3.Dot((ray.Start - plane.Position), plane.Normal) / Vector3.Dot(ray.Direction, plane.Normal);
-            Vector3 intersectpos = ray.Start + ray.Direction * result1;
-            Vector3 middletointer = intersectpos - plane.Position;
-            float dota = 0, dotb = 0;
-
-            if (result1 < finalresult && result1 > 0 || !replaced)
+            if (plane.finite)
             {
-                dota = Vector3.Dot(middletointer, plane.Dimension1);
-                if (dota < 0)
-                    dota = Vector3.Dot(middletointer, -plane.Dimension1);
-                if (dota < plane.width)
+                Vector3 intersectpos = ray.Start + ray.Direction * result1;
+                Vector3 middletointer = intersectpos - plane.Position;
+                float dota = 0, dotb = 0;
+
+                if (result1 < finalresult && result1 > 0 || !replaced)
                 {
-                    dotb = Vector3.Dot(middletointer, plane.Dimension2);
-                    if (dotb < 0)
-                        dotb = Vector3.Dot(middletointer, -plane.Dimension2);
-                    if (dotb < plane.height)
+                    dota = Vector3.Dot(middletointer, plane.Dimension1);
+                    if (dota < 0)
+                        dota = Vector3.Dot(middletointer, -plane.Dimension1);
+                    if (dota < plane.width)
                     {
-                        finalresult = result1;
-                        Object = plane;
-                        replaced = true;
+                        dotb = Vector3.Dot(middletointer, plane.Dimension2);
+                        if (dotb < 0)
+                            dotb = Vector3.Dot(middletointer, -plane.Dimension2);
+                        if (dotb < plane.height)
+                        {
+                            finalresult = result1;
+                            Object = plane;
+                            replaced = true;
+                        }
+                        else
+                            continue;
                     }
                     else
                         continue;
                 }
-                else
-                    continue;
+            }
+            else
+            {
+                if (result1 < 100)
+                {
+                    finalresult = result1;
+                    Object = plane;
+                    replaced = true;
+                }
             }
         }
         //when there is a intersection we add it to the list 
-        //we also check if it is from a mirror then we add it to the reflection intersection list
+        //we also check if it is from a mirror; in that case we add it to the reflection intersection list
+        //if no intersections were made, a distance of -1 will be returned, which then gets converted in a stardard ray length of 10 for the debug screen
         if (replaced)
         {
             i1 = new Intersection(Object, finalresult, ray);
@@ -182,6 +197,7 @@ class Scene
         return finalresult;
     }
 
+    //use the checkintersect to find a intersection of the refleced ray
     public Vector3 CheckReflectIntersect(Intersection inter)
     {
         reflectintersect = null;
@@ -213,7 +229,7 @@ class Scene
         }
     }
 
-    //this makes the shadowrays
+    //creates shadowrays for each light, calculates attentuation
     public Vector3 ShadowRay(Intersection inter)
     {
         float attenuation = 0.1f;
@@ -237,22 +253,26 @@ class Scene
             }
             shadowrays.Add(SR);
         }
-        //this is for checkerboard pattern   
+        //determines the color of the plane, if it is assigned to have a checkerboard
         if (inter.Object is Plane)
         {
             Plane plane = (Plane)inter.Object;
-            Vector3 planedistance = inter.Position - inter.Object.Position;
-            if (Math.Sin(Vector3.Dot(planedistance, plane.Dimension1)) <= 0 && Math.Sin(Vector3.Dot(planedistance, plane.Dimension2)) <= 0)
-                inter.Color = new Vector3(1, 1, 1);
-            else if (Math.Sin(Vector3.Dot(planedistance, plane.Dimension1)) <= 0 || Math.Sin(Vector3.Dot(planedistance, plane.Dimension2)) <= 0)
-                inter.Color = new Vector3(0, 0, 0);
-            else            
-                inter.Color = new Vector3(1, 1, 1);            
+            if (plane.checkerboard)
+            {
+                Vector3 planedistance = inter.Position - inter.Object.Position;
+                if (Math.Sin(Vector3.Dot(planedistance, plane.Dimension1)) <= 0 && Math.Sin(Vector3.Dot(planedistance, plane.Dimension2)) <= 0)
+                    inter.Color = new Vector3(1, 1, 1);
+                else if (Math.Sin(Vector3.Dot(planedistance, plane.Dimension1)) <= 0 || Math.Sin(Vector3.Dot(planedistance, plane.Dimension2)) <= 0)
+                    inter.Color = new Vector3(0, 0, 0);
+                else
+                    inter.Color = new Vector3(1, 1, 1);
+            }
         }
         return inter.Color * attenuation;
     }
+
     //this finds our shadow ray intersects
-    //it uses the same way to find intersects like in the CheckIntersect funtion
+    //it uses the same way to find intersects like in CheckIntersect
     Ray ShadowRayIntersect(Ray ray)
     {
         foreach (Sphere sphere in spheres)
@@ -291,12 +311,13 @@ class Scene
         return ray;
     }
 
-    //simple function to check distance between two point and lenght of a vector
+    //simple functions to check distance between two point and lenght of a vector
     public float Distance(Vector3 first, Vector3 second)
     {
         Vector3 offset = second - first;
         return (float)Math.Sqrt((offset.X * offset.X) + (offset.Y * offset.Y) + (offset.Z * offset.Z));
     }
+
     public float Length(Vector3 L)
     {
         return (float)Math.Sqrt(L.X * L.X + L.Y * L.Y + L.Z * L.Z);
