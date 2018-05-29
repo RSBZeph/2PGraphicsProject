@@ -18,7 +18,7 @@ class Intersection
         Ray = r;
         Position = Ray.Start + Ray.Direction * dis;
         Color = prim.Color;
-        //the normal for if it is a plane or a sphere
+        //gives the normal for an object for when it is a plane or a sphere
         if (Object is Sphere)
             Normal = Vector3.Normalize(Position - Object.Position);
         else

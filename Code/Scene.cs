@@ -28,7 +28,7 @@ class Scene
         C = Camera.Instance();
     }
 
-    //filling the the scene with instances of objects (spheres, planes and lights have their own lists)
+    //filling the the scene with instances of objects (spheres, planes and lights all have their own lists)
     void FillLists()
     {
         Sphere s1 = new Sphere(new Vector3(4, 5, 7), 2f, new Vector3(0f, 0.2f, 0.9f), false);
@@ -204,7 +204,7 @@ class Scene
         return finalresult;
     }
 
-    //use the checkintersect to find a intersection of the refleced ray
+    //use the checkintersect to find a intersection for the reflected ray
     public Vector3 CheckReflectIntersect(Intersection inter)
     {
         reflectintersect = null;
@@ -279,7 +279,7 @@ class Scene
     }
 
     //this finds our shadow ray intersections
-    //it uses the same way to find intersections like in CheckIntersect
+    //it uses the same way to find intersections as in CheckIntersect
     Ray ShadowRayIntersect(Ray ray)
     {
         if (ray.x == 332)
@@ -326,7 +326,7 @@ class Scene
         return ray;
     }
 
-    //simple functions to check distance between two point and lenght of a vector
+    //simple functions to calculate the distance between two points
     public float Distance(Vector3 first, Vector3 second)
     {
         Vector3 offset = second - first;
