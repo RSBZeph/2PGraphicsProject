@@ -24,7 +24,7 @@ class Raytracer
         S = new Scene(Screen);
         arRay = new Ray[Screen.width / 2];
         CheckRayY = Screen.height / 2;
-        K = (float)((10 / 180) * Math.PI);
+        //K = (float)((10 / 180) * Math.PI);
     }
 
     public void Render()
@@ -33,12 +33,13 @@ class Raytracer
 
         if (KBS.IsKeyDown(Key.U))
         {
-            RotateAngleRight++;
-            if(RotateAngleRight >= 450)
-            {
-                RotateAngleRight = 90;
-            }
-            C.RotateRight(RotateAngleRight);
+            C.Direction = C.RotateX * C.Direction;
+            //RotateAngleRight++;
+            //if(RotateAngleRight >= 450)
+            //{
+            //    RotateAngleRight = 90;
+            //}
+            //C.RotateRight(RotateAngleRight);
            
 
             //if (C.B < 0)
@@ -56,8 +57,7 @@ class Raytracer
 
         else if (KBS.IsKeyDown(Key.J))
         {
-            if (C.B > 0)
-                C.B = -C.B;
+            C.Direction = C.Direction + new Vector3(0.1f, 0, 0);
             //C.Direction = C.Direction * Matrix3.CreateRotationZ(1f);
             //if (C.Direction != new Vector3(0, 0, 1))
             //{
