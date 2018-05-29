@@ -6,7 +6,7 @@ class Sphere : Primitive
     public float Radius;
     public Sphere(Vector3 pos, float radius, Vector3 Col, bool mirror)
     {
-        //if we make a instance we fill in the values
+        //if we make an instance we fill in the values
         Position = pos;
         Radius = radius;
         Color = Col;

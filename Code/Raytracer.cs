@@ -55,7 +55,7 @@ class Raytracer
         //here we give every pixel the backgroundcolor
         for (int x = 0; x < Screen.width / 2; x++)
             for (int y = 0; y < Screen.height; y++)
-                Screen.pixels[x + y * Screen.width] = Colour(new Vector3(0.2f, 0, 0));
+                Screen.pixels[x + y * Screen.width] = Colour(new Vector3(0f, 0.1f, 0f));
 
         //here we give every pixel with intersections a color
         foreach (Intersection I in S.intersections)
@@ -74,7 +74,7 @@ class Raytracer
         S.intersections.Clear();
         //draws the horizontal line in the middle of the left screen
         Screen.Line(0, CheckRayY, Screen.width / 2, CheckRayY, Colour(RayColor));
-        //draw the vertical line between the degub and the 3d world
+        //draw the vertical line between the debug and the 3d world
         Screen.Line(512, 0, 512, 512, Colour(new Vector3(1, 1, 1)));
     }
 
@@ -132,6 +132,7 @@ class Raytracer
                             Screen.Line((int)(srstart.X), (int)(srstart.Y), (int)(srend.X), (int)(srend.Y), Colour(shadowcolor));
                         }
                 }
+                
                 //draws the reflection rays in the debug
                 foreach (Ray rr in S.reflectrays)
                 {
@@ -150,7 +151,7 @@ class Raytracer
         S.DrawPrimitivesDebug();
         //clearing the ray lists
         S.reflectrays.Clear();
-
+        
         //here the camera and the virtual screen are drawn, both dependant on the horizontal angle of the camera
         //the changing of the vertical angle is simulated by changing the distance from camera to screen for the debug window
         float angleoffset = (float)(Math.Atan((C.ScreenWidth / 2) / C.DistanceToOrigin2D) * 180 / Math.PI);
