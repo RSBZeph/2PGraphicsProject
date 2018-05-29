@@ -12,7 +12,7 @@ class Raytracer
     Ray[] arRay;
     int CheckRayY;
     Vector3 RayColor = new Vector3(0.3f, 0.8f, 0.5f);
-    public float angle = 0;
+    public float angle = 90, yangle = 0;
 
     public Raytracer(Surface sur)
     {
@@ -155,41 +155,22 @@ class Raytracer
         //the changing of the vertical angle is simulated by changing the distance from camera to screen for the debug window
         float angleoffset = (float)(Math.Atan((C.ScreenWidth / 2) / C.DistanceToOrigin2D) * 180 / Math.PI);
         float screencirclediameter = (float)Math.Sqrt(C.DistanceToOrigin2D * C.DistanceToOrigin2D + (C.ScreenWidth) * (C.ScreenWidth) / 4);
-        Vector2 leftcorner = pointoncircle(angle - angleoffset - 90, screencirclediameter), rightcorner = pointoncircle(angle + angleoffset - 90, screencirclediameter);
+        Vector2 leftcorner = pointoncircle(360 - angle - angleoffset, screencirclediameter), rightcorner = pointoncircle(360 - angle + angleoffset, screencirclediameter);
         Screen.Line((int)leftcorner.X, (int)leftcorner.Y, (int)rightcorner.X, (int)rightcorner.Y, Colour(new Vector3(1, 1, 1)));
-        Screen.Line((int)(pointoncircle(angle -90).X), (int)(pointoncircle(angle -90).Y), (int)(pointoncircle(angle - 220).X), (int)(pointoncircle(angle -220).Y), Colour(new Vector3(1, 1, 1)));
-        Screen.Line((int)(pointoncircle(angle -90).X), (int)(pointoncircle(angle -90).Y), (int)(pointoncircle(angle + 40).X), (int)(pointoncircle(angle + 40).Y), Colour(new Vector3(1, 1, 1)));
-
-        //foreach (Ray sr in S.shadowrays)
-        //{
-        //    if (sr.y == CheckRayY)
-        //        {
-        //            srstart = VectorToScreenPos(sr.Start);
-        //            if (sr.Occluded)
-        //            {
-        //                srend = VectorToScreenPos(sr.Start + sr.Direction * sr.Distance);
-        //                shadowcolor = new Vector3(0.7f, 0.1f, 0);
-        //            }
-        //            else
-        //            {
-        //                srend = VectorToScreenPos(sr.Start + sr.Direction * sr.MaxDistance);
-        //                shadowcolor = new Vector3(1, 1, 1);
-        //            }
-        //            Screen.Line((int)(srstart.X), (int)(srstart.Y), (int)(srend.X), (int)(srend.Y), Colour(shadowcolor));
-        //        }
-        //}
+        Screen.Line((int)(pointoncircle(360 - angle).X), (int)(pointoncircle(360 - angle).Y), (int)(pointoncircle(360 - angle + 130).X), (int)(pointoncircle(360 - angle + 130).Y), Colour(new Vector3(1, 1, 1)));
+        Screen.Line((int)(pointoncircle(360 - angle).X), (int)(pointoncircle(360 - angle).Y), (int)(pointoncircle(360 - angle - 130).X), (int)(pointoncircle(360 - angle - 130).Y), Colour(new Vector3(1, 1, 1)));
         S.shadowrays.Clear();
     }
 
 
     //used to draw the camera on a invisible circle on the debug screen
-    Vector2 pointoncircle(double angle, float size = 0.2f)
+    Vector2 pointoncircle(double angle, float radius = 0.2f)
     {
         int width = Screen.width / 2, height = Screen.height;
         int width1 = width / 10, height1 = height / 10;
         angle = angle * Math.PI / 180;
-        int x = (int)(width + width1 * C.Position.X + width1 * size * Math.Cos(angle));
-        int y = (int)(height - height1 * C.Position.Z + height1 * size * Math.Sin(angle));
+        int x = (int)(width + width1 * C.Position.X + width1 * radius * Math.Cos(angle));
+        int y = (int)(height - height1 * C.Position.Z + height1 * radius * Math.Sin(angle));
         return new Vector2(x, y);
     }
 
