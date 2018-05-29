@@ -199,7 +199,7 @@ class Raytracer
         S.intersections.Clear();
         //draws the horizontal line in the middle of the left screen
         Screen.Line(0, CheckRayY, Screen.width / 2, CheckRayY, Colour(RayColor));
-        //draw the vertical line between the degub and the 3d world
+        //draw the vertical line between the debug and the 3d world
         Screen.Line(512, 0, 512, 512, Colour(new Vector3(1, 1, 1)));
     }
 
@@ -257,6 +257,7 @@ class Raytracer
                             Screen.Line((int)(srstart.X), (int)(srstart.Y), (int)(srend.X), (int)(srend.Y), Colour(shadowcolor));
                         }
                 }
+                
                 //draws the reflection rays in the debug
                 foreach (Ray rr in S.reflectrays)
                 {
@@ -275,7 +276,7 @@ class Raytracer
         S.DrawPrimitivesDebug();
         //clearing the ray lists
         S.reflectrays.Clear();
-
+        
         //here the camera and the virtual screen are drawn, both dependant on the horizontal angle of the camera
         //the changing of the vertical angle is simulated by changing the distance from camera to screen for the debug window
         float angleoffset = (float)(Math.Atan((C.ScreenWidth / 2) / C.DistanceToOrigin2D) * 180 / Math.PI);
@@ -284,26 +285,8 @@ class Raytracer
         Screen.Line((int)leftcorner.X, (int)leftcorner.Y, (int)rightcorner.X, (int)rightcorner.Y, Colour(new Vector3(1, 1, 1)));
         Screen.Line((int)(pointoncircle(angle -90).X), (int)(pointoncircle(angle -90).Y), (int)(pointoncircle(angle - 220).X), (int)(pointoncircle(angle -220).Y), Colour(new Vector3(1, 1, 1)));
         Screen.Line((int)(pointoncircle(angle -90).X), (int)(pointoncircle(angle -90).Y), (int)(pointoncircle(angle + 40).X), (int)(pointoncircle(angle + 40).Y), Colour(new Vector3(1, 1, 1)));
-
-        //foreach (Ray sr in S.shadowrays)
-        //{
-        //    if (sr.y == CheckRayY)
-        //        {
-        //            srstart = VectorToScreenPos(sr.Start);
-        //            if (sr.Occluded)
-        //            {
-        //                srend = VectorToScreenPos(sr.Start + sr.Direction * sr.Distance);
-        //                shadowcolor = new Vector3(0.7f, 0.1f, 0);
-        //            }
-        //            else
-        //            {
-        //                srend = VectorToScreenPos(sr.Start + sr.Direction * sr.MaxDistance);
-        //                shadowcolor = new Vector3(1, 1, 1);
-        //            }
-        //            Screen.Line((int)(srstart.X), (int)(srstart.Y), (int)(srend.X), (int)(srend.Y), Colour(shadowcolor));
-        //        }
-        //}
         S.shadowrays.Clear();
+       
     }
 
 
