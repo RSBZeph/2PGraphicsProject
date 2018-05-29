@@ -100,7 +100,7 @@ class Raytracer
         {
             if (C.B > 0)
                 C.B = -C.B;
-            C.Direction = C.Direction * Matrix3.CreateRotationZ(1f);
+            //C.Direction = C.Direction * Matrix3.CreateRotationZ(1f);
             //if (C.Direction != new Vector3(0, 0, 1))
             //{
             //   C.Direction = C.Direction * new Vector3((float)(C.Direction.X * Math.Cos(-0.17) - C.Direction.Y * Math.Sin(-0.17)), (float)(C.Direction.X * Math.Sin(-0.17) + C.Direction.Y * Math.Cos(-0.17)), C.Direction.Z);
