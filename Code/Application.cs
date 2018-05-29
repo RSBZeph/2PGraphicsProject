@@ -23,13 +23,29 @@ class Application
     void Input()
     {
         KBS = Keyboard.GetState();
-        if (KBS.IsKeyDown(Key.Plus))
+        if (KBS.IsKeyDown(Key.I))
         {
-            R.angle += 10;
+
         }
-        if (KBS.IsKeyDown(Key.Minus))
+        if (KBS.IsKeyDown(Key.K))
         {
-            R.angle -= 10;
+
+        }
+        if (KBS.IsKeyDown(Key.L))
+        {
+
+        }
+        if (KBS.IsKeyDown(Key.J))
+        {
+
+        }
+        if (KBS.IsKeyDown(Key.O))
+        {
+
+        }
+        if (KBS.IsKeyDown(Key.U))
+        {
+
         }
 
         if (KBS.IsKeyDown(Key.A))

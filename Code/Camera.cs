@@ -24,47 +24,11 @@ class Camera
 
     public void Tick()
     {
-        test = Vector3.Cross(Direction, upp);
-        test1 = Vector3.Normalize(test);
-        UnitR = Vector3.Divide(Vector3.Cross(V, upp), Vector3.Normalize(Vector3.Cross(V, upp)));
-        UnitU = Vector3.Cross(test1, Direction);
-        double x = B / 180 * Math.PI;
-        RotateX = new Matrix3
-         (1, 0, 0,
-         0, (float)Math.Cos(x), -(float)Math.Sin(x),
-         0, (float)Math.Sin(x), (float)Math.Cos(x));
-        RotateY = new Matrix3
-            ((float)Math.Cos(x), 0, (float)Math.Sin(x),
-            0, 1, 0,
-            -(float)Math.Sin(x), 0, (float)Math.Cos(x));
-        RotateZ = new Matrix3(
-            (float)Math.Cos(x), -(float)Math.Sin(x), 0,
-            (float)Math.Sin(x), (float)Math.Cos(x), 0,
-            0, 0, 1);
         DistanceToOrigin2D = (float)Math.Sqrt((ScreenCentre - Position).X * (ScreenCentre - Position).X + (ScreenCentre - Position).Z * (ScreenCentre - Position).Z);
-        //Console.WriteLine(Direction);
         ScreenCentre = Position + Direction * DistanceToOrigin;
-        //P0 = (ScreenCentre - test1 + UnitU);
-        //P1 = (ScreenCentre + test1 + UnitU);
-        //P2 = (ScreenCentre - test1 - UnitU);
-        P0 = (Position + Direction * DistanceToOrigin - test1 + UnitU);
-        P1 = (P0 + (test * 2));
-        P2 = (P0 - UnitU * 2);
-
-        Console.WriteLine(Position);
-        Console.WriteLine(P0);
-        //Console.WriteLine(Position);
-    }
-
-    //public void RotateX()
-    //{
-    //    x = (float)(Math.Cos(B) * Direction.X - Math.Sin(B) * Direction.Z);
-    //    Direction.X = x;
-    //}
-
-    public static Camera Instance()
-    {
-        return C;
+        P0 = ScreenCentre + Right + Up;
+        P1 = ScreenCentre - Right + Up;
+        P2 = ScreenCentre + Right - Up;
     }
 
     public void RotateRight(float A)
@@ -81,8 +45,9 @@ class Camera
         P2.X = (Position.X + hypotenuse * (float)Math.Cos(RotateAngleR - angle));
         P2.Z = (Position.Z + hypotenuse * (float)Math.Sin(RotateAngleR - angle));
     }
-        
-            
 
-    
+    public static Camera Instance()
+    {
+        return C;
+    }
 }

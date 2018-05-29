@@ -52,10 +52,10 @@ class Scene
         p1.width = 6;
         planes.Add(p1);
 
-        Light l1 = new Light(new Vector3(0, 7, 3), 3f);
+        Light l1 = new Light(new Vector3(0, 5, 3), 3f);
         lights.Add(l1);
 
-        l1 = new Light(new Vector3(10, 7, 3), 3f);
+        l1 = new Light(new Vector3(10, 5, 3), 3f);
         lights.Add(l1);
     }
 
