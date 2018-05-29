@@ -101,11 +101,11 @@ class Scene
         //the object and distance that we return
         Primitive Object = null;
         finalresult = -1;
-        //re-write the the formula for sphere intersection with lines to one which consists of an a * t^2, b * t and c, allowing us to use the ABC formula to solve t
+        //re-write the the formula for sphere intersection with lines to one which consists of an a * t^2, b * t and c (which results in a being 1), allowing us to use the ABC formula to solve t
         foreach (Sphere sphere in spheres)
         {
             Vector3 difference1 = ray.Start - sphere.Position;
-            b = 2 * Vector3.Dot(difference1, ray.Direction);
+            b = 2 * Vector3.Dot(ray.Direction, difference1);
             c = Vector3.Dot(difference1, difference1) - (sphere.Radius * sphere.Radius);
             discriminant = (b * b) - (4 * c);
             if (discriminant >= 0)
@@ -290,7 +290,7 @@ class Scene
         foreach (Sphere sphere in spheres)
         {
             Vector3 difference3 = ray.Start - sphere.Position;
-            b = 2 * Vector3.Dot(difference3, ray.Direction);
+            b = 2 * (Vector3.Dot(ray.Direction, difference3));
             c = Vector3.Dot(difference3, difference3) - (sphere.Radius * sphere.Radius);
             discriminant = (b * b) - (4 * c);
             if (discriminant >= 0)

@@ -8,7 +8,7 @@ class Intersection
     // here we store our value for our intersections (position, color, normal, ect)
     public Vector3 Position, Color, Normal;
     public Primitive Object;
-    public float Distance;
+    public double Distance;
     public Ray Ray;
     public Intersection(Primitive prim, float dis, Ray r)
     {
