@@ -231,7 +231,7 @@ class Raytracer
                 //draws the shadowrays in the debug
                 foreach (Ray sr in S.shadowrays)
                 {
-                    if (r.y == sr.y)
+                    if (sr.y == CheckRayY)
                         if (r.x == sr.x)
                         {
                             srstart = VectorToScreenPos(sr.Start);
@@ -251,7 +251,7 @@ class Raytracer
                 //draws the reflection rays in the debug
                 foreach (Ray rr in S.reflectrays)
                 {
-                    if (r.y == rr.y)
+                    if (rr.y == CheckRayY)
                         if (r.x == rr.x)
                         {
                             rrstart = VectorToScreenPos(rr.Start);
@@ -266,7 +266,6 @@ class Raytracer
         S.DrawPrimitivesDebug();
         //clearing the ray lists
         S.reflectrays.Clear();
-        S.shadowrays.Clear();
 
         //here the camera and the virtual screen are drawn, both dependant on the horizontal angle of the camera
         //the changing of the vertical angle is simulated by changing the distance from camera to screen for the debug window
@@ -276,8 +275,30 @@ class Raytracer
         Screen.Line((int)leftcorner.X, (int)leftcorner.Y, (int)rightcorner.X, (int)rightcorner.Y, Colour(new Vector3(1, 1, 1)));
         Screen.Line((int)(pointoncircle(angle -90).X), (int)(pointoncircle(angle -90).Y), (int)(pointoncircle(angle - 220).X), (int)(pointoncircle(angle -220).Y), Colour(new Vector3(1, 1, 1)));
         Screen.Line((int)(pointoncircle(angle -90).X), (int)(pointoncircle(angle -90).Y), (int)(pointoncircle(angle + 40).X), (int)(pointoncircle(angle + 40).Y), Colour(new Vector3(1, 1, 1)));
+
+        //foreach (Ray sr in S.shadowrays)
+        //{
+        //    if (sr.y == CheckRayY)
+        //        {
+        //            srstart = VectorToScreenPos(sr.Start);
+        //            if (sr.Occluded)
+        //            {
+        //                srend = VectorToScreenPos(sr.Start + sr.Direction * sr.Distance);
+        //                shadowcolor = new Vector3(0.7f, 0.1f, 0);
+        //            }
+        //            else
+        //            {
+        //                srend = VectorToScreenPos(sr.Start + sr.Direction * sr.MaxDistance);
+        //                shadowcolor = new Vector3(1, 1, 1);
+        //            }
+        //            Screen.Line((int)(srstart.X), (int)(srstart.Y), (int)(srend.X), (int)(srend.Y), Colour(shadowcolor));
+        //        }
+        //}
+        S.shadowrays.Clear();
     }
 
+
+    //used to draw the camera on a invisible circle on the debug screen
     Vector2 pointoncircle(double angle, float size = 0.2f)
     {
         int width = Screen.width / 2, height = Screen.height;
@@ -325,10 +346,10 @@ class Raytracer
         public float Distance, MaxDistance, MinDistance;
         public bool Occluded;
 
-        public Ray(Vector3 a, Vector3 b)
+        public Ray(Vector3 start, Vector3 direction)
         {
-            Start = a;
-            Direction = b;
+            Start = start;
+            Direction = direction;
             x = -1;
             y = -1;
             Distance = 10;
