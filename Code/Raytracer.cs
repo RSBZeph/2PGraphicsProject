@@ -13,7 +13,7 @@ class Raytracer
     int CheckRayY;
     Vector3 RayColor = new Vector3(0.3f, 0.8f, 0.5f);
     KeyboardState KBS;
-    float angle = 0;
+    public float angle = 0;
     public float K;
 
     public Raytracer(Surface sur)
@@ -28,58 +28,7 @@ class Raytracer
 
     public void Render()
     {
-        KBS = Keyboard.GetState();
-        if (KBS.IsKeyDown(Key.Plus))
-        {
-            angle+= 10;
-        }
-        if (KBS.IsKeyDown(Key.Minus))
-        {
-            angle-= 10;
-        }
-
-        if (KBS.IsKeyDown(Key.A))
-        {
-            C.Position -= 0.25f * C.Right;
-            C.P0 -= 0.25f * C.Right;
-            C.P1 -= 0.25f * C.Right;
-            C.P2 -= 0.25f * C.Right;
-        }
-        else if (KBS.IsKeyDown(Key.D))
-        {
-            C.Position += 0.25f * C.Right;
-            C.P0 += 0.25f * C.Right;
-            C.P1 += 0.25f * C.Right;
-            C.P2 += 0.25f * C.Right;
-        }
-        if (KBS.IsKeyDown(Key.S))
-        {
-            C.Position -= 0.25f * C.Direction;
-            C.P0 -= 0.25f * C.Direction;
-            C.P1 -= 0.25f * C.Direction;
-            C.P2 -= 0.25f * C.Direction;
-        }
-        else if (KBS.IsKeyDown(Key.W))
-        {
-            C.Position += 0.25f * C.Direction;
-            C.P0 += 0.25f * C.Direction;
-            C.P1 += 0.25f * C.Direction;
-            C.P2 += 0.25f * C.Direction;
-        }
-        if (KBS.IsKeyDown(Key.Q))
-        {
-            C.Position -= 0.25f * C.Up;
-            C.P0 -= 0.25f * C.Up;
-            C.P1 -= 0.25f * C.Up;
-            C.P2 -= 0.25f * C.Up;
-        }
-        else if (KBS.IsKeyDown(Key.E))
-        {
-            C.Position += 0.25f * C.Up;
-            C.P0 += 0.25f * C.Up;
-            C.P1 += 0.25f * C.Up;
-            C.P2 += 0.25f * C.Up;
-        }
+        KBS = Keyboard.GetState();       
 
         if (KBS.IsKeyDown(Key.U))
         {
@@ -245,16 +194,6 @@ class Raytracer
         Screen.Line(512, 0, 512, 512, Colour(new Vector3(1, 1, 1)));
     }
 
-    Vector2 pointoncircle(double angle, float size = 0.2f)
-    {
-        int width = Screen.width / 2, height = Screen.height;
-        int width1 = width / 10, height1 = height / 10;
-        angle = angle * Math.PI / 180;
-        int x = (int)(width + width1 * C.Position.X + width1 * size * Math.Cos(angle));
-        int y = (int)(height - height1 * C.Position.Z + height1 * size * Math.Sin(angle));
-        return new Vector2(x, y);
-    }
-
     //draws the pixels on the right screen (debug)
     public void DrawDebug()
     {
@@ -337,6 +276,16 @@ class Raytracer
         Screen.Line((int)leftcorner.X, (int)leftcorner.Y, (int)rightcorner.X, (int)rightcorner.Y, Colour(new Vector3(1, 1, 1)));
         Screen.Line((int)(pointoncircle(angle -90).X), (int)(pointoncircle(angle -90).Y), (int)(pointoncircle(angle - 220).X), (int)(pointoncircle(angle -220).Y), Colour(new Vector3(1, 1, 1)));
         Screen.Line((int)(pointoncircle(angle -90).X), (int)(pointoncircle(angle -90).Y), (int)(pointoncircle(angle + 40).X), (int)(pointoncircle(angle + 40).Y), Colour(new Vector3(1, 1, 1)));
+    }
+
+    Vector2 pointoncircle(double angle, float size = 0.2f)
+    {
+        int width = Screen.width / 2, height = Screen.height;
+        int width1 = width / 10, height1 = height / 10;
+        angle = angle * Math.PI / 180;
+        int x = (int)(width + width1 * C.Position.X + width1 * size * Math.Cos(angle));
+        int y = (int)(height - height1 * C.Position.Z + height1 * size * Math.Sin(angle));
+        return new Vector2(x, y);
     }
 
     //simple function to translate a 3d point to a point on the debug
