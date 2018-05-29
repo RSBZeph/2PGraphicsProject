@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using OpenTK;
+﻿using OpenTK;
 
 class Plane : Primitive
 {
     public Vector3 Dimension1, Dimension2, Normal;
     public float  width, height;
+    public bool checkerboard = false;
 
     public Plane(Vector3 P0, Vector3 dimension1, Vector3 dimension2, Vector3 Col)
     {
