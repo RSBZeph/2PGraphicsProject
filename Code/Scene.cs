@@ -53,10 +53,10 @@ class Scene
         p1.width = 6;
         planes.Add(p1);
 
-        Light l1 = new Light(new Vector3(0, 7, 3), 3f);
+        Light l1 = new Light(new Vector3(0, 5, 3), 3f);
         lights.Add(l1);
 
-        l1 = new Light(new Vector3(10, 7, 3), 3f);
+        l1 = new Light(new Vector3(10, 5, 3), 3f);
         lights.Add(l1);
     }
 
@@ -220,7 +220,7 @@ class Scene
             RRay.Distance = 10;
             reflectrays.Add(RRay);
             recursions--;
-            return new Vector3(0.2f, 0, 0) * inter.Object.ReflectFactor + ShadowRay(inter) * (1 - inter.Object.ReflectFactor);
+            return new Vector3(0.1f, 0.1f, 0.1f) * inter.Object.ReflectFactor + ShadowRay(inter) * (1 - inter.Object.ReflectFactor);
         }
         else 
         {
