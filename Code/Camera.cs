@@ -22,7 +22,6 @@ class Camera
         DistanceToOrigin = (float)(1 / Math.Sin(((FOV / 2) / 180) * Math.PI));
         NormDirection = Vector3.Normalize(Direction);
         Matrix4.CreateRotationX(4f);
-
     }
 
     public void Tick()
@@ -46,8 +45,7 @@ class Camera
         P0 = (ScreenCentre - test1 + UnitU);
         P1 = (ScreenCentre + test1 + UnitU);
         P2 = (ScreenCentre - test1 - UnitU);
-        Console.WriteLine(Position);
-
+        //Console.WriteLine(Position);
     }
 
     //public void RotateX()
