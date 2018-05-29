@@ -30,27 +30,27 @@ class Scene
 
     void FillLists()
     {
-        Sphere s1 = new Sphere(new Vector3(2, 5, 8), 2f, new Vector3(0.7f, 0.7f, 0.7f), false);
+        Sphere s1 = new Sphere(new Vector3(5, 5, 9), 2f, new Vector3(0.7f, 0.7f, 0.7f), false);
         s1.Mirror = true;
         s1.ReflectFactor = 0.5f;
         spheres.Add(s1);
 
-        s1 = new Sphere(new Vector3(8, 5, 9), 1.5f, new Vector3(0, 0.6f, 0.9f), false);
+        s1 = new Sphere(new Vector3(8, 5, 6), 1.5f, new Vector3(0, 0.6f, 0.9f), false);
         spheres.Add(s1);
 
-        s1 = new Sphere(new Vector3(5, 5, 7), 0.8f, new Vector3(0, 0.8f, 0.3f), false);
+        s1 = new Sphere(new Vector3(1, 5, 6), 0.8f, new Vector3(0, 0.8f, 0.3f), false);
         spheres.Add(s1);
 
-        Plane p1 = new Plane(new Vector3(5, 3, 9), new Vector3(1,0,0), new Vector3(0,0,1), new Vector3(0.7f, 0.6f, 0));
+        Plane p1 = new Plane(new Vector3(5, 3, 11), new Vector3(1, 0, 0), new Vector3(0, 0, 1), new Vector3(0.7f, 0.6f, 0));
         p1.height = 5;
         p1.width = 6;
         p1.checkerboard = true;
         planes.Add(p1);
 
-        Light l1 = new Light(new Vector3(0, 7, 3), 10f);
+        Light l1 = new Light(new Vector3(0, 7, 3), 3f);
         lights.Add(l1);
 
-        l1 = new Light(new Vector3(10, 5, 8), 5f);
+        l1 = new Light(new Vector3(10, 7, 3), 3f);
         lights.Add(l1);
     }
 
@@ -97,7 +97,7 @@ class Scene
             b = 2 * Vector3.Dot(difference1, ray.Direction);
             c = Vector3.Dot(difference1, difference1) - (sphere.Radius * sphere.Radius);
             discriminant = (b * b) - (4 * a * c);
-            if (discriminant > 0)
+            if (discriminant >= 0)
             {
                 result1 = (float)((-b + Math.Sqrt(discriminant)) / (2 * a));
                 result2 = (float)((-b - Math.Sqrt(discriminant)) / (2 * a));
@@ -135,14 +135,14 @@ class Scene
                 }
             }
         }
-            foreach (Plane plane in planes)
-            {
-                if (Vector3.Dot(plane.Normal, ray.Direction) >= 0)
-                    continue;
-                result1 = -Vector3.Dot((ray.Start - plane.Position), plane.Normal) / Vector3.Dot(ray.Direction, plane.Normal);
-                Vector3 intersectpos = ray.Start + ray.Direction * result1;
-                Vector3 middletointer = intersectpos - plane.Position;
-                float dota = 0, dotb = 0;
+        foreach (Plane plane in planes)
+        {
+            if (FromMirror && Vector3.Dot(plane.Normal, ray.Direction) >= 0 || Vector3.Dot(plane.Normal, ray.Direction) == 0)
+                continue;
+            result1 = -Vector3.Dot((ray.Start - plane.Position), plane.Normal) / Vector3.Dot(ray.Direction, plane.Normal);
+            Vector3 intersectpos = ray.Start + ray.Direction * result1;
+            Vector3 middletointer = intersectpos - plane.Position;
+            float dota = 0, dotb = 0;
 
             if (result1 < finalresult && result1 > 0 || !replaced)
             {
@@ -160,12 +160,12 @@ class Scene
                         Object = plane;
                         replaced = true;
                     }
-                    else                    
-                        continue;                    
+                    else
+                        continue;
                 }
                 else
-                    continue;                
-            }            
+                    continue;
+            }
         }
         if (replaced)
         {
@@ -209,6 +209,10 @@ class Scene
             }
             else
             {
+                if (inter.Object is Plane)
+                {
+
+                }
                 return ShadowRay(reflectintersect) * inter.Object.ReflectFactor + ShadowRay(inter) * (1 - inter.Object.ReflectFactor);
             }
         }
@@ -216,7 +220,7 @@ class Scene
 
     public Vector3 ShadowRay(Intersection inter)
     {
-        float attenuation = 0;
+        float attenuation = 0.1f;
         foreach (Light light in lights)
         {
             difference2 = light.Position - inter.Position;
@@ -260,7 +264,7 @@ class Scene
             b = 2 * Vector3.Dot(difference3, ray.Direction);
             c = Vector3.Dot(difference3, difference3) - (sphere.Radius * sphere.Radius);
             discriminant = (b * b) - (4 * a * c);
-            if (discriminant > 0)
+            if (discriminant >= 0)
             {
                 precalc1 = (float)(Math.Sqrt(discriminant));
                 result1 = ((-b + precalc1) / (2 * a));

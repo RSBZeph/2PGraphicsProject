@@ -5,7 +5,7 @@ class Camera
 {
     public Vector3 Position = new Vector3(5, 5, 0.5f), Direction = new Vector3(0, 0, 1), ScreenCentre, NormDirection, P0, P1, P2;
     public Vector3 Right = new Vector3(1, 0, 0), Up = new Vector3(0, 1, 0);
-    public float FOV = 180, ScreenWidth, DistanceToOrigin;
+    public float FOV = 180, ScreenWidth, DistanceToOrigin, DistanceToOrigin2D;
     static Camera C = new Camera();
     float x, y, z;
     public Matrix3 RotateX, RotateY, RotateZ;
@@ -42,7 +42,7 @@ class Camera
             (float)Math.Cos(x), -(float)Math.Sin(x), 0,
             (float)Math.Sin(x), (float)Math.Cos(x), 0,
             0, 0, 1);
-
+        DistanceToOrigin2D = (float)Math.Sqrt((ScreenCentre - Position).X * (ScreenCentre - Position).X + (ScreenCentre - Position).Z * (ScreenCentre - Position).Z);
         //Console.WriteLine(Direction);
     }
 

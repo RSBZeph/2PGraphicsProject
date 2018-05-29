@@ -13,6 +13,7 @@ class Raytracer
     int CheckRayY;
     Vector3 RayColor = new Vector3(0.3f, 0.8f, 0.5f);
     KeyboardState KBS;
+    float angle = 0;
 
     public Raytracer(Surface sur)
     {
@@ -26,6 +27,15 @@ class Raytracer
     public void Render()
     {
         KBS = Keyboard.GetState();
+        if (KBS.IsKeyDown(Key.Plus))
+        {
+            angle+= 10;
+        }
+        if (KBS.IsKeyDown(Key.Minus))
+        {
+            angle-= 10;
+        }
+
         if (KBS.IsKeyDown(Key.A))
         {
             C.Position -= 0.25f * C.Right;
@@ -93,7 +103,7 @@ class Raytracer
         //}
 
         //    if(KBS.IsKeyDown())
-
+        
 
         //if (KBS.IsKeyDown(Key.I))
         //{
@@ -157,6 +167,16 @@ class Raytracer
         Screen.Line(512, 0, 512, 512, Colour(new Vector3(1, 1, 1)));
     }
 
+    Vector2 pointoncircle(double angle, float size = 0.2f)
+    {
+        int width = Screen.width / 2, height = Screen.height;
+        int width1 = width / 10, height1 = height / 10;
+        angle = angle * Math.PI / 180;
+        int x = (int)(width + width1 * C.Position.X + width1 * size * Math.Cos(angle));
+        int y = (int)(height - height1 * C.Position.Z + height1 * size * Math.Sin(angle));
+        return new Vector2(x, y);
+    }
+
     public void DrawDebug()
     {
         for (int x = 0; x < Screen.width / 2; x++)
@@ -164,11 +184,8 @@ class Raytracer
             {
                 Screen.pixels[x + Screen.width / 2 + y * Screen.width] = Colour(new Vector3(0, 0, 0));
             }
-        
+
         Vector2 Origin = VectorToScreenPos(C.Position);
-        Screen.Line((int)(Origin.X - 5), (int)(Origin.Y + 5), (int)(Origin.X), (int)(Origin.Y - 10), Colour(new Vector3(1, 1, 1)));
-        Screen.Line((int)(Origin.X + 5), (int)(Origin.Y + 5), (int)(Origin.X), (int)(Origin.Y - 10), Colour(new Vector3(1, 1, 1)));
-        Screen.Line((int)(Origin.X - C.ScreenWidth / 2 * Screen.width / 20), (int)(Origin.Y - C.DistanceToOrigin * Screen.height / 10), (int)(Origin.X + C.ScreenWidth / 2 * Screen.width / 20), (int)(Origin.Y - C.DistanceToOrigin * Screen.height / 10), Colour(new Vector3(1, 1, 1)));
 
         int counter = 0;
         float t;
@@ -208,7 +225,7 @@ class Raytracer
                                 srend = VectorToScreenPos(sr.Start + sr.Direction * sr.MaxDistance);
                                 shadowcolor = new Vector3(1, 1, 1);
                             }
-                            Screen.Line((int)(srstart.X), (int)(srstart.Y), (int)(srend.X), (int)(srend.Y), Colour(shadowcolor));                            
+                            Screen.Line((int)(srstart.X), (int)(srstart.Y), (int)(srend.X), (int)(srend.Y), Colour(shadowcolor));
                         }
                 }
 
@@ -228,6 +245,13 @@ class Raytracer
         S.DrawPrimitivesDebug();
         S.reflectrays.Clear();
         S.shadowrays.Clear();
+        float angleoffset = (float)(Math.Atan((C.ScreenWidth / 2) / C.DistanceToOrigin2D) * 180 / Math.PI), w, e;
+        float screencirclediameter = (float)Math.Sqrt(C.DistanceToOrigin2D * C.DistanceToOrigin2D + (C.ScreenWidth) * (C.ScreenWidth) / 4);
+        Vector2 leftcorner = pointoncircle(angle - angleoffset - 90, screencirclediameter), rightcorner = pointoncircle(angle + angleoffset - 90, screencirclediameter);
+        Screen.Line((int)leftcorner.X, (int)leftcorner.Y, (int)rightcorner.X, (int)rightcorner.Y, Colour(new Vector3(1, 1, 1)));
+        // Screen.Line((int)(Origin.X - C.ScreenWidth / 2 * Screen.width / 20), (int)(Origin.Y - C.DistanceToOrigin * Screen.height / 10), (int)(Origin.X + C.ScreenWidth / 2 * Screen.width / 20), (int)(Origin.Y - C.DistanceToOrigin * Screen.height / 10), Colour(new Vector3(1, 1, 1)));
+        Screen.Line((int)(pointoncircle(angle -90).X), (int)(pointoncircle(angle -90).Y), (int)(pointoncircle(angle - 220).X), (int)(pointoncircle(angle -220).Y), Colour(new Vector3(1, 1, 1)));
+        Screen.Line((int)(pointoncircle(angle -90).X), (int)(pointoncircle(angle -90).Y), (int)(pointoncircle(angle + 40).X), (int)(pointoncircle(angle + 40).Y), Colour(new Vector3(1, 1, 1)));
     }
 
     Vector2 VectorToScreenPos(Vector3 v)
