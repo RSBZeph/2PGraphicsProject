@@ -117,8 +117,6 @@ class Raytracer
         //    C.P2 = C.P2 * C.RotateZ;
         //}
 
-        C.Tick();
-        Draw3D();
         //if (KBS.IsKeyDown(Key.U))
         //{
         //    C.Direction += Vector3.Normalize(C.Direction + Vector3.UnitX);            
@@ -132,7 +130,7 @@ class Raytracer
         //}
 
         //    if(KBS.IsKeyDown())
-        
+
 
         //if (KBS.IsKeyDown(Key.I))
         //{
@@ -149,9 +147,11 @@ class Raytracer
         //else if (KBS.IsKeyDown(Key.K))
         //    C.RotateThatShit += new Vector3(0, 0, 0.1f);
 
-        
+
         //C.RotateThatShit = new Vector3(1, 1, 1);
-        
+
+        C.Tick();
+        Draw3D();
     }
 
     //draws the pixels on the left screen (the 3d world)
